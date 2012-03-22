@@ -21,8 +21,6 @@ namespace Vocaluxe.Screens
         private const string TextWarning = "TextWarning";
         private const string StaticWarning = "StaticWarning";
         
-        private int[] _PlayerNr;
-        
         public CScreenNames()
         {
             Init();
@@ -68,12 +66,6 @@ namespace Vocaluxe.Screens
             {
                 SelectSlides[htSelectSlides(SelectSlidePlayerMic[i])].WithTextures = true;
             }
-            
-            _PlayerNr = new int[CSettings.MaxNumPlayer];
-            for (int i = 0; i < _PlayerNr.Length; i++)
-            {
-                _PlayerNr[i] = i;
-            }
         }
 
         public override bool HandleInput(KeyEvent KeyEvent)
@@ -103,7 +95,7 @@ namespace Vocaluxe.Screens
                                 processed = true;
                                 CGame.NumPlayer = i + 1;
 
-                                UpdateSelection();
+                                UpdateSlides();
                                 UpdateVisibility();
 
                                 CConfig.NumPlayer = CGame.NumPlayer;
@@ -131,7 +123,7 @@ namespace Vocaluxe.Screens
                 }
 
                 if (!processed)
-                    UpdateSelection();
+                    UpdateSlides();
             }
 
             return true;
@@ -156,7 +148,7 @@ namespace Vocaluxe.Screens
                         processed = true;
                         CGame.NumPlayer = i + 1;
 
-                        UpdateSelection();
+                        UpdateSlides();
                         UpdateVisibility();
 
                         CConfig.NumPlayer = CGame.NumPlayer;
@@ -181,7 +173,7 @@ namespace Vocaluxe.Screens
                 }
 
                 if (!processed)
-                    UpdateSelection();
+                    UpdateSlides();
             }
 
             if (MouseEvent.RB)
@@ -233,43 +225,51 @@ namespace Vocaluxe.Screens
             CGraphics.FadeTo(EScreens.ScreenSing);
         }
 
+        /// <summary>
+        /// Update player selection slides when entering the screen and on every selection change.
+        /// </summary>
         private void UpdateSlides()
         {
+            Dictionary<int, int> indices = new Dictionary<int, int>();
             for (int i = 0; i < SelectSlidePlayerMic.Length; i++)
             {
+                int index = SelectSlides[htSelectSlides(SelectSlidePlayerMic[i])].ValueIndex;
+                if (i < CGame.NumPlayer && CProfiles.IsActive(index) && !indices.ContainsKey(index))
+                    indices.Add(index, i);
+                    
                 SelectSlides[htSelectSlides(SelectSlidePlayerMic[i])].Clear();
             }
 
+            for (int i = 0; i < CGame.NumPlayer; i++)
+            {
+                if (!indices.ContainsValue(i))
+                {
+                    for (int j = 0; j < CProfiles.NumProfiles; j++)
+                    {
+                        if (CProfiles.IsActive(j) && !indices.ContainsKey(j))
+                        {
+                            indices.Add(j, i);
+                            break;
+                        }
+                    }
+                }
+            }
+
+
             for (int i = 0; i < CProfiles.NumProfiles; i++)
             {
-                if (CProfiles.Profiles[i].Active == EOffOn.TR_CONFIG_ON)
+                if (CProfiles.IsActive(i))
                 {
-                    for (int p = 0; p < SelectSlidePlayerMic.Length; p++)
+                    for (int p = 0; p < CGame.NumPlayer; p++)
                     {
-                        SelectSlides[htSelectSlides(SelectSlidePlayerMic[p])].AddValue(CProfiles.Profiles[i].PlayerName, CProfiles.Profiles[i].Avatar.Texture, i);
-                    }
-                }
-            }
+                        if (!indices.ContainsKey(i) || indices[i] == p)
+                        {
+                            SelectSlides[htSelectSlides(SelectSlidePlayerMic[p])].AddValue(CProfiles.Profiles[i].PlayerName, CProfiles.Profiles[i].Avatar.Texture, i);
 
-            for (int i = 0; i < _PlayerNr.Length; i++)
-            {
-                if (i < SelectSlidePlayerMic.Length)
-                {
-                    if (_PlayerNr[i] < CProfiles.NumProfiles && _PlayerNr[i] >= 0)
-                    {
-                        SelectSlides[htSelectSlides(SelectSlidePlayerMic[i])].Selection = _PlayerNr[i];
+                            if (indices.ContainsKey(i) && indices[i] == p)
+                                SelectSlides[htSelectSlides(SelectSlidePlayerMic[p])].SetSelectionByValueIndex(i);
+                        }
                     }
-                }
-            }
-        }
-
-        private void UpdateSelection()
-        {
-            for (int i = 0; i < _PlayerNr.Length; i++)
-            {
-                if (i < SelectSlidePlayerMic.Length)
-                {
-                    _PlayerNr[i] = SelectSlides[htSelectSlides(SelectSlidePlayerMic[i])].Selection;
                 }
             }
         }
