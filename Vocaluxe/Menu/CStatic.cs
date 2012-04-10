@@ -209,7 +209,7 @@ namespace Vocaluxe.Menu
             Draw(1f, Rect.Z, false, true);
         }
 
-        public void Draw(float scale, float z, bool aspect, bool ForceDraw)
+        public virtual void Draw(float scale, float z, bool aspect, bool ForceDraw)
         {
             STexture texture;
             if (_Texture.index != -1)

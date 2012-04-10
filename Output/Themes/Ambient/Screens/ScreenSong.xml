@@ -195,9 +195,9 @@
       <!--<SongMenuTileBoard>: Config for TileBoard view-->
       <SongMenuTileBoard>
         <!--<NumW>: Number of tiles horizontal-->
-        <NumW>6</NumW>
+        <NumW>4</NumW>
         <!--<NumH>: Number of tiles vertical-->
-        <NumH>4</NumH>
+        <NumH>3</NumH>
         <!--<SpaceW>: Space between tiles horizontal-->
         <SpaceW>10,00</SpaceW>
         <!--<SpaceH>: Space between tiles vertical-->

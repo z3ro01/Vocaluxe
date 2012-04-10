@@ -13,7 +13,7 @@ namespace Vocaluxe.Menu.SongMenu
     class CSongMenuTileBoard : CSongMenuFramework
     {
         private SRectF _ScrollRect;
-        private List<CStatic> _Tiles;
+        private List<DynamicCover> _Tiles;
         private CStatic _CoverBig;
         private CStatic _TextBG;
         private CStatic _DuetIcon;
@@ -60,14 +60,14 @@ namespace Vocaluxe.Menu.SongMenu
             _CoverTexture = CTheme.GetSkinTexture(_Theme.CoverBackgroundName);
             _CoverBigTexture = CTheme.GetSkinTexture(_Theme.CoverBigBackgroundName);
 
-            _Tiles = new List<CStatic>();
+            _Tiles = new List<DynamicCover>();
             for (int i = 0; i < _NumH; i++)
             {
                 for (int j = 0; j < _NumW; j++)
                 {
                     SRectF rect = new SRectF(_Theme.songMenuTileBoard.TileRect.X + j * (_TileW + _SpaceW),
                         _Theme.songMenuTileBoard.TileRect.Y + i * (_TileH + _SpaceH), _TileW, _TileH, _Rect.Z);
-                    CStatic tile = new CStatic(_CoverTexture, Color, rect);
+                    DynamicCover tile = new DynamicCover(_CoverTexture, Color, rect, _Theme.TextCover);
                     _Tiles.Add(tile);
                 }
             }
@@ -618,11 +618,15 @@ namespace Vocaluxe.Menu.SongMenu
                     {
                         _Tiles[i].Texture = CSongs.VisibleSongs[i + offset].CoverTextureSmall;
                         _Tiles[i].Color = new SColorF(1f, 1f, 1f, 1f);
+                        _Tiles[i].Artist = CSongs.VisibleSongs[i + offset].Artist;
+                        _Tiles[i].Title = CSongs.VisibleSongs[i + offset].Title;
                     }
                     else
                     {
                         _Tiles[i].Texture = _CoverTexture;
                         _Tiles[i].Color = _Color;
+                        _Tiles[i].Artist = String.Empty;
+                        _Tiles[i].Title = String.Empty;
                     }
                 }
 
@@ -632,11 +636,15 @@ namespace Vocaluxe.Menu.SongMenu
                     {
                         _Tiles[i].Texture = CSongs.Categories[i + offset].CoverTextureSmall;
                         _Tiles[i].Color = new SColorF(1f, 1f, 1f, 1f);
+                        _Tiles[i].Artist = CSongs.Categories[i + offset].Name;
+                        _Tiles[i].Title = String.Empty;
                     }
                     else
                     {
                         _Tiles[i].Texture = _CoverTexture;
                         _Tiles[i].Color = _Color;
+                        _Tiles[i].Artist = String.Empty;
+                        _Tiles[i].Title = String.Empty;
                     }
                 }
             }

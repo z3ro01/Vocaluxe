@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -21,6 +22,8 @@ namespace Vocaluxe.Menu.SongMenu
         public string VideoIconName;
 
         public string ColorName;
+
+        public CText TextCover;
 
         //public SThemeSongMenuBook songMenuBook;
         //public SThemeSongMenuDreidel songMenuDreidel;
@@ -217,6 +220,8 @@ namespace Vocaluxe.Menu.SongMenu
         {
             _Theme = new SThemeSongMenu();
 
+            _Theme.TextCover = new CText();
+
             _Theme.songMenuTileBoard.TextArtist = new CText();
             _Theme.songMenuTileBoard.TextTitle = new CText();
             _Theme.songMenuTileBoard.TextSongLength = new CText();
@@ -258,6 +263,8 @@ namespace Vocaluxe.Menu.SongMenu
                 _ThemeLoaded &= CHelper.TryGetFloatValueFromXML(item + "/A", navigator, ref _Color.A);
             }
 
+            //_ThemeLoaded &= _Theme.TextCover.LoadTheme(item, "TextCover", navigator, SkinIndex);
+
             #region SongMenuTileBoard
             _ThemeLoaded &= CHelper.TryGetIntValueFromXML(item + "/SongMenuTileBoard/NumW", navigator, ref _Theme.songMenuTileBoard.numW);
             _ThemeLoaded &= CHelper.TryGetIntValueFromXML(item + "/SongMenuTileBoard/NumH", navigator, ref _Theme.songMenuTileBoard.numH);
@@ -284,6 +291,14 @@ namespace Vocaluxe.Menu.SongMenu
             if (_ThemeLoaded)
             {
                 _Theme.Name = ElementName;
+
+                // must be deleted when finished:
+                _Theme.TextCover.Align = EAlignment.Center;
+                _Theme.TextCover.Color = new SColorF(1f, 1f, 1f, 1f);
+                _Theme.TextCover.Fon = "Outline";
+                _Theme.TextCover.Style = EStyle.Bold;
+                // deletion end
+
                 LoadTextures();
                 Init();
             }
@@ -329,6 +344,8 @@ namespace Vocaluxe.Menu.SongMenu
                     writer.WriteElementString("B", _Color.B.ToString("#0.00"));
                     writer.WriteElementString("A", _Color.A.ToString("#0.00"));
                 }
+
+                _Theme.TextCover.SaveTheme(writer);
 
                 #region SongMenuTileBoard
                 writer.WriteComment("<SongMenuTileBoard>: Config for TileBoard view");
@@ -492,6 +509,8 @@ namespace Vocaluxe.Menu.SongMenu
             if (_Theme.ColorName != String.Empty)
                 _Color = CTheme.GetColor(_Theme.ColorName);
 
+            _Theme.TextCover.ReloadTextures();
+
             _Theme.songMenuTileBoard.StaticCoverBig.ReloadTextures();
             _Theme.songMenuTileBoard.StaticTextBG.ReloadTextures();
             _Theme.songMenuTileBoard.StaticDuetIcon.ReloadTextures();
@@ -612,5 +631,79 @@ namespace Vocaluxe.Menu.SongMenu
             UpdateRect(rect);
         }
         #endregion ThemeEdit
+    }
+
+    class DynamicCover : CStatic
+    {
+        private CText _TextArtist;
+        public CText TextArtist
+        {
+            get { return _TextArtist; }
+        }
+
+        private CText _TextTitle;
+        public CText TextTitle
+        {
+            get { return _TextTitle; }
+        }
+
+        public string Title
+        {
+            get { return _TextTitle.Text; }
+            set { _TextTitle.Text = value; }
+        }
+
+        public string Artist
+        {
+            get { return _TextArtist.Text; }
+            set { _TextArtist.Text = value; }
+        }
+
+        public float RelativeArtistY = 0.3f;
+        public float RelativeTitleY = 0.6f;
+        public float RelativeTextHeight = 0.3f;
+        public float RelativeTextWidth = 0.85f;
+
+        public DynamicCover(STexture texture, SColorF color, SRectF rect, CText text) : base(texture, color, rect)
+        {
+            _TextArtist = new CText(text);
+            _TextTitle = new CText(text);
+        }
+
+        public override void Draw(float scale, float z, bool aspect, bool ForceDraw)
+        {
+            base.Draw(scale, z, aspect, ForceDraw);
+
+            SRectF bounds = new SRectF(
+                Rect.X - Rect.W * (scale - 1f),
+                Rect.Y - Rect.H * (scale - 1f),
+                Rect.W + 2 * Rect.W * (scale - 1f),
+                Rect.H + 2 * Rect.H * (scale - 1f),
+                z);
+
+            _TextArtist.Height = bounds.H * RelativeTextHeight;
+            _TextTitle.Height = bounds.H * RelativeTextHeight;
+
+            _TextArtist.MaxWidth = bounds.W * RelativeTextWidth;
+            _TextTitle.MaxWidth = bounds.W * RelativeTextWidth;
+
+            _TextArtist.X = bounds.X + bounds.W / 2f;
+            _TextTitle.X = bounds.X + bounds.W / 2f;
+
+            _TextArtist.Y = bounds.Y + bounds.H * RelativeArtistY;
+            _TextTitle.Y = bounds.Y + bounds.H * RelativeTitleY;
+
+            _TextArtist.Z = z;
+            _TextTitle.Z = z;
+
+            SColorF color = new SColorF(Color.R, Color.G, Color.B, Color.A * Alpha);
+            _TextArtist.Color = color;
+            _TextTitle.Color = color;
+            if (Visible || ForceDraw || (CSettings.GameState == EGameState.EditTheme))
+            {
+                _TextArtist.Draw();
+                _TextTitle.Draw();
+            }
+        }
     }
 }

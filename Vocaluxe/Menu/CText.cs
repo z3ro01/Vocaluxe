@@ -110,6 +110,7 @@ namespace Vocaluxe.Menu
             {
                 if (_MaxWidth != value)
                 {
+                    _Bounds.W = value;
                     _MaxWidth = value;
                     _PositionNeedsUpdate = true;
                 }
@@ -199,6 +200,41 @@ namespace Vocaluxe.Menu
         public bool Visible = true;
 
         public float Alpha = 1f;
+
+        public CText(CText text)
+        {
+            _Theme = new SThemeText();
+            _Theme.ColorName = text._Theme.ColorName;
+            _Theme.Name = text._Theme.Name;
+            _Theme.SColorName = text._Theme.SColorName;
+            _Theme.Text = text._Theme.Text;
+
+            _ThemeLoaded = text._ThemeLoaded;
+            _ButtonText = text._ButtonText;
+
+            X = text._X;
+            Y = text._Y;
+            Z = text._Z;
+            Height = text._Height;
+            MaxWidth = text._MaxWidth;
+            Bounds = new SRectF(text._Bounds);
+            Align = text._Align;
+            Style = text._Style;
+            Fon = text._Fon;
+
+            Color = new SColorF(text.Color);
+            SColor = new SColorF(text.SColor);
+            Reflection = text.Reflection;
+            ReflectionSpace = text.ReflectionSpace;
+            ReflectionHeight = text.ReflectionHeight;
+
+            Text = text._Text;
+            Selected = text.Selected;
+            Visible = text.Visible;
+            Alpha = text.Alpha;
+
+            _PositionNeedsUpdate = true;
+        }
 
         public CText()
         {
