@@ -105,7 +105,7 @@ namespace Vocaluxe.Screens
             _ButtonsJoker.Clear();
             for (int i = 0; i < CSettings.MaxNumPlayer; i++)
                 _ButtonsJoker.Add("ButtonJoker" + (i + 1));
-            List<string> blist = new List<string>();
+            var blist = new List<string>();
             blist.AddRange(_ButtonsJoker);
             blist.Add(_ButtonOptionsClose);
             blist.Add(_ButtonOptionsPlaylist);
@@ -123,7 +123,7 @@ namespace Vocaluxe.Screens
             _TextsPlayer.Clear();
             for (int i = 0; i < CSettings.MaxNumPlayer; i++)
                 _TextsPlayer.Add("TextPlayer" + (i + 1));
-            List<string> tlist = new List<string>();
+            var tlist = new List<string>();
             tlist.AddRange(_TextsPlayer);
             tlist.Add(_TextCategory);
             tlist.Add(_TextSelection);
@@ -172,7 +172,7 @@ namespace Vocaluxe.Screens
                 {
                     if (_SearchActive)
                         _ApplyNewSearchFilter(_SearchText + keyEvent.Unicode);
-                    else if(!_Sso.Selection.PartyMode)
+                    else if (!_Sso.Selection.PartyMode)
                     {
                         _JumpTo(keyEvent.Unicode);
                         return true;
@@ -660,7 +660,7 @@ namespace Vocaluxe.Screens
                 CBackgroundMusic.Disabled = false;
 
             int song = _SongMenus[_SongMenu].GetActualSelection();
-            if ((CSongs.Category >= 0 || CConfig.Tabs == EOffOn.TR_CONFIG_OFF) && song >= 0 && song < CSongs.VisibleSongs.Count)
+            if ((CSongs.IsInCategory || CConfig.Tabs == EOffOn.TR_CONFIG_OFF) && song >= 0 && song < CSongs.VisibleSongs.Count)
                 _Texts[_TextSelection].Text = CSongs.VisibleSongs[song].Artist + " - " + CSongs.VisibleSongs[song].Title;
             else if (!CSongs.IsInCategory && song >= 0 && song < CSongs.Categories.Count)
                 _Texts[_TextSelection].Text = CSongs.Categories[song].Name;
@@ -862,7 +862,7 @@ namespace Vocaluxe.Screens
             CGame.Reset();
             CGame.ClearSongs();
 
-            List<int> ids = new List<int>();
+            var ids = new List<int>();
             for (int i = 0; i < CSongs.AllSongs.Count; i++)
                 ids.Add(i);
 
@@ -870,7 +870,7 @@ namespace Vocaluxe.Screens
             {
                 int songNr = ids[CGame.Rand.Next(ids.Count)];
 
-                EGameMode gm = EGameMode.TR_GAMEMODE_NORMAL;
+                var gm = EGameMode.TR_GAMEMODE_NORMAL;
                 if (CSongs.AllSongs[songNr].IsDuet)
                     gm = EGameMode.TR_GAMEMODE_DUET;
 
@@ -894,7 +894,7 @@ namespace Vocaluxe.Screens
             {
                 int songNr = ids[CGame.Rand.Next(ids.Count)];
 
-                EGameMode gm = EGameMode.TR_GAMEMODE_NORMAL;
+                var gm = EGameMode.TR_GAMEMODE_NORMAL;
                 if (CSongs.AllSongs[songNr].IsDuet)
                     gm = EGameMode.TR_GAMEMODE_DUET;
 
@@ -1009,14 +1009,14 @@ namespace Vocaluxe.Screens
             int curSelected = _SongMenus[_SongMenu].GetActualSelection();
             bool firstLevel = CConfig.Tabs == EOffOn.TR_CONFIG_OFF && CSongs.IsInCategory;
             bool secondSort = CConfig.Tabs == EOffOn.TR_CONFIG_ON &&
-                                (CConfig.SongSorting == ESongSorting.TR_CONFIG_ARTIST ||
-                                 CConfig.SongSorting == ESongSorting.TR_CONFIG_ARTIST_LETTER ||
-                                 CConfig.SongSorting == ESongSorting.TR_CONFIG_FOLDER ||
-                                 CConfig.SongSorting == ESongSorting.TR_CONFIG_TITLE_LETTER);
+                              (CConfig.SongSorting == ESongSorting.TR_CONFIG_ARTIST ||
+                               CConfig.SongSorting == ESongSorting.TR_CONFIG_ARTIST_LETTER ||
+                               CConfig.SongSorting == ESongSorting.TR_CONFIG_FOLDER ||
+                               CConfig.SongSorting == ESongSorting.TR_CONFIG_TITLE_LETTER);
             if (firstLevel && !secondSort)
             {
                 //TODO: What's to do with multiple tags?
-                //How can we get current letter? I think we have to save it - Or is there a better method?
+                //Flamefire: What? We only sorted by one tag, sorting by multiple tags (e.g. Album) will be by e.g. the first entry. That can be used here too as otherwhise it will confuse users because it jumps randomly
                 ReadOnlyCollection<CSong> songs = CSongs.VisibleSongs;
                 int ct = songs.Count;
                 int visibleID = -1;
@@ -1029,7 +1029,6 @@ namespace Vocaluxe.Screens
                         visibleID = _FindIndex(songs, start, element => element.Artist.StartsWith(letter.ToString(), StringComparison.OrdinalIgnoreCase));
                         break;
 
-                    //TODO: Does this make sense? Maybe we should deactivate this for years? You could only jump between 1 and 2
                     case ESongSorting.TR_CONFIG_YEAR:
                     case ESongSorting.TR_CONFIG_DECADE:
                         if (curSelected >= 0 && curSelected < ct - 1 && songs[curSelected].Year.StartsWith(letter.ToString(), StringComparison.OrdinalIgnoreCase))
@@ -1076,7 +1075,7 @@ namespace Vocaluxe.Screens
                 if (visibleID > -1)
                     _SongMenus[_SongMenu].SetSelectedSong(visibleID);
             }
-            else if(!CSongs.IsInCategory)
+            else if (!CSongs.IsInCategory)
             {
                 ReadOnlyCollection<CCategory> categories = CSongs.Categories;
                 int ct = categories.Count;
@@ -1126,51 +1125,52 @@ namespace Vocaluxe.Screens
 
         private void _ToggleSongOptions(ESongOptionsView view)
         {
-            
-                _SelectSlides[_SelectSlideOptionsMode].Visible = false;
-                _SelectSlides[_SelectSlideOptionsPlaylistAdd].Visible = false;
-                _SelectSlides[_SelectSlideOptionsPlaylistOpen].Visible = false;
-                _SelectSlides[_SelectSlideOptionsNumMedleySongs].Visible = false;
-                _Buttons[_ButtonOptionsClose].Visible = false;
-                _Buttons[_ButtonOptionsSing].Visible = false;
-                _Buttons[_ButtonOptionsPlaylist].Visible = false;
-                _Buttons[_ButtonOptionsRandom].Visible = false;
-                _Buttons[_ButtonOptionsRandomCategory].Visible = false;
-                _Buttons[_ButtonOptionsSingAll].Visible = false;
-                _Buttons[_ButtonOptionsSingAllVisible].Visible = false;
-                _Buttons[_ButtonOptionsOpenSelectedItem].Visible = false;
-                _Buttons[_ButtonOptionsRandomMedley].Visible = false;
-                _Buttons[_ButtonOptionsStartMedley].Visible = false;
-                _Texts[_TextOptionsTitle].Visible = false;
-                _Statics[_StaticOptionsBG].Visible = false;
-                _Buttons[_ButtonOpenOptions].Visible = true;
+            _SelectSlides[_SelectSlideOptionsMode].Visible = false;
+            _SelectSlides[_SelectSlideOptionsPlaylistAdd].Visible = false;
+            _SelectSlides[_SelectSlideOptionsPlaylistOpen].Visible = false;
+            _SelectSlides[_SelectSlideOptionsNumMedleySongs].Visible = false;
+            _Buttons[_ButtonOptionsClose].Visible = false;
+            _Buttons[_ButtonOptionsSing].Visible = false;
+            _Buttons[_ButtonOptionsPlaylist].Visible = false;
+            _Buttons[_ButtonOptionsRandom].Visible = false;
+            _Buttons[_ButtonOptionsRandomCategory].Visible = false;
+            _Buttons[_ButtonOptionsSingAll].Visible = false;
+            _Buttons[_ButtonOptionsSingAllVisible].Visible = false;
+            _Buttons[_ButtonOptionsOpenSelectedItem].Visible = false;
+            _Buttons[_ButtonOptionsRandomMedley].Visible = false;
+            _Buttons[_ButtonOptionsStartMedley].Visible = false;
+            _Texts[_TextOptionsTitle].Visible = false;
+            _Statics[_StaticOptionsBG].Visible = false;
+            _Buttons[_ButtonOpenOptions].Visible = true;
 
-              if (CSongs.VisibleSongs.Count > 0)
-              {
-                _SongOptionsActive = view != ESongOptionsView.None;
+            if (view == ESongOptionsView.None)
+                _SongOptionsActive = false;
+            else if (CSongs.IsInCategory)
+                _SongOptionsActive = CSongs.VisibleSongs.Count > 0;
+            else
+                _SongOptionsActive = CSongs.Categories.Count > 0;
 
-                if (_SongOptionsActive)
-                {
-                    //Has to be done here otherwhise changed playlist names will not appear until OnShow is called!
-                    _UpdatePlaylistNames();
+            if (!_SongOptionsActive)
+                return;
 
-                    _Texts[_TextOptionsTitle].Visible = true;
-                    _Buttons[_ButtonOptionsClose].Visible = true;
-                    _Statics[_StaticOptionsBG].Visible = true;
-                    _Buttons[_ButtonOpenOptions].Visible = false;
-                    if (view == ESongOptionsView.Song)
-                        _ShowSongOptionsSong();
-                    else if (view == ESongOptionsView.General)
-                        _ShowSongOptionsGeneral();
-                    else if (view == ESongOptionsView.Medley)
-                        _ShowSongOptionsMedley();
-                }
-            }
+            //Has to be done here otherwhise changed playlist names will not appear until OnShow is called!
+            _UpdatePlaylistNames();
+
+            _Texts[_TextOptionsTitle].Visible = true;
+            _Buttons[_ButtonOptionsClose].Visible = true;
+            _Statics[_StaticOptionsBG].Visible = true;
+            _Buttons[_ButtonOpenOptions].Visible = false;
+            if (view == ESongOptionsView.Song)
+                _ShowSongOptionsSong();
+            else if (view == ESongOptionsView.General)
+                _ShowSongOptionsGeneral();
+            else if (view == ESongOptionsView.Medley)
+                _ShowSongOptionsMedley();
         }
 
         private void _ShowSongOptionsSong()
         {
-            EGameMode lastMode = EGameMode.TR_GAMEMODE_NORMAL;
+            var lastMode = EGameMode.TR_GAMEMODE_NORMAL;
             if (_AvailableGameModes.Count > 0)
                 lastMode = _AvailableGameModes[_SelectSlides[_SelectSlideOptionsMode].Selection];
             _AvailableGameModes.Clear();
