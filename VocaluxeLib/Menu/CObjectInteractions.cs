@@ -88,7 +88,7 @@ namespace VocaluxeLib.Menu
             _ParticleEffects.Clear();
         }
 
-        private void _SetSelected(int newSelection)
+        public void _SetSelected(int newSelection)
         {
             IMenuElement el = _GetElement(_Selection);
             if (newSelection == _Selection)

@@ -267,6 +267,25 @@ namespace VocaluxeLib
         public int Y;
         public int Z;
     }
+
+    public struct SPopupGeneral
+    {
+        public EPopupGeneralType type;
+        public EPopupGeneralSize size;
+        public string TextTitle;
+        public string TextMessage;
+        public string ButtonYesLabel;
+        public string ButtonNoLabel;
+        public string ButtonOkLabel;
+        public string DefaultButton;
+    }
+
+    public struct SPopupGeneralEvent
+    {
+        public string target;
+        public string name;
+    }
+
     #endregion Drawing
 
     #region Inputs

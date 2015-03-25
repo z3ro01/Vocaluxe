@@ -406,8 +406,22 @@ namespace VocaluxeLib
         PopupPlayerControl = 0,
         PopupVolumeControl = 1,
         PopupServerQR = 2,
-
+		PopupGeneral = 3,
         NoPopup = -1
+    }
+    
+    public enum EPopupGeneralType
+    {
+        None = -1,
+        Confirm = 0,
+        Alert = 1
+    }
+
+    public enum EPopupGeneralSize
+    {
+        Small = 0,
+        Medium = 1,
+        Big = 2
     }
 
     [Flags]

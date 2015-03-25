@@ -88,6 +88,7 @@ namespace Vocaluxe.Base
             _PopupScreens.Add(new CPopupScreenPlayerControl());
             _PopupScreens.Add(new CPopupScreenVolumeControl());
             _PopupScreens.Add(new CPopupScreenServerQR());
+            _PopupScreens.Add(new CPopupScreenGeneral());
 
             CLog.StopBenchmark("Build Screen List");
 
@@ -321,6 +322,11 @@ namespace Vocaluxe.Base
             // Make sure the last screen change is done
             _FinishScreenFading();
             NextScreen = screen;
+        }
+
+        public static IMenu GetPopup(EPopupScreens popupScreen)
+        {
+            return _PopupScreens[(int)popupScreen];
         }
 
         public static void ShowPopup(EPopupScreens popupScreen)
