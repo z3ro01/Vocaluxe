@@ -29,6 +29,7 @@ using Vocaluxe.Lib.Webcam;
 using VocaluxeLib;
 using VocaluxeLib.Profile;
 using VocaluxeLib.Xml;
+using VocaluxeLib.Network;
 
 namespace Vocaluxe.Base
 {
@@ -161,6 +162,17 @@ namespace Vocaluxe.Base
             [DefaultValue(EOffOn.TR_CONFIG_OFF)] public EOffOn ServerEncryption;
             [DefaultValue(3000)] public int ServerPort;
         }
+
+        public struct SConfigCommunity
+        {
+            [DefaultValue(EOffOn.TR_CONFIG_OFF)] public EOffOn Active;
+            [DefaultValue(null)] public string Server;
+            [DefaultValue("My Community")] public string Name;
+            [DefaultValue(EOffOn.TR_CONFIG_OFF)]
+            public EOffOn AutosendScores;
+            public string AuthProfile;
+        }
+
 #pragma warning restore 649
         // ReSharper restore UnassignedField.Global
 
@@ -177,6 +189,7 @@ namespace Vocaluxe.Base
             public SConfigVideo Video;
             public SConfigRecord Record;
             public SConfigServer Server;
+            public SConfigCommunity Community;
         }
 
         public static SConfig Config;
@@ -348,6 +361,12 @@ namespace Vocaluxe.Base
                     PrimaryScreenResolution = Screen.PrimaryScreen.Bounds.Size.ToString(),
                     Directory = CSettings.ProgramFolder
                 };
+
+            //load community profiles
+            if (Config.Community.Active == EOffOn.TR_CONFIG_ON)
+            {
+                CCommunity.loadProfiles();
+            }
         }
 
         private static readonly List<string> _CommentsGot = new List<string>();

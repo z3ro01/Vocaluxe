@@ -458,6 +458,22 @@ namespace Vocaluxe.Base
             _Profiles[profileID].Active = option;
         }
 
+        public static void SetCommunityProfile(int profileID, string profileName)
+        {
+            if (!IsProfileIDValid(profileID))
+                return;
+
+            _Profiles[profileID].CommunityProfile = profileName;
+        }
+
+        public static String GetCommunityProfile(int profileID)
+        {
+            if (!IsProfileIDValid(profileID))
+                return "";
+
+            return _Profiles[profileID].CommunityProfile;
+        }
+
         public static bool IsGuestProfile(int profileID)
         {
             if (!IsProfileIDValid(profileID))

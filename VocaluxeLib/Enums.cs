@@ -414,7 +414,8 @@ namespace VocaluxeLib
     {
         None = -1,
         Confirm = 0,
-        Alert = 1
+        Alert = 1,
+        Loading = 2
     }
 
     public enum EPopupGeneralSize

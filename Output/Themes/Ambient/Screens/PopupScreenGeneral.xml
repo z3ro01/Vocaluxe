@@ -39,6 +39,17 @@
         <Z>-2</Z>
       </Rect>
     </Static>
+    <Static Name="StaticLoadingLoop">
+      <Skin>Random</Skin>
+      <Color Name="ButtonSelColor" />
+      <Rect>
+        <X>590</X>
+        <Y>340</Y>
+        <W>100</W>
+        <H>100</H>
+        <Z>-2.01</Z>
+      </Rect>
+    </Static>
   </Statics>
   <Texts>
 	<Text Name="TextSmallTitle">

@@ -25,6 +25,7 @@ using VocaluxeLib;
 using VocaluxeLib.Game;
 using VocaluxeLib.Menu;
 using VocaluxeLib.Songs;
+using VocaluxeLib.Network;
 
 namespace Vocaluxe.Screens
 {
@@ -33,7 +34,7 @@ namespace Vocaluxe.Screens
         // Version number for theme files. Increment it, if you've changed something on the theme files!
         protected override int _ScreenVersion
         {
-            get { return 3; }
+            get { return 4; }
         }
 
         private const string _TextSong = "TextSong";
@@ -66,7 +67,7 @@ namespace Vocaluxe.Screens
         {
             base.Init();
 
-            var texts = new List<string> {_TextSong};
+            var texts = new List<string> { _TextSong };
 
             _BuildTextStrings(ref texts);
 
@@ -77,7 +78,7 @@ namespace Vocaluxe.Screens
 
             _ThemeStatics = statics.ToArray();
 
-            _ThemeScreenSettings = new string[] {_ScreenSettingShortScore, _ScreenSettingShortRating, _ScreenSettingShortDifficulty, _ScreenSettingAnimationDirection};
+            _ThemeScreenSettings = new string[] { _ScreenSettingShortScore, _ScreenSettingShortRating, _ScreenSettingShortDifficulty, _ScreenSettingAnimationDirection };
 
             _StaticPointsBarDrawnPoints = new double[CSettings.MaxNumPlayer];
 
@@ -88,7 +89,7 @@ namespace Vocaluxe.Screens
 
         public override bool HandleInput(SKeyEvent keyEvent)
         {
-            if (keyEvent.KeyPressed) {}
+            if (keyEvent.KeyPressed) { }
             else
             {
                 switch (keyEvent.Key)
@@ -105,6 +106,12 @@ namespace Vocaluxe.Screens
 
                     case Keys.Right:
                         _ChangeRound(1);
+                        break;
+
+                    case Keys.Space:
+                        if (CCommunity.isEnabled())
+                            if (CCommunity.canSendNow())
+                                _ComConfirm();
                         break;
                 }
             }
@@ -139,6 +146,10 @@ namespace Vocaluxe.Screens
             _SetVisibility();
             _UpdateRatings();
             _SlideShowBG.Visible = _UpdateBackground();
+            if (CCommunity.isEnabled())
+            {
+                _SendComStatistics();
+            }
         }
 
         public override bool UpdateGame()
@@ -214,10 +225,10 @@ namespace Vocaluxe.Screens
 
         private void _BuildTextStrings(ref List<string> texts)
         {
-            _TextNames = new string[CSettings.MaxNumPlayer,CSettings.MaxNumPlayer];
-            _TextScores = new string[CSettings.MaxNumPlayer,CSettings.MaxNumPlayer];
-            _TextRatings = new string[CSettings.MaxNumPlayer,CSettings.MaxNumPlayer];
-            _TextDifficulty = new string[CSettings.MaxNumPlayer,CSettings.MaxNumPlayer];
+            _TextNames = new string[CSettings.MaxNumPlayer, CSettings.MaxNumPlayer];
+            _TextScores = new string[CSettings.MaxNumPlayer, CSettings.MaxNumPlayer];
+            _TextRatings = new string[CSettings.MaxNumPlayer, CSettings.MaxNumPlayer];
+            _TextDifficulty = new string[CSettings.MaxNumPlayer, CSettings.MaxNumPlayer];
 
             for (int numplayer = 0; numplayer < CSettings.MaxNumPlayer; numplayer++)
             {
@@ -242,9 +253,9 @@ namespace Vocaluxe.Screens
 
         private void _BuildStaticStrings(ref List<string> statics)
         {
-            _StaticPointsBar = new string[CSettings.MaxNumPlayer,CSettings.MaxNumPlayer];
-            _StaticPointsBarBG = new string[CSettings.MaxNumPlayer,CSettings.MaxNumPlayer];
-            _StaticAvatar = new string[CSettings.MaxNumPlayer,CSettings.MaxNumPlayer];
+            _StaticPointsBar = new string[CSettings.MaxNumPlayer, CSettings.MaxNumPlayer];
+            _StaticPointsBarBG = new string[CSettings.MaxNumPlayer, CSettings.MaxNumPlayer];
+            _StaticAvatar = new string[CSettings.MaxNumPlayer, CSettings.MaxNumPlayer];
 
             for (int numplayer = 0; numplayer < CSettings.MaxNumPlayer; numplayer++)
             {
@@ -428,5 +439,215 @@ namespace Vocaluxe.Screens
         {
             CParty.LeavingScore();
         }
+
+        ///<summary>
+        ///Community - Send players scores to server
+        ///</summary>
+        #region Community
+        public void _ComUserEvents(SPopupGeneralEvent eventData)
+        {
+            if (eventData.name.Equals("onKeyReturn") || eventData.name.Equals("onMouseLB"))
+            {
+                if (eventData.target != null)
+                {
+                    if (eventData.target.Equals("ButtonYes") || eventData.target.Equals("ButtonOk"))
+                    {
+                        CGraphics.HidePopup(EPopupScreens.PopupGeneral);
+                        _ComLoading();
+                        CCommunity.sendScoreAsync(delegate(SComResponse result)
+                        {
+                            CGraphics.HidePopup(EPopupScreens.PopupGeneral);
+                            if (result.status == 0)
+                            {
+                                _ComAlert(result.message);
+                            }
+                        });
+                    }
+                    else if (eventData.target.Equals("ButtonNo"))
+                    {
+                        CGraphics.HidePopup(EPopupScreens.PopupGeneral);
+                    }
+                }
+            }
+            else if (eventData.name.Equals("onKeyEscape") || eventData.name.Equals("onKeyBack"))
+            {
+                CGraphics.HidePopup(EPopupScreens.PopupGeneral);
+            }
+        }
+
+        private void _ComAlert(string message)
+        {
+            var popup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
+            popup.SetDefaults();
+            popup.AddEventHandler("onKeyReturn,onKeyEscape,onKeyBack,onMouseLB", delegate(SPopupGeneralEvent eventData)
+            {
+                if (eventData.name.Equals("onMouseLB") && eventData.target != null)
+                {
+                    CGraphics.HidePopup(EPopupScreens.PopupGeneral);
+                }
+                else if (eventData.name.IndexOf("onKey") > -1)
+                {
+                    CGraphics.HidePopup(EPopupScreens.PopupGeneral);
+                }
+            });
+
+            SPopupGeneral data = new SPopupGeneral();
+            data.TextTitle = "TR_COMMUNITY_ERROR";
+            data.type = EPopupGeneralType.Alert;
+            data.size = EPopupGeneralSize.Medium;
+            data.ButtonOkLabel = "Ok";
+            data.TextMessage = message;
+            popup.SetDisplayData(data);
+            CGraphics.ShowPopup(EPopupScreens.PopupGeneral);
+        }
+
+        private void _ComLoading()
+        {
+            var popup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
+            popup.SetDefaults();
+            SPopupGeneral data = new SPopupGeneral();
+            data.TextTitle = CCommunity.getName();
+            data.type = EPopupGeneralType.Loading;
+            data.size = EPopupGeneralSize.Small;
+            data.TextMessage =  CLanguage.Translate("TR_COMMUNITY_SENDING");
+            popup.SetDisplayData(data);
+            CGraphics.ShowPopup(EPopupScreens.PopupGeneral);
+        }
+
+        private void _ComConfirm()
+        {
+            var popup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
+            popup.SetDefaults();
+            popup.AddEventHandler("onKeyReturn,onKeyEscape,onKeyBack", (Action<SPopupGeneralEvent>)_ComUserEvents);
+            popup.AddEventHandler("onMouseLB", (Action<SPopupGeneralEvent>)_ComUserEvents);
+
+            SPopupGeneral data = new SPopupGeneral();
+            data.TextTitle = CLanguage.Translate("TR_COMMUNITY_CONFIRMTITLE").Replace("%v", CCommunity.getName());
+            data.type = EPopupGeneralType.Confirm;
+            data.size = EPopupGeneralSize.Small;
+            data.ButtonYesLabel = "TR_COMMUNITY_CONFIRMYES";
+            data.ButtonNoLabel = "TR_COMMUNITY_CONFIRMNO";
+            data.DefaultButton = "ButtonYes";
+            data.TextMessage = CLanguage.Translate("TR_COMMUNITY_CONFIRMSEND");
+            popup.SetDisplayData(data);
+            CGraphics.ShowPopup(EPopupScreens.PopupGeneral);
+        }
+
+        private void _SendComStatistics()
+        {
+            if (CCommunity.isEnabled())
+            {
+                var toSend = new SComQueryScore();
+
+                if (CParty.CurrentPartyModeID > -1)
+                {
+                    var ComOptions = CParty.GetCommunityOptions();
+                    if (!ComOptions.CanSendScores)
+                    {
+                        return;
+                    }
+                    toSend.partyMode = ComOptions.PartyModeName;
+                }
+
+                bool songfinished = false;
+                SPlayer[] players = _Points.GetPlayer(0, CGame.NumPlayers);
+                toSend.scores = new SComQueryScoreItem[_Points.NumRounds * players.Length];
+                int scindex = 0;
+                int guests = 0;
+
+                for (int round = 0; round < _Points.NumRounds; round++)
+                {
+                    players = _Points.GetPlayer(round, CGame.NumPlayers);
+
+                    for (int p = 0; p < players.Length; p++)
+                    {
+                        //if player has communityProfile
+                        var nprofile = CProfiles.GetCommunityProfile(players[p].ProfileID);
+                        if (String.IsNullOrEmpty(nprofile))
+                        {
+                            guests++;
+                            continue;
+                        }
+                        else
+                        {
+                            SComProfile nprofiledata = CCommunity.getProfileByFile(nprofile);
+                            if (String.IsNullOrEmpty(nprofiledata.Email))
+                            {
+                                guests++;
+                                continue;
+                            }
+                            else
+                            {
+                                var pdata = new SComQueryScoreItem();
+                                pdata.score = players[p].Points;
+                                pdata.playerId = players[p].ProfileID;
+                                pdata.playerName = CProfiles.GetPlayerName(players[p].ProfileID, p);
+                                pdata.username = nprofiledata.Email;
+                                pdata.password = nprofiledata.Password;
+                                pdata.gameMode = players[p].GameMode.ToString();
+                                pdata.goldenbonus = players[p].PointsGoldenNotes;
+                                pdata.linebonus = players[p].PointsLineBonus;
+                                pdata.difficulty = CProfiles.GetDifficulty(players[p].ProfileID).ToString();
+                                if (players[p].SongFinished)
+                                {
+                                    songfinished = true;
+                                }
+                                if (players[p].GameMode == EGameMode.TR_GAMEMODE_DUET)
+                                {
+                                    pdata.voicenr = players[p].VoiceNr + 1;
+                                }
+
+                                if (string.IsNullOrEmpty(toSend.gameMode))
+                                {
+                                    toSend.gameMode = pdata.gameMode;
+                                }
+                                CSong song = CSongs.GetSong(players[p].SongID);
+                                pdata.artist = song.Artist;
+                                pdata.title = song.Title;
+                                pdata.txtHash = string.IsNullOrEmpty(song.FileHash) ? CCommunity.hashTextFile(song.Folder, song.FileName) : song.FileHash;
+                                pdata.round = round;
+
+                                if (string.IsNullOrEmpty(song.FileHash))
+                                {
+                                    song.FileHash = pdata.txtHash;
+                                }
+                                toSend.scores[scindex] = pdata;
+                                scindex++;
+                            }
+                        }
+                    }
+                }
+
+                toSend.guests = guests;
+                Console.WriteLine("CANSEND? " + songfinished + " / " + scindex);
+                if (CCommunity.canAutoSend())
+                {
+                    if (songfinished && scindex > 0)
+                    {
+                        _ComLoading();
+                        CCommunity.setScores(toSend);
+                        //display a sending window
+                        CCommunity.sendScoreAsync(delegate(SComResponse result)
+                        {
+                            CGraphics.HidePopup(EPopupScreens.PopupGeneral);
+                            if (result.status == 0)
+                            {
+                                _ComAlert(result.message);
+                            }
+                        });
+
+                    }
+                }
+                else
+                {
+                    if (songfinished && scindex>0)
+                    {
+                        CCommunity.setScores(toSend);
+                        _ComConfirm();
+                    }
+                }
+            }
+        }
+        #endregion
     }
 }

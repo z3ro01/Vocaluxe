@@ -33,41 +33,45 @@ namespace Vocaluxe.Screens
             get { return 1; }
         }
 
-        private const string _StaticSmallBg     = "StaticPopupSmallBG";
-        private const string _ButtonSmallYes    = "ButtonSmallYes";
-        private const string _ButtonSmallNo     = "ButtonSmallNo";
-        private const string _ButtonSmallOk     = "ButtonSmallOk";
-        private const string _TextSmallTitle    = "TextSmallTitle";
-        private const string _TextSmallMessage  = "TextSmallMessage";
+        private const string _StaticLoading = "StaticLoadingLoop";
+        private const string _StaticSmallBg = "StaticPopupSmallBG";
+        private const string _ButtonSmallYes = "ButtonSmallYes";
+        private const string _ButtonSmallNo = "ButtonSmallNo";
+        private const string _ButtonSmallOk = "ButtonSmallOk";
+        private const string _TextSmallTitle = "TextSmallTitle";
+        private const string _TextSmallMessage = "TextSmallMessage";
 
-        private const string _StaticMediumBg    = "StaticPopupMediumBG";
-        private const string _ButtonMediumYes   = "ButtonMediumYes";
-        private const string _ButtonMediumNo    = "ButtonMediumNo";
-        private const string _ButtonMediumOk    = "ButtonMediumOk";
-        private const string _ButtonMediumUp    = "ButtonMediumUp";
-        private const string _ButtonMediumDown  = "ButtonMediumDown";
-        private const string _TextMediumTitle   = "TextMediumTitle";
-        private const int    _MediumTextLines      = 6;
-        private const int    _MediumMaxLineLength  = 57;
-        private string[]     _TextMediums;
+        private const string _StaticMediumBg = "StaticPopupMediumBG";
+        private const string _ButtonMediumYes = "ButtonMediumYes";
+        private const string _ButtonMediumNo = "ButtonMediumNo";
+        private const string _ButtonMediumOk = "ButtonMediumOk";
+        private const string _ButtonMediumUp = "ButtonMediumUp";
+        private const string _ButtonMediumDown = "ButtonMediumDown";
+        private const string _TextMediumTitle = "TextMediumTitle";
+        private const int _MediumTextLines = 6;
+        private const int _MediumMaxLineLength = 57;
+        private string[] _TextMediums;
 
-        private const string _StaticBigBg       = "StaticPopupBigBG";
-        private const string _ButtonBigYes      = "ButtonBigYes";
-        private const string _ButtonBigNo       = "ButtonBigNo";
-        private const string _ButtonBigOk       = "ButtonBigOk";
-        private const string _ButtonBigUp       = "ButtonBigUp";
-        private const string _ButtonBigDown     = "ButtonBigDown";
-        private const string _TextBigTitle      = "TextBigTitle";
-        private const int    _BigTextLines      = 13;
-        private const int    _BigMaxLineLength  = 91;
-        private string[]     _TextBigs;
-        
+        private const string _StaticBigBg = "StaticPopupBigBG";
+        private const string _ButtonBigYes = "ButtonBigYes";
+        private const string _ButtonBigNo = "ButtonBigNo";
+        private const string _ButtonBigOk = "ButtonBigOk";
+        private const string _ButtonBigUp = "ButtonBigUp";
+        private const string _ButtonBigDown = "ButtonBigDown";
+        private const string _TextBigTitle = "TextBigTitle";
+        private const int _BigTextLines = 13;
+        private const int _BigMaxLineLength = 91;
+        private string[] _TextBigs;
+
 
         private EPopupGeneralType _renderedDisplayMode = EPopupGeneralType.None;
         private SPopupGeneral _DisplayData = new SPopupGeneral();
         private bool _needUpdate = false;
         private List<string> _TextLines;
         private int _TextPos = 0;
+        private int _animDirection = -1;
+        private float _animAlpha = 1;
+        private Timer _animTimer = null;
 
         public struct evHandler
         {
@@ -82,6 +86,16 @@ namespace Vocaluxe.Screens
             eventHandlers = new List<evHandler>();
         }
 
+        public override void OnClose()
+        {
+            base.OnClose();
+            if (_animTimer != null)
+            {
+                _animTimer.Enabled = false;
+                _animTimer.Stop();
+            }
+        }
+
         public override void AddEventHandler(string eventType, Action<SPopupGeneralEvent> callable)
         {
             if (eventHandlers == null) { eventHandlers = new List<evHandler>(); }
@@ -93,6 +107,8 @@ namespace Vocaluxe.Screens
 
         private void RunEventHandlers(string evName, string target = null)
         {
+
+            Console.WriteLine("OutGoingEvent:" + evName + " / onTarget:" + target);
             SPopupGeneralEvent eventCall = new SPopupGeneralEvent();
             eventCall.target = target;
             eventCall.name = evName;
@@ -163,7 +179,8 @@ namespace Vocaluxe.Screens
                     if (_Buttons[key].Selected)
                     {
                         string buttonName = key.ToString().Replace("Medium", "").Replace("Small", "").Replace("Big", "");
-                        if (!buttonName.Equals("ButtonUp") && !buttonName.Equals("ButtonDown")) { 
+                        if (!buttonName.Equals("ButtonUp") && !buttonName.Equals("ButtonDown"))
+                        {
                             RunEventHandlers("onKey" + keyEvent.Key.ToString(), buttonName);
                             return true;
                         }
@@ -243,6 +260,9 @@ namespace Vocaluxe.Screens
 
         public override bool UpdateGame()
         {
+            if (_DisplayData.type == EPopupGeneralType.Loading)
+                renderAnimation();
+
             if (_DisplayData.type != _renderedDisplayMode)
             {
                 renderDisplayMode();
@@ -254,7 +274,7 @@ namespace Vocaluxe.Screens
                     if (_TextLines.Count > _MediumTextLines)
                     {
                         renderMediumText();
-                        
+
                     }
                 }
                 else if (_DisplayData.size == EPopupGeneralSize.Big)
@@ -269,12 +289,66 @@ namespace Vocaluxe.Screens
             return true;
         }
 
+
+        public void renderAnimation()
+        {
+            if (_Statics[_StaticLoading].Alpha != _animAlpha)
+            {
+                _Statics[_StaticLoading].Alpha = _animAlpha;
+            }
+        }
+
+
+        public void startAnimation()
+        {
+            if (_animTimer == null)
+            {
+                _animTimer = new Timer();
+                _animTimer.Tick += new EventHandler(_onTimerEvent);
+            }
+            if (_animTimer.Enabled != true)
+            {
+                _animTimer.Interval = 10;
+                _animTimer.Enabled = true;
+                _animTimer.Start();
+            }
+        }
+
+        public void _onTimerEvent(object sender, EventArgs e)
+        {
+            if (_animDirection >= 0)
+            {
+                if (_animAlpha < 1)
+                {
+                    _animAlpha += 0.01f;
+                    if (_animAlpha > 1) { _animAlpha = 1; _animDirection = 0; }
+                }
+                else
+                {
+                    _animDirection = -1;
+                }
+            }
+            else
+            {
+                if (_animAlpha > 0)
+                {
+                    _animAlpha -= 0.01f;
+                    if (_animAlpha < 0.1) { _animAlpha = 0; _animDirection = 1; }
+                }
+                else
+                {
+                    _animDirection = 1;
+                }
+            }
+        }
+
         public void renderDisplayMode()
         {
             _Statics[_StaticSmallBg].Visible = false;
             _Statics[_StaticMediumBg].Visible = false;
             _Statics[_StaticBigBg].Visible = false;
-           
+            _Statics[_StaticLoading].Visible = false;
+
             foreach (string text in _ThemeTexts)
             {
                 _Texts[text].Visible = false;
@@ -318,6 +392,10 @@ namespace Vocaluxe.Screens
                     _Buttons[_ButtonSmallOk].Visible = true;
                     _SelectElement(_Buttons[_ButtonSmallOk]);
                 }
+                else if (_DisplayData.type == EPopupGeneralType.Loading)
+                {
+                    _Statics[_StaticLoading].Visible = true;
+                }
             }
             else if (_DisplayData.size == EPopupGeneralSize.Medium)
             {
@@ -332,16 +410,18 @@ namespace Vocaluxe.Screens
                 _TextLines = calculateTextLines(_DisplayData.TextMessage, _MediumMaxLineLength);
                 if (_TextLines.Count > _MediumTextLines)
                 {
-                    _Buttons[_ButtonMediumUp].Visible    = true;
+                    _Buttons[_ButtonMediumUp].Visible = true;
                     _Buttons[_ButtonMediumUp].Selectable = false;
-                    _Buttons[_ButtonMediumDown].Visible  = true;
+                    _Buttons[_ButtonMediumDown].Visible = true;
                     _Buttons[_ButtonMediumDown].Selected = true;
+                    _Buttons[_ButtonMediumDown].Selectable = false;
                 }
 
                 renderMediumText();
 
                 if (_DisplayData.type == EPopupGeneralType.Confirm)
                 {
+                    _Buttons[_ButtonMediumOk].Selected = false;
                     _Buttons[_ButtonMediumYes].Text.Text = _DisplayData.ButtonYesLabel;
                     _Buttons[_ButtonMediumYes].Visible = true;
                     _Buttons[_ButtonMediumNo].Text.Text = _DisplayData.ButtonNoLabel;
@@ -357,6 +437,8 @@ namespace Vocaluxe.Screens
                 }
                 else if (_DisplayData.type == EPopupGeneralType.Alert)
                 {
+                    _Buttons[_ButtonMediumNo].Selected = false;
+                    _Buttons[_ButtonMediumYes].Selected = false;
                     _Buttons[_ButtonMediumOk].Text.Text = _DisplayData.ButtonOkLabel;
                     _Buttons[_ButtonMediumOk].Visible = true;
                     _Buttons[_ButtonMediumOk].Selected = true;
@@ -401,8 +483,8 @@ namespace Vocaluxe.Screens
                 else if (_DisplayData.type == EPopupGeneralType.Alert)
                 {
                     _Buttons[_ButtonBigOk].Text.Text = _DisplayData.ButtonOkLabel;
-                    _Buttons[_ButtonBigOk].Visible   = true;
-                    _Buttons[_ButtonBigOk].Selected  = true;
+                    _Buttons[_ButtonBigOk].Visible = true;
+                    _Buttons[_ButtonBigOk].Selected = true;
                 }
 
             }
@@ -453,20 +535,20 @@ namespace Vocaluxe.Screens
                     if (_TextPos == 0)
                     {
                         _Buttons[_ButtonMediumUp].Selected = false;
-                        _Buttons[_ButtonMediumUp].Selectable = false;
+                        // _Buttons[_ButtonMediumUp].Selectable = false;
                     }
                     else
                     {
-                        _Buttons[_ButtonMediumUp].Selectable = true;
+                        // _Buttons[_ButtonMediumUp].Selectable = true;
                     }
                     if (_TextPos == _TextLines.Count - _MediumTextLines)
                     {
                         _Buttons[_ButtonMediumDown].Selected = false;
-                        _Buttons[_ButtonMediumDown].Selectable = false;
+                        // _Buttons[_ButtonMediumDown].Selectable = false;
                     }
                     else
                     {
-                        _Buttons[_ButtonMediumDown].Selectable = true;
+                        // _Buttons[_ButtonMediumDown].Selectable = true;
                     }
                     if (num > 0)
                     {
@@ -508,7 +590,7 @@ namespace Vocaluxe.Screens
                 }
                 else
                 {
-                    _Buttons[_ButtonBigUp].Selected = true;
+                    _Buttons[_ButtonBigDown].Selected = true;
                 }
                 _needUpdate = true;
             }
@@ -516,64 +598,66 @@ namespace Vocaluxe.Screens
 
         private List<string> calculateTextLines(string text, int maxlen)
         {
-           List<string> linesOut = new List<string>();
-           string[] lines = text.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
-           int o = 0;
-           for (int i = 0; i < lines.Length; i++)
-           {
-               if (lines[i].Length > maxlen)
-               {
-                   string newline = "";
-                   string[] words = lines[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-                   for (int w = 0; w < words.Length; w++)
-                   {
-                       if (newline.Length+words[w].Length < maxlen)
-                       {
-                           if (newline.Length > 0) { newline += " "+words[w];  }
-                           else { newline = words[w]; }
-                          
-                           if (w + 1 < words.Length) { 
-                               if (newline.Length + words[w + 1].Length > maxlen)
-                               {
-                                   linesOut.Add(newline);
-                                   newline = "";
-                               }
-                           }
-                       }
-                       else
-                       {
-                           if (words[w].Length > maxlen) {
-                               int maxlenlong = maxlen - 10;
-                               int count = (int)Math.Ceiling((float)(words[w].Length / maxlenlong));
-                               for (int z = 0; z <= count; z++)
-                               {
-                                   int start = z * maxlenlong;
-                                   int end = words[w].Length > (z * maxlenlong + maxlenlong) ? z * maxlenlong + maxlenlong : words[w].Length;
-                                   linesOut.Add(words[w].Substring(start, end - start));
-                               }
-                           }
-                           else
-                           {
-                               if (newline.Length > 0)
-                               {
-                                   linesOut.Add(newline);
-                                   newline = words[w];
-                               }
-                           }
-                       }
-                   }
+            List<string> linesOut = new List<string>();
+            if (String.IsNullOrEmpty(text) || String.IsNullOrWhiteSpace(text)) { return linesOut; }
+            string[] lines = text.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (lines[i].Length > maxlen)
+                {
+                    string newline = "";
+                    string[] words = lines[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                    for (int w = 0; w < words.Length; w++)
+                    {
+                        if (newline.Length + words[w].Length < maxlen)
+                        {
+                            if (newline.Length > 0) { newline += " " + words[w]; }
+                            else { newline = words[w]; }
 
-                   if (newline.Length > 0)
-                   {
-                       linesOut.Add(newline);
-                   }
-               }
-               else
-               {
-                   linesOut.Add(lines[i]);
-               }
-           }
-           return linesOut;
+                            if (w + 1 < words.Length)
+                            {
+                                if (newline.Length + words[w + 1].Length > maxlen)
+                                {
+                                    linesOut.Add(newline);
+                                    newline = "";
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (words[w].Length > maxlen)
+                            {
+                                int maxlenlong = maxlen - 10;
+                                int count = (int)Math.Ceiling((float)(words[w].Length / maxlenlong));
+                                for (int z = 0; z <= count; z++)
+                                {
+                                    int start = z * maxlenlong;
+                                    int end = words[w].Length > (z * maxlenlong + maxlenlong) ? z * maxlenlong + maxlenlong : words[w].Length;
+                                    linesOut.Add(words[w].Substring(start, end - start));
+                                }
+                            }
+                            else
+                            {
+                                if (newline.Length > 0)
+                                {
+                                    linesOut.Add(newline);
+                                    newline = words[w];
+                                }
+                            }
+                        }
+                    }
+
+                    if (newline.Length > 0)
+                    {
+                        linesOut.Add(newline);
+                    }
+                }
+                else
+                {
+                    linesOut.Add(lines[i]);
+                }
+            }
+            return linesOut;
         }
 
         public override void SetDisplayData(SPopupGeneral data)
@@ -582,6 +666,11 @@ namespace Vocaluxe.Screens
             if (_DisplayData.DefaultButton == null)
             {
                 _DisplayData.DefaultButton = "ButtonNo";
+            }
+            if (_DisplayData.type == EPopupGeneralType.Loading)
+            {
+                _DisplayData.size = EPopupGeneralSize.Small;
+                startAnimation();
             }
         }
 

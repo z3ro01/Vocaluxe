@@ -402,5 +402,28 @@ namespace VocaluxeLib
         public int VoiceNr;
         public int ID;
     }
+
+    public struct SCommunityConfig
+    {
+        public EOffOn Active;
+        public string Server;
+        public string Name;
+        public EOffOn AutosendScores;
+        public string AuthProfile;
+    }
+
+    public struct SComPartyOptions
+    {
+        public bool CanSendScores;
+        public string PartyModeName;
+        public bool CanLoadScores;
+        public string QueryMethod;
+        public string QueryType;
+        public int QueryId;
+        public string QueryUsername;
+        public string QueryPassword;
+        public string QueryGameMode;
+        public int QueryDifficulty;
+    }
     #endregion Game
 }

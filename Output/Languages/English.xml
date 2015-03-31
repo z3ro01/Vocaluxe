@@ -222,4 +222,18 @@
   <string name="TR_SCREENPVOLUMECONTROL_VOLUME">Volume</string>
   <string name="TR_SCREENPSERVERQR_ADDRESS">Server address</string>
   <string name="TR_SCREENPSERVERQR_NOTRUNNING">Server is not running. Please check config.xml!</string>
+  <string name="TR_COMMUNITY_PROFILE">Community profile</string>
+  <string name="TR_COMMUNITY_NOPROFILE">No Community profiles found ...</string>
+  <string name="TR_COMMUNITY_CONFIRMTITLE">Send your scores to %v</string>
+  <string name="TR_COMMUNITY_CONFIRMSEND">Would you like to send your scores?</string>
+  <string name="TR_COMMUNITY_OFF">Off</string>
+  <string name="TR_COMMUNITY_CONFIRMYES">Yes</string>
+  <string name="TR_COMMUNITY_CONFIRMNO">Not now</string>
+  <string name="TR_COMMUNITY_SENDING">Sending scores, please wait ...</string>
+  <string name="TR_COMMUNITY_ERROR">Error</string>
+  <string name="TR_COMMUNITY_HS_TITLE">Global scores: %v</string>
+  <string name="TR_COMMUNITY_HS_HELPER">Press [SPACE] to change between local/community highscores.  Press [TAB] to view highscores by difficulty.</string>
+  <string name="TR_COMMUNITY_HS_CANTLOAD">Cant load scores ...</string>
+  <string name="TR_COMMUNITY_HS_PROGRESS">Loading scores, please wait ...</string>
+  <string name="TR_COMMUNITY_HS_NODATA">Currently no data available for this song.</string>
 </resources>

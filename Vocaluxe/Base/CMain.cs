@@ -155,6 +155,17 @@ namespace Vocaluxe.Base
         {
             return CConfig.LoadOldThemeFiles;
         }
+
+        public SCommunityConfig GetCommunityConfig()
+        {
+            SCommunityConfig cfg = new SCommunityConfig();
+            cfg.Active = CConfig.Config.Community.Active;
+            cfg.Server = CConfig.Config.Community.Server;
+            cfg.Name = CConfig.Config.Community.Name;
+            cfg.AutosendScores = CConfig.Config.Community.AutosendScores;
+            cfg.AuthProfile = CConfig.Config.Community.AuthProfile;
+            return cfg;
+        }
     }
 
     class CBsettings : ISettings

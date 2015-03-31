@@ -58,6 +58,7 @@ namespace VocaluxeLib
         int GetMaxNumMics();
 
         bool GetLoadOldThemeFiles();
+        SCommunityConfig GetCommunityConfig();
     }
 
     public interface ISettings

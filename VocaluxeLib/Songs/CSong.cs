@@ -93,6 +93,7 @@ namespace VocaluxeLib.Songs
         public string Folder = String.Empty;
         public string FolderName = String.Empty;
         public string FileName = String.Empty;
+        public string FileHash = String.Empty;
         public bool Relative;
 
         public string MP3FileName = String.Empty;

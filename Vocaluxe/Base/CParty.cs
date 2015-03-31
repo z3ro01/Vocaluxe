@@ -183,6 +183,11 @@ namespace Vocaluxe.Base
         {
             _CurrentPartyMode.LeavingHighscore();
         }
+
+        public static SComPartyOptions GetCommunityOptions()
+        {
+            return _CurrentPartyMode.GetCommunityOptions();
+        }
         #endregion Interface
 
         #region private stuff

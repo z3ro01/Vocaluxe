@@ -48,6 +48,7 @@ namespace VocaluxeLib.Profile
         [XmlIgnore] public string FilePath;
         [DefaultValue(null)] public byte[] PasswordHash;
         [DefaultValue(null)] public byte[] PasswordSalt;
+        [DefaultValue(null)] public string CommunityProfile;
 
         public EGameDifficulty Difficulty;
 
