@@ -475,6 +475,21 @@ namespace Vocaluxe.Base
         {
             return CGraphics.GetScreen(screen);
         }
+
+        public IMenu GetPopup(EPopupScreens popupScreen)
+        {
+            return CGraphics.GetPopup(popupScreen);
+        }
+
+        public void ShowPopup(EPopupScreens popupScreen)
+        {
+            CGraphics.ShowPopup(popupScreen);
+        }
+
+        public void HidePopup(EPopupScreens popupScreen)
+        {
+            CGraphics.HidePopup(popupScreen);
+        }
     }
 
     class CBlog : ILog

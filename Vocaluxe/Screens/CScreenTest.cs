@@ -100,6 +100,11 @@ namespace Vocaluxe.Screens
                         PopupTest("Alert.Big");
                         break;
 
+                    case Keys.D7:
+                    case Keys.NumPad7:
+                        PopupTest("Loading.Small");
+                        break;
+
                     case Keys.F:
                         //FadeAndPause();
                         break;
@@ -197,6 +202,12 @@ namespace Vocaluxe.Screens
                 data.size = EPopupGeneralSize.Big;
                 data.ButtonOkLabel = "YES";
                 data.TextMessage = "Its a big alert popup,\nwith multiline text support.\nDo you see? :)";
+            }
+            else if (type.Equals("Loading.Small"))
+            {
+                data.type = EPopupGeneralType.Loading;
+                data.size = EPopupGeneralSize.Small;
+                data.TextMessage = "Loading simple text.";
             }
 
             //set popup display data
