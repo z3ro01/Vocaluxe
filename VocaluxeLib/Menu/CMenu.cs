@@ -96,6 +96,7 @@ namespace VocaluxeLib.Menu
         public virtual void AddEventHandler(string eventType, Action<SPopupGeneralEvent> callback) { }
         public virtual void RemoveAllEventHandler() { }
         public virtual void SetDisplayData(SPopupGeneral data) { }
+        public virtual void SetProgressData(SPopupGeneralProgress data) { }
 
         public override void Init()
         {

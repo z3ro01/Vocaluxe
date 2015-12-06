@@ -50,6 +50,50 @@
         <Z>-2.01</Z>
       </Rect>
     </Static>
+    <Static Name="StaticProgressBar1">
+      <Skin>SelectSlidePlayer</Skin>
+      <Color Name="StaticColor" />
+      <Rect>
+        <X>200</X>
+        <Y>280</Y>
+        <W>860</W>
+        <H>50</H>
+        <Z>-2.01</Z>
+      </Rect>
+    </Static>
+    <Static Name="StaticProgressBar2">
+      <Skin>SelectSlidePlayer</Skin>
+      <Color Name="StaticColor" />
+      <Rect>
+        <X>200</X>
+        <Y>400</Y>
+        <W>860</W>
+        <H>50</H>
+        <Z>-2.01</Z>
+      </Rect>
+    </Static>
+    <Static Name="StaticProgressBar1Progress">
+      <Skin/>
+      <Color Name="StaticColorAlpha" />
+      <Rect>
+        <X>320</X>
+        <Y>280</Y>
+        <W>640</W>
+        <H>50</H>
+        <Z>-2.01</Z>
+      </Rect>
+    </Static>
+    <Static Name="StaticProgressBar2Progress">
+      <Skin/>
+      <Color Name="StaticColorAlpha" />
+      <Rect>
+        <X>320</X>
+        <Y>400</Y>
+        <W>320</W>
+        <H>50</H>
+        <Z>-2.01</Z>
+      </Rect>
+    </Static>
   </Statics>
   <Texts>
 	<Text Name="TextSmallTitle">
@@ -93,6 +137,62 @@
       <Style>Bold</Style>
       <Font>Outline</Font>
       <Text/>
+    </Text>
+    <Text Name="TextMediumLoading1">
+      <X>640</X>
+      <Y>250</Y>
+      <Z>-2.01</Z>
+      <H>27</H>
+      <MaxW>600</MaxW>
+      <Color Name="StaticColor" />
+      <SelColor Name="TextSelColor" />
+      <Align>Center</Align>
+      <ResizeAlign>Center</ResizeAlign>
+      <Style>Normal</Style>
+      <Font>Outline</Font>
+      <Text>Loading something</Text>
+    </Text>
+    <Text Name="TextMediumPercent1">
+      <X>640</X>
+      <Y>290</Y>
+      <Z>-2.01</Z>
+      <H>27</H>
+      <MaxW>600</MaxW>
+      <Color Name="StaticColor" />
+      <SelColor Name="TextSelColor" />
+      <Align>Center</Align>
+      <ResizeAlign>Center</ResizeAlign>
+      <Style>Normal</Style>
+      <Font>Outline</Font>
+      <Text>20%</Text>
+    </Text>
+    <Text Name="TextMediumLoading2">
+      <X>640</X>
+      <Y>370</Y>
+      <Z>-2.01</Z>
+      <H>27</H>
+      <MaxW>600</MaxW>
+      <Color Name="StaticColor" />
+      <SelColor Name="TextSelColor" />
+      <Align>Center</Align>
+      <ResizeAlign>Center</ResizeAlign>
+      <Style>Normal</Style>
+      <Font>Outline</Font>
+      <Text>Loading something</Text>
+    </Text>
+    <Text Name="TextMediumPercent2">
+      <X>640</X>
+      <Y>410</Y>
+      <Z>-2.01</Z>
+      <H>27</H>
+      <MaxW>600</MaxW>
+      <Color Name="StaticColor" />
+      <SelColor Name="TextSelColor" />
+      <Align>Center</Align>
+      <ResizeAlign>Center</ResizeAlign>
+      <Style>Normal</Style>
+      <Font>Outline</Font>
+      <Text>20%</Text>
     </Text>
 	<Text Name="TextMediumMessage1">
       <X>320</X>
