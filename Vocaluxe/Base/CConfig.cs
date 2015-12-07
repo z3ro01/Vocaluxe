@@ -76,7 +76,7 @@ namespace Vocaluxe.Base
 #endif
 
             [DefaultValue(ETextureQuality.TR_CONFIG_TEXTURE_MEDIUM)] public ETextureQuality TextureQuality;
-            [XmlRanged(32, 1024), DefaultValue(128)] public int CoverSize;
+            [XmlRanged(32, 1024), DefaultValue(300)] public int CoverSize;
 
             [DefaultValue(1024)] public int ScreenW;
             [DefaultValue(576)] public int ScreenH;
@@ -89,6 +89,7 @@ namespace Vocaluxe.Base
             [DefaultValue(60f)] public float MaxFPS;
             [DefaultValue(EOffOn.TR_CONFIG_ON)] public EOffOn VSync;
             [DefaultValue(EOffOn.TR_CONFIG_ON)] public EOffOn FullScreen;
+            [DefaultValue(EOffOn.TR_CONFIG_OFF)] public EOffOn Stretch;
             [DefaultValue(0.4f), XmlRanged(0, 3)] public float FadeTime;
         }
 
@@ -468,6 +469,8 @@ namespace Vocaluxe.Base
                     return "Server Encryption On/Off: " + CHelper.ListStrings(Enum.GetNames(typeof(EOffOn)));
                 case "ServerPort":
                     return "Server Port (default: 3000) [1..65535]";
+                case "Stretch":
+                    return "Stretch view to full window size: " + CHelper.ListStrings(Enum.GetNames(typeof(EOffOn)));
                 default:
                     return null;
             }
