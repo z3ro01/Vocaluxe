@@ -25,6 +25,10 @@ namespace Vocaluxe.Screens
 {
     public class CScreenTest : CMenu
     {
+        private System.Timers.Timer progressTimer = new System.Timers.Timer(100);
+        private SPopupGeneralProgress pb1 = new SPopupGeneralProgress();
+        private SPopupGeneralProgress pb2 = new SPopupGeneralProgress();
+
         // Version number for theme files. Increment it, if you've changed something on the theme files!
         protected override int _ScreenVersion
         {
@@ -99,10 +103,20 @@ namespace Vocaluxe.Screens
                     case Keys.NumPad6:
                         PopupTest("Alert.Big");
                         break;
-
+                    
                     case Keys.D7:
                     case Keys.NumPad7:
                         PopupTest("Loading.Small");
+                        break;
+
+                    case Keys.D8:
+                    case Keys.NumPad8:
+                        PopupProgressTest(false);
+                        break;
+
+                    case Keys.D9:
+                    case Keys.NumPad9:
+                        PopupLoginTest();
                         break;
 
                     case Keys.F:
@@ -143,6 +157,7 @@ namespace Vocaluxe.Screens
         {
             //get popup screen
             var popup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
+
             //reset eventhandlers
             popup.SetDefaults();
             //add new eventhandlers
@@ -208,12 +223,178 @@ namespace Vocaluxe.Screens
                 data.type = EPopupGeneralType.Loading;
                 data.size = EPopupGeneralSize.Small;
                 data.TextMessage = "Loading simple text.";
+                data.ButtonNoLabel = "Cancel";
             }
 
             //set popup display data
             popup.SetDisplayData(data);
             //and show it
             CGraphics.ShowPopup(EPopupScreens.PopupGeneral);
+        }
+
+        public void PopupLoginTest()
+        {
+            //get popup screen
+            var popup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
+
+            //reset eventhandlers
+            popup.SetDefaults();
+            //add new eventhandlers
+            popup.AddEventHandler("onKeyReturn,onKeyEscape,onMouseLB", (Action<SPopupGeneralEvent>)PopupLoginCallback);
+
+            SPopupGeneral data = new SPopupGeneral();
+            data.TextTitle   = "Login to somewhere";
+            data.TextMessage = "";
+           
+            data.type = EPopupGeneralType.Login;
+            data.size = EPopupGeneralSize.Medium;
+
+            data.ButtonNoLabel = "Cancel";
+            data.ButtonYesLabel = "Login!";
+            popup.SetDisplayData(data);
+            CGraphics.ShowPopup(EPopupScreens.PopupGeneral);
+        }
+
+        public void PopupLoginCallback(SPopupGeneralEvent eventData)
+        {
+            if (eventData.name.Equals("onKeyEscape") 
+                || (eventData.name.Equals("onKeyReturn") && eventData.target.Equals("ButtonNo"))
+                || (eventData.name.Equals("onMouseLB") && eventData.target.Equals("ButtonNo"))
+            )
+            {
+                CGraphics.HidePopup(EPopupScreens.PopupGeneral);
+            }
+            else if ((eventData.name.Equals("onKeyReturn") && eventData.target.Equals("ButtonYes"))
+                || (eventData.name.Equals("onMouseLB") && eventData.target.Equals("ButtonYes")))
+            {
+                var popup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
+                var data = popup.GetDisplayData();
+
+                data.TextMessage = data.Username + " / " + data.Password + " --> Failed to login...";
+                popup.SetDisplayData(data);
+                CGraphics.ShowPopup(EPopupScreens.PopupGeneral);
+            }
+        }
+
+
+        public void PopupProgressTest(Boolean cont)
+        {
+            var popup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
+            //reset eventhandlers
+            popup.SetDefaults();
+            //add new eventhandlers
+            popup.AddEventHandler("onMouseRB,onKeyEscape", (Action<SPopupGeneralEvent>)PopupProgressCallback);
+           
+            SPopupGeneral data = new SPopupGeneral();
+            data.TextTitle = "Loading sample";
+            data.type = EPopupGeneralType.Loading;
+            data.size = EPopupGeneralSize.Medium;
+            data.ButtonNoLabel = "Cancel";
+            data.ProgressBar1Visible = true;
+            data.ProgressBar2Visible = true;
+
+            popup.SetDisplayData(data);
+            if (!cont) {
+                pb1.target = 1;
+                pb1.percentage = 0;
+            }
+            pb1.title = "Downloading xyz - zyx ...";
+            popup.SetProgressData(pb1);
+
+
+            pb2.target = 2;
+            if (!cont)
+            {
+                pb2.total = 10;
+                pb2.loaded = 0;
+                pb2.title = "Downloading 1/10";
+            }
+            else
+            {
+                pb2.title = "Downloading "+pb2.loaded+"/"+pb2.total;
+            }
+            
+            popup.SetProgressData(pb2);
+
+            CGraphics.ShowPopup(EPopupScreens.PopupGeneral);
+
+            progressTimer.Elapsed += (timerSender, timerEvent) => updateProgressBars(timerSender, timerEvent);
+            progressTimer.Enabled = true;
+            progressTimer.Start();
+
+           
+        }
+
+        public void updateProgressBars(object source, System.Timers.ElapsedEventArgs e)
+        {
+            var popup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
+            if (pb1.percentage < 100) { 
+                 pb1.percentage++;
+                 popup.SetProgressData(pb1);
+            }
+            else if (pb1.percentage == 100)
+            {
+                if (pb2.loaded < pb2.total)
+                {
+                    pb2.loaded++;
+                    pb1.percentage = 0;
+                    pb1.title = "Downloading xyz / "+pb2.loaded;
+                    popup.SetProgressData(pb1);
+                    pb2.title = "Downloading "+pb2.loaded+"/"+pb2.total;
+                    popup.SetProgressData(pb2);
+                }
+                else
+                {
+                    progressTimer.Enabled = false;
+                    progressTimer.Stop();
+                    CGraphics.HidePopup(EPopupScreens.PopupGeneral);
+                }
+            }
+        }
+
+        public void PopupProgressCallback(SPopupGeneralEvent eventData)
+        {
+            if (eventData.name.Equals("onKeyEscape") || eventData.name.Equals("onMouseRB"))
+            {
+                //create new popup
+                var popup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
+                popup.SetDefaults();
+                popup.AddEventHandler("onKeyReturn,onKeyEscape,onMouseLB", (Action<SPopupGeneralEvent>)PopupProgressOnCancel);
+                SPopupGeneral data = new SPopupGeneral();
+                data.TextTitle = "Confirm";
+                data.type = EPopupGeneralType.Confirm;
+                data.size = EPopupGeneralSize.Small;
+                data.ButtonYesLabel = "YES";
+                data.ButtonNoLabel = "NO";
+                data.TextMessage = "Do you want to cancel?";
+
+                popup.SetDisplayData(data);
+                CGraphics.ShowPopup(EPopupScreens.PopupGeneral);
+            }
+        }
+
+        public void PopupProgressOnCancel(SPopupGeneralEvent eventData)
+        {
+            if (eventData.name.Equals("onKeyReturn") || eventData.name.Equals("onMouseLB"))
+            {
+                if (eventData.target != null)
+                {
+                    if (eventData.target.Equals("ButtonYes") || eventData.target.Equals("ButtonOk"))
+                    {
+                        progressTimer.Enabled = false;
+                        progressTimer.Stop();
+                        CGraphics.HidePopup(EPopupScreens.PopupGeneral);
+                    }
+                    else if (eventData.target.Equals("ButtonNo"))
+                    {
+                        PopupProgressTest(true);
+                    }
+                }
+            }
+            else if (eventData.name.Equals("onKeyEscape"))
+            {
+                PopupProgressTest(true);
+            }
         }
 
         public void PopupCallback(SPopupGeneralEvent eventData)
@@ -224,6 +405,8 @@ namespace Vocaluxe.Screens
                 {
                     if (eventData.target.Equals("ButtonYes") || eventData.target.Equals("ButtonOk"))
                     {
+                        var currPopup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
+
                         Console.WriteLine("You selected YES!");
                         CGraphics.HidePopup(EPopupScreens.PopupGeneral);
                     }

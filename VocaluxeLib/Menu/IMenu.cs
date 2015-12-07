@@ -41,6 +41,8 @@ namespace VocaluxeLib.Menu
         void AddEventHandler(string eventType, Action<SPopupGeneralEvent> callback);
         void RemoveAllEventHandler();
         void SetDisplayData(SPopupGeneral data);
+        SPopupGeneral GetDisplayData();
+        void SetProgressData(SPopupGeneralProgress data);
 
         bool UpdateGame();
         void Draw();
