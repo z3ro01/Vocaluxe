@@ -27,6 +27,7 @@ namespace VocaluxeLib.Network
         private static bool initalized = false;
         private static SComProfile authProfile;
         private static string version = "0.0.1";
+        private static Boolean loginStatus = false;
 
         public static void Init()
         {
@@ -40,6 +41,7 @@ namespace VocaluxeLib.Network
             }
             initalized = true;
         }
+
         public static Boolean isEnabled()
         {
             LoadConfig();
@@ -52,6 +54,21 @@ namespace VocaluxeLib.Network
             }
             return false;
         }
+
+        public static Boolean isReadyForLogin()
+        {
+            if (!string.IsNullOrEmpty(config.AuthUser) && !string.IsNullOrEmpty(config.AuthToken))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static Boolean isLoggedIn()
+        {
+            return loginStatus;
+        }
+
         public static Boolean canAutoSend()
         {
             if (isEnabled())
@@ -63,17 +80,20 @@ namespace VocaluxeLib.Network
             }
             return false;
         }
+
         public static void setScores(SComQueryScore sc)
         {
             alreadySended = false;
             currentScores = sc;
 
         }
+
         public static void clearScores()
         {
             alreadySended = false;
             currentScores = new SComQueryScore();
         }
+
         public static string getName()
         {
             if (string.IsNullOrEmpty(config.Name))
@@ -85,6 +105,7 @@ namespace VocaluxeLib.Network
                 return config.Name;
             }
         }
+
         public static void loadProfiles()
         {
             LoadConfig();
@@ -235,6 +256,11 @@ namespace VocaluxeLib.Network
         }
 
         #region HTTPCalls
+        public static void authRequestAsync(SComQueryAuth data, Action<SComResponse> callback)
+        {
+            var task = Task<SComResponse>.Factory.StartNew(() => _authRequestAsync(data, callback));
+        }
+
         public static void sendScoreAsync(Action<SComResponse> callback)
         {
             var task = Task<SComResponse>.Factory.StartNew(() => _sendScoreAsync(callback));
@@ -257,9 +283,81 @@ namespace VocaluxeLib.Network
         }
         #endregion
 
+        private static SComResponse _authRequestAsync(SComQueryAuth data, Action<SComResponse> callback)
+        {
+            SComQueryCmd request = new SComQueryCmd();
+            request.method = "vcx-handshake";
+            request.version = version;
+
+            SComResponse result = new SComResponse();
+            SComResponse response = Request(JsonConvert.SerializeObject(request));
+            if (response.status == 1)
+            {
+                try
+                {
+                    SComResultHandshake jresult = JsonConvert.DeserializeObject<SComResultHandshake>(response.result);
+                    if (jresult.status == 1)
+                    {
+                        var pwdtoencode = Encoding.UTF8.GetBytes(data.password);
+                        using (var rsa = new RSACryptoServiceProvider())
+                        {
+                            try
+                            {
+                                rsa.FromXmlString(jresult.pubkey);
+                                var encodedB64 = Convert.ToBase64String(rsa.Encrypt(pwdtoencode, true));
+                                data.password = encodedB64;
+                                data.key = jresult.key;
+
+                                SComResponse responseAuth = Request(JsonConvert.SerializeObject(data));
+                                if (callback != null) { callback(responseAuth); }
+                                return responseAuth;
+                            }
+                            catch (Exception e)
+                            {
+                                CBase.Log.LogError("CommunityClient: _authRequestAsync error: " + e.Message);
+                                result.message = e.Message;
+                                result.status = 0;
+                                result.code = -1;
+                                if (callback != null) { callback(result); }
+                                return result;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        result.code = -1;
+                        result.status = 0;
+                        result.message = "Cant load public key.";
+                        return result;
+                    }
+                }
+                catch (Newtonsoft.Json.JsonReaderException e)
+                {
+                    CBase.Log.LogError("CommunityClient: JSON Parse error: " + e.Message);
+                    SComResponse jresult = new SComResponse();
+                    jresult.message = e.Message;
+                    jresult.status = 0;
+                    jresult.code = -1;
+                    if (callback != null) { callback(jresult); }
+                    return jresult;
+                }
+            }
+            else
+            {
+                result.status = 0;
+                result.message = response.message;
+                result.code = response.code;
+                if (callback != null) { callback(result); }
+                return result;
+            }
+        }
+
         private static SComResponse _sendScoreAsync(Action<SComResponse> callback)
         {
-            currentScores.method = "setscores";
+            if (String.IsNullOrEmpty(currentScores.method)) { 
+                currentScores.method = "setscores";
+            }
+
             currentScores.version = version;
 
             SComResponse result = new SComResponse();
@@ -362,6 +460,16 @@ namespace VocaluxeLib.Network
                     if (callback != null) { callback(result); }
                     return result;
                 }
+                catch (Exception e)
+                {
+                    CBase.Log.LogError("CommunityClient: Unknown error: " + e.Message);
+                    CBase.Log.LogError("CommunityClient: Original response: " + response.result);
+                    result.message = e.Message;
+                    result.status = 0;
+                    result.code = -1;
+                    if (callback != null) { callback(result); }
+                    return result;
+                }
             }
             else
             {
@@ -415,6 +523,7 @@ namespace VocaluxeLib.Network
                 return result;
             }
         }
+
         private static SComResponse _getContestAccessAsync(string[] profileFiles, int contestId, Action<SComResponse> callback)
         {
             SComQueryContestAccess query = new SComQueryContestAccess();
@@ -519,6 +628,7 @@ namespace VocaluxeLib.Network
             r.code = -1;
             return r;
         }
+
         public static SComResponse Request(string requestData)
         {
             SComResponse result = new SComResponse();
@@ -698,6 +808,14 @@ namespace VocaluxeLib.Network
         SendScore = 1
     }
 
+    public struct SComQueryAuth
+    {
+        public string version;
+        public string username;
+        public string password;
+        public int key;
+    }
+
     public struct SComQueryCmd
     {
         public string version;
@@ -744,6 +862,7 @@ namespace VocaluxeLib.Network
         public string gameMode;
         public string partyMode;
         public int guests;
+        public int id;
         public SComQueryScoreItem[] scores;
     }
 
@@ -777,6 +896,14 @@ namespace VocaluxeLib.Network
         public int code;
         public string message;
         public string result;
+    }
+
+    public struct SComResultHandshake
+    {
+        public int status;
+        public int key;
+        public int size;
+        public string pubkey;
     }
 
     public struct SComResultContestList

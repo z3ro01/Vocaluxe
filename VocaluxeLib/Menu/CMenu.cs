@@ -97,6 +97,7 @@ namespace VocaluxeLib.Menu
         public virtual void RemoveAllEventHandler() { }
         public virtual void SetDisplayData(SPopupGeneral data) { }
         public virtual void SetProgressData(SPopupGeneralProgress data) { }
+        public virtual SPopupGeneral GetDisplayData() { return new SPopupGeneral(); }
 
         public override void Init()
         {

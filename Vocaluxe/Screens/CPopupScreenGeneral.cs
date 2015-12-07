@@ -59,6 +59,10 @@ namespace Vocaluxe.Screens
         private const string _ButtonMediumUp = "ButtonMediumUp";
         private const string _ButtonMediumDown = "ButtonMediumDown";
         private const string _TextMediumTitle = "TextMediumTitle";
+        private const string _TextMediumLoginUser = "TextMediumLoginUser";
+        private const string _TextMediumLoginPassword = "TextMediumLoginPassword";
+        private const string _ButtonUsername = "ButtonUsername";
+        private const string _ButtonPassword = "ButtonPassword";
         private const int _MediumTextLines = 6;
         private const int _MediumMaxLineLength = 57;
         private string[] _TextMediums;
@@ -85,6 +89,7 @@ namespace Vocaluxe.Screens
         private string themefile;
         private SPopupGeneralProgress _ProgressBar1 = new SPopupGeneralProgress();
         private SPopupGeneralProgress _ProgressBar2 = new SPopupGeneralProgress();
+        private string editField = null;
 
         public struct evHandler
         {
@@ -149,8 +154,8 @@ namespace Vocaluxe.Screens
         public override void Init()
         {
             base.Init();
-            var texts = new List<string> { _TextSmallTitle, _TextSmallMessage, _TextMediumTitle, _TextBigTitle, _TextProgressBar1, _TextProgressBar2, _TextProgressBar1Progress, _TextProgressBar2Progress };
-            _ThemeButtons = new string[] { _ButtonSmallNo, _ButtonSmallYes, _ButtonSmallOk, _ButtonMediumNo, _ButtonMediumYes, _ButtonMediumOk, _ButtonMediumUp, _ButtonMediumDown, _ButtonBigNo, _ButtonBigOk, _ButtonBigYes, _ButtonBigUp, _ButtonBigDown };
+            var texts = new List<string> { _TextSmallTitle, _TextSmallMessage, _TextMediumTitle, _TextBigTitle, _TextProgressBar1, _TextProgressBar2, _TextProgressBar1Progress, _TextProgressBar2Progress, _TextMediumLoginUser, _TextMediumLoginPassword };
+            _ThemeButtons = new string[] { _ButtonSmallNo, _ButtonSmallYes, _ButtonSmallOk, _ButtonMediumNo, _ButtonMediumYes, _ButtonMediumOk, _ButtonMediumUp, _ButtonMediumDown, _ButtonBigNo, _ButtonBigOk, _ButtonBigYes, _ButtonBigUp, _ButtonBigDown, _ButtonUsername, _ButtonPassword };
 
             _TextMediums = new string[_MediumTextLines];
             for (int i = 0; i < _MediumTextLines; i++)
@@ -177,15 +182,65 @@ namespace Vocaluxe.Screens
 
         public override bool HandleInput(SKeyEvent keyEvent)
         {
+            if (editField != null)
+            {
+                if (keyEvent.KeyPressed && !Char.IsControl(keyEvent.Unicode))
+                {
+                    if (editField.Equals("ButtonUsername"))
+                    {
+                        _DisplayData.Username += keyEvent.Unicode;
+                    }
+                    else if (editField.Equals("ButtonPassword"))
+                    {
+                        _DisplayData.Password += keyEvent.Unicode;
+                    }
+                    renderEditables();
+                    return true;
+                }
+                else if (keyEvent.Key == Keys.Back)
+                {
+                    if (editField.Equals("ButtonUsername"))
+                    {
+                        if (_DisplayData.Username.Length > 0) { _DisplayData.Username = _DisplayData.Username.Remove(_DisplayData.Username.Length - 1); }
+                    }
+                    else if (editField.Equals("ButtonPassword"))
+                    {
+                        if (_DisplayData.Password.Length > 0) { _DisplayData.Password = _DisplayData.Password.Remove(_DisplayData.Password.Length - 1); }
+                    }
+                    renderEditables();
+                    return true;
+                
+                }
+                else if (keyEvent.Key == Keys.Return)
+                {
+                    editField = null;
+                    renderEditables();
+                    return true;
+                }
+                else if (keyEvent.Key == Keys.Tab)
+                {
+                    if (editField.Equals("ButtonUsername"))
+                    {
+                        editField = "ButtonPassword";
+                        _Buttons[_ButtonPassword].Selected = true;
+                        _Buttons[_ButtonUsername].Selected = false;
+                        renderEditables();
+                        return true;
+                    }
+                }
+            }
+
             if (keyEvent.Key != Keys.None)
             {
                 switch (keyEvent.Key)
                 {
+#if DEBUG
                     case Keys.Space:
                         ReloadTheme(themefile);
                         renderDisplayMode();
                         renderProgressBars();
                         break;
+#endif
                     case Keys.Up:
                         scrollText(-1);
                         return true;
@@ -196,10 +251,41 @@ namespace Vocaluxe.Screens
                         return base.HandleInput(keyEvent);
                     case Keys.Right:
                         return base.HandleInput(keyEvent);
+                    case Keys.Escape:
+                        if (editField != null)
+                        {
+                            editField = null;
+                            renderEditables();
+                            return true;
+                        }
+                        break;
                 }
 
                 foreach (string key in _ThemeButtons)
                 {
+                    if (_DisplayData.type == EPopupGeneralType.Login)
+                    {
+                        if (_Buttons[key].Selected)
+                        {
+                            if (key.Equals("ButtonUsername") || key.Equals("ButtonPassword"))
+                            {
+
+                                if (keyEvent.Key == Keys.Return)
+                                {
+                                    if (editField == null)
+                                    {
+                                        editField = key;
+                                    }
+                                    else if(editField == key) {
+                                         editField = null;
+                                    }
+                                    else { editField = key; }
+                                    renderEditables();
+                                }
+                            }
+                        }
+                    }
+
                     if (_Buttons[key].Selected)
                     {
                         string buttonName = key.ToString().Replace("Medium", "").Replace("Small", "").Replace("Big", "");
@@ -234,6 +320,11 @@ namespace Vocaluxe.Screens
 
         public override bool HandleMouse(SMouseEvent mouseEvent)
         {
+            if (editField != null)
+            {
+                return true;
+            }
+
             float z = CBase.Settings.GetZFar();
             int element = -1;
             for (int i = 0; i < _Elements.Count; i++)
@@ -250,6 +341,26 @@ namespace Vocaluxe.Screens
             {
                 foreach (string key in _ThemeButtons)
                 {
+                    if (_DisplayData.type == EPopupGeneralType.Login)
+                    {
+                        if (_Buttons[key].Selected)
+                        {
+                            if (key.Equals("ButtonUsername") || key.Equals("ButtonPassword"))
+                            {
+                                if (editField == null)
+                                {
+                                    editField = key;
+                                }
+                                else if (editField == key)
+                                {
+                                    editField = null;
+                                }
+                                else { editField = key; }
+                                renderEditables();
+                            }
+                        }
+                    }
+
                     if (_Buttons[key].Selected)
                     {
                         string buttonName = key.ToString().Replace("Medium", "").Replace("Small", "").Replace("Big", "");
@@ -368,6 +479,66 @@ namespace Vocaluxe.Screens
             }
         }
 
+        public void renderLogin()
+        {
+              
+            _Statics[_StaticMediumBg].Visible = true;
+            if (_DisplayData.TextTitle != null)
+            {
+                _Texts[_TextMediumTitle].Text = _DisplayData.TextTitle;
+                _Texts[_TextMediumTitle].Visible = true;
+            }
+
+            _Texts[_TextMediums[4]].Visible = true;
+
+            if (_DisplayData.TextMessage != null)
+            {
+                _Texts[_TextMediums[4]].Text = _DisplayData.TextMessage;
+            }
+
+            _Texts[_TextMediumLoginUser].Visible     = true;
+            _Texts[_TextMediumLoginPassword].Visible = true;
+            _Buttons[_ButtonUsername].Visible = true;
+            _Buttons[_ButtonPassword].Visible = true;
+
+            _Buttons[_ButtonMediumYes].Text.Text = _DisplayData.ButtonYesLabel;
+            _Buttons[_ButtonMediumYes].Visible = true;
+            _Buttons[_ButtonMediumNo].Text.Text = _DisplayData.ButtonNoLabel;
+            _Buttons[_ButtonMediumNo].Visible = true;
+
+            if (_DisplayData.DefaultButton.Equals("ButtonYes"))
+            {
+                _SelectElement(_Buttons[_ButtonMediumYes]);
+            }
+            else if (_DisplayData.DefaultButton.Equals("ButtonNo"))
+            {
+                _SelectElement(_Buttons[_ButtonMediumNo]);
+            }
+
+            renderEditables();
+        }
+
+        public void renderEditables()
+        {
+            string dd = "";
+            if (_DisplayData.Username != null) { _Buttons[_ButtonUsername].Text.Text = _DisplayData.Username; }
+            if (_DisplayData.Password != null && _DisplayData.Password.Length > 0) { _Buttons[_ButtonPassword].Text.Text = dd.PadLeft(_DisplayData.Password.Length, '•'); }
+            else
+            {
+                _Buttons[_ButtonPassword].Text.Text = "";
+            }
+            if (editField != null) { 
+                if (editField.Equals("ButtonUsername"))
+                {
+                    _Buttons[_ButtonUsername].Text.Text += "|";
+                }
+                else if (editField.Equals("ButtonPassword"))
+                {
+                    _Buttons[_ButtonPassword].Text.Text += "|";
+                }
+            }
+        }
+
         public void renderDisplayMode()
         {
             _Statics[_StaticSmallBg].Visible = false;
@@ -389,157 +560,165 @@ namespace Vocaluxe.Screens
                 _Buttons[btn].Visible = false;
             }
 
-            if (_DisplayData.size == EPopupGeneralSize.Small)
+            if (_DisplayData.type == EPopupGeneralType.Login)
             {
-                _Statics[_StaticSmallBg].Visible = true;
-                if (_DisplayData.TextTitle != null)
-                {
-                    _Texts[_TextSmallTitle].Text = _DisplayData.TextTitle;
-                    _Texts[_TextSmallTitle].Visible = true;
-                }
-                if (_DisplayData.TextMessage != null)
-                {
-                    _Texts[_TextSmallMessage].Text = _DisplayData.TextMessage;
-                    _Texts[_TextSmallMessage].Visible = true;
-                }
-                if (_DisplayData.type == EPopupGeneralType.Confirm)
-                {
-                    _Buttons[_ButtonSmallYes].Text.Text = _DisplayData.ButtonYesLabel;
-                    _Buttons[_ButtonSmallYes].Visible = true;
-                    _Buttons[_ButtonSmallNo].Text.Text = _DisplayData.ButtonNoLabel;
-                    _Buttons[_ButtonSmallNo].Visible = true;
-                    if (_DisplayData.DefaultButton.Equals("ButtonYes"))
-                    {
-                        _SelectElement(_Buttons[_ButtonSmallYes]);
-                    }
-                    else if (_DisplayData.DefaultButton.Equals("ButtonNo"))
-                    {
-                        _SelectElement(_Buttons[_ButtonSmallNo]);
-                    }
-                }
-                else if (_DisplayData.type == EPopupGeneralType.Alert)
-                {
-                    _Buttons[_ButtonSmallOk].Text.Text = _DisplayData.ButtonOkLabel;
-                    _Buttons[_ButtonSmallOk].Visible = true;
-                    _SelectElement(_Buttons[_ButtonSmallOk]);
-                }
-                else if (_DisplayData.type == EPopupGeneralType.Loading)
-                {
-                    _Statics[_StaticLoading].Visible = true;
-                }
+                renderLogin();
             }
-            else if (_DisplayData.size == EPopupGeneralSize.Medium)
+            else
             {
-                if (_DisplayData.type == EPopupGeneralType.Confirm || _DisplayData.type == EPopupGeneralType.Alert)
+
+                if (_DisplayData.size == EPopupGeneralSize.Small)
+                {
+                    _Statics[_StaticSmallBg].Visible = true;
+                    if (_DisplayData.TextTitle != null)
+                    {
+                        _Texts[_TextSmallTitle].Text = _DisplayData.TextTitle;
+                        _Texts[_TextSmallTitle].Visible = true;
+                    }
+                    if (_DisplayData.TextMessage != null)
+                    {
+                        _Texts[_TextSmallMessage].Text = _DisplayData.TextMessage;
+                        _Texts[_TextSmallMessage].Visible = true;
+                    }
+                    if (_DisplayData.type == EPopupGeneralType.Confirm)
+                    {
+                        _Buttons[_ButtonSmallYes].Text.Text = _DisplayData.ButtonYesLabel;
+                        _Buttons[_ButtonSmallYes].Visible = true;
+                        _Buttons[_ButtonSmallNo].Text.Text = _DisplayData.ButtonNoLabel;
+                        _Buttons[_ButtonSmallNo].Visible = true;
+                        if (_DisplayData.DefaultButton.Equals("ButtonYes"))
+                        {
+                            _SelectElement(_Buttons[_ButtonSmallYes]);
+                        }
+                        else if (_DisplayData.DefaultButton.Equals("ButtonNo"))
+                        {
+                            _SelectElement(_Buttons[_ButtonSmallNo]);
+                        }
+                    }
+                    else if (_DisplayData.type == EPopupGeneralType.Alert)
+                    {
+                        _Buttons[_ButtonSmallOk].Text.Text = _DisplayData.ButtonOkLabel;
+                        _Buttons[_ButtonSmallOk].Visible = true;
+                        _SelectElement(_Buttons[_ButtonSmallOk]);
+                    }
+                    else if (_DisplayData.type == EPopupGeneralType.Loading)
+                    {
+                        _Statics[_StaticLoading].Visible = true;
+                    }
+                }
+                else if (_DisplayData.size == EPopupGeneralSize.Medium)
+                {
+                    if (_DisplayData.type == EPopupGeneralType.Confirm || _DisplayData.type == EPopupGeneralType.Alert)
+                    {
+                        _TextPos = 0;
+                        _Statics[_StaticMediumBg].Visible = true;
+                        if (_DisplayData.TextTitle != null)
+                        {
+                            _Texts[_TextMediumTitle].Text = _DisplayData.TextTitle;
+                            _Texts[_TextMediumTitle].Visible = true;
+                        }
+
+                        _TextLines = calculateTextLines(_DisplayData.TextMessage, _MediumMaxLineLength);
+                        if (_TextLines.Count > _MediumTextLines)
+                        {
+                            _Buttons[_ButtonMediumDown].Visible = true;
+                        }
+
+                        renderMediumText();
+                    }
+
+                    if (_DisplayData.type == EPopupGeneralType.Confirm)
+                    {
+                        _Buttons[_ButtonMediumOk].Selected = false;
+                        _Buttons[_ButtonMediumYes].Text.Text = _DisplayData.ButtonYesLabel;
+                        _Buttons[_ButtonMediumYes].Visible = true;
+                        _Buttons[_ButtonMediumNo].Text.Text = _DisplayData.ButtonNoLabel;
+                        _Buttons[_ButtonMediumNo].Visible = true;
+                        if (_DisplayData.DefaultButton.Equals("ButtonYes"))
+                        {
+                            _SelectElement(_Buttons[_ButtonMediumYes]);
+                        }
+                        else if (_DisplayData.DefaultButton.Equals("ButtonNo"))
+                        {
+                            _SelectElement(_Buttons[_ButtonMediumNo]);
+                        }
+                    }
+                    else if (_DisplayData.type == EPopupGeneralType.Alert)
+                    {
+                        _Buttons[_ButtonMediumNo].Selected = false;
+                        _Buttons[_ButtonMediumYes].Selected = false;
+                        _Buttons[_ButtonMediumOk].Text.Text = _DisplayData.ButtonOkLabel;
+                        _Buttons[_ButtonMediumOk].Visible = true;
+                        _Buttons[_ButtonMediumOk].Selected = true;
+                    }
+                    else if (_DisplayData.type == EPopupGeneralType.Loading)
+                    {
+                        if (_DisplayData.TextTitle != null)
+                        {
+                            _Texts[_TextMediumTitle].Text = _DisplayData.TextTitle;
+                            _Texts[_TextMediumTitle].Visible = true;
+                        }
+                        _Statics[_StaticMediumBg].Visible = true;
+                        if (_DisplayData.ProgressBar1Visible)
+                        {
+                            _Statics[_StaticProgressBar1].Visible = true;
+                            _Statics[_StaticProgressBar1Progress].Visible = true;
+                            if (!_DisplayData.ProgressBar2Visible)
+                            {
+                                _Statics[_StaticProgressBar1].Y = 320;
+                                _Statics[_StaticProgressBar1Progress].Y = 320;
+                            }
+                            _Statics[_StaticProgressBar1Progress].W = 0;
+                        }
+                        if (_DisplayData.ProgressBar2Visible)
+                        {
+                            _Statics[_StaticProgressBar2].Visible = true;
+                            _Statics[_StaticProgressBar2Progress].Visible = true;
+                            _Statics[_StaticProgressBar2Progress].W = 0;
+                        }
+                    }
+                }
+                else if (_DisplayData.size == EPopupGeneralSize.Big)
                 {
                     _TextPos = 0;
-                    _Statics[_StaticMediumBg].Visible = true;
+                    _Statics[_StaticBigBg].Visible = true;
                     if (_DisplayData.TextTitle != null)
                     {
-                        _Texts[_TextMediumTitle].Text = _DisplayData.TextTitle;
-                        _Texts[_TextMediumTitle].Visible = true;
+                        _Texts[_TextBigTitle].Text = _DisplayData.TextTitle;
+                        _Texts[_TextBigTitle].Visible = true;
                     }
 
-                    _TextLines = calculateTextLines(_DisplayData.TextMessage, _MediumMaxLineLength);
-                    if (_TextLines.Count > _MediumTextLines)
+                    _TextLines = calculateTextLines(_DisplayData.TextMessage, _BigMaxLineLength);
+                    if (_TextLines.Count > _BigTextLines)
                     {
-                        _Buttons[_ButtonMediumDown].Visible = true;
+                        _Buttons[_ButtonBigDown].Visible = true;
                     }
 
-                    renderMediumText();
-                }
+                    renderBigText();
 
-                if (_DisplayData.type == EPopupGeneralType.Confirm)
-                {
-                    _Buttons[_ButtonMediumOk].Selected = false;
-                    _Buttons[_ButtonMediumYes].Text.Text = _DisplayData.ButtonYesLabel;
-                    _Buttons[_ButtonMediumYes].Visible = true;
-                    _Buttons[_ButtonMediumNo].Text.Text = _DisplayData.ButtonNoLabel;
-                    _Buttons[_ButtonMediumNo].Visible = true;
-                    if (_DisplayData.DefaultButton.Equals("ButtonYes"))
+                    if (_DisplayData.type == EPopupGeneralType.Confirm)
                     {
-                        _SelectElement(_Buttons[_ButtonMediumYes]);
-                    }
-                    else if (_DisplayData.DefaultButton.Equals("ButtonNo"))
-                    {
-                        _SelectElement(_Buttons[_ButtonMediumNo]);
-                    }
-                }
-                else if (_DisplayData.type == EPopupGeneralType.Alert)
-                {
-                    _Buttons[_ButtonMediumNo].Selected = false;
-                    _Buttons[_ButtonMediumYes].Selected = false;
-                    _Buttons[_ButtonMediumOk].Text.Text = _DisplayData.ButtonOkLabel;
-                    _Buttons[_ButtonMediumOk].Visible = true;
-                    _Buttons[_ButtonMediumOk].Selected = true;
-                }
-                else if (_DisplayData.type == EPopupGeneralType.Loading)
-                {
-                    if (_DisplayData.TextTitle != null)
-                    {
-                        _Texts[_TextMediumTitle].Text = _DisplayData.TextTitle;
-                        _Texts[_TextMediumTitle].Visible = true;
-                    }
-                    _Statics[_StaticMediumBg].Visible = true;
-                    if (_DisplayData.ProgressBar1Visible)
-                    {
-                        _Statics[_StaticProgressBar1].Visible = true;
-                        _Statics[_StaticProgressBar1Progress].Visible = true;
-                        if (!_DisplayData.ProgressBar2Visible)
+                        _Buttons[_ButtonBigYes].Text.Text = _DisplayData.ButtonYesLabel;
+                        _Buttons[_ButtonBigYes].Visible = true;
+                        _Buttons[_ButtonBigNo].Text.Text = _DisplayData.ButtonNoLabel;
+                        _Buttons[_ButtonBigNo].Visible = true;
+                        if (_DisplayData.DefaultButton.Equals("ButtonYes"))
                         {
-                            _Statics[_StaticProgressBar1].Y = 320;
-                            _Statics[_StaticProgressBar1Progress].Y = 320;
+                            _SelectElement(_Buttons[_ButtonBigYes]);
                         }
-                        _Statics[_StaticProgressBar1Progress].W = 0;
+                        else if (_DisplayData.DefaultButton.Equals("ButtonNo"))
+                        {
+                            _SelectElement(_Buttons[_ButtonBigNo]);
+                        }
                     }
-                    if (_DisplayData.ProgressBar2Visible)
+                    else if (_DisplayData.type == EPopupGeneralType.Alert)
                     {
-                        _Statics[_StaticProgressBar2].Visible = true;
-                        _Statics[_StaticProgressBar2Progress].Visible = true;
-                        _Statics[_StaticProgressBar2Progress].W = 0;
+                        _Buttons[_ButtonBigOk].Text.Text = _DisplayData.ButtonOkLabel;
+                        _Buttons[_ButtonBigOk].Visible = true;
+                        _Buttons[_ButtonBigOk].Selected = true;
                     }
-                }
-            }
-            else if (_DisplayData.size == EPopupGeneralSize.Big)
-            {
-                _TextPos = 0;
-                _Statics[_StaticBigBg].Visible = true;
-                if (_DisplayData.TextTitle != null)
-                {
-                    _Texts[_TextBigTitle].Text = _DisplayData.TextTitle;
-                    _Texts[_TextBigTitle].Visible = true;
-                }
 
-                _TextLines = calculateTextLines(_DisplayData.TextMessage, _BigMaxLineLength);
-                if (_TextLines.Count > _BigTextLines)
-                {
-                    _Buttons[_ButtonBigDown].Visible = true;
                 }
-
-                renderBigText();
-
-                if (_DisplayData.type == EPopupGeneralType.Confirm)
-                {
-                    _Buttons[_ButtonBigYes].Text.Text = _DisplayData.ButtonYesLabel;
-                    _Buttons[_ButtonBigYes].Visible = true;
-                    _Buttons[_ButtonBigNo].Text.Text = _DisplayData.ButtonNoLabel;
-                    _Buttons[_ButtonBigNo].Visible = true;
-                    if (_DisplayData.DefaultButton.Equals("ButtonYes"))
-                    {
-                        _SelectElement(_Buttons[_ButtonBigYes]);
-                    }
-                    else if (_DisplayData.DefaultButton.Equals("ButtonNo"))
-                    {
-                        _SelectElement(_Buttons[_ButtonBigNo]);
-                    }
-                }
-                else if (_DisplayData.type == EPopupGeneralType.Alert)
-                {
-                    _Buttons[_ButtonBigOk].Text.Text = _DisplayData.ButtonOkLabel;
-                    _Buttons[_ButtonBigOk].Visible = true;
-                    _Buttons[_ButtonBigOk].Selected = true;
-                }
-
             }
             _renderedDisplayMode = _DisplayData.type;
         }
@@ -742,24 +921,16 @@ namespace Vocaluxe.Screens
             return linesOut;
         }
 
-      /*  public override SPopupGeneral saveDisplayData()
+        public override SPopupGeneral GetDisplayData()
         {
             return _DisplayData;
         }
 
-        public override List<evHandler> saveEventHandlers()
-        {
-            return eventHandlers;
-        }
-
-        public override void setEventHandlers(List<evHandler> evHandlers)
-        {
-            eventHandlers = evHandlers;
-        }*/
-
         public override void SetDisplayData(SPopupGeneral data)
         {
             _DisplayData = data;
+            editField = null;
+
             if (_DisplayData.DefaultButton == null)
             {
                 _DisplayData.DefaultButton = "ButtonNo";

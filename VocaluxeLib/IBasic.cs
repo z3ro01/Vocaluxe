@@ -156,6 +156,9 @@ namespace VocaluxeLib
         IMenu GetNextScreen();
         EScreen GetNextScreenType();
         IMenu GetScreen(EScreen screen);
+        IMenu GetPopup(EPopupScreens popupScreen);
+        void ShowPopup(EPopupScreens popupScreen);
+        void HidePopup(EPopupScreens popupScreen);
     }
 
     public interface ILog
@@ -219,6 +222,7 @@ namespace VocaluxeLib
         bool IsProfileIDValid(int profileID);
         bool IsGuest(int profileID);
         void AddProfileChangedCallback(ProfileChangedCallback notification);
+        string GetCommunityProfile(int profileID);
     }
 
     public interface ISongs

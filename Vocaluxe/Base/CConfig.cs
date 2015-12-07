@@ -167,10 +167,12 @@ namespace Vocaluxe.Base
         {
             [DefaultValue(EOffOn.TR_CONFIG_OFF)] public EOffOn Active;
             [DefaultValue(null)] public string Server;
-            [DefaultValue("My Community")] public string Name;
+            [DefaultValue("Vocaluxe Community")] public string Name;
             [DefaultValue(EOffOn.TR_CONFIG_OFF)]
             public EOffOn AutosendScores;
             public string AuthProfile;
+            [DefaultValue(null)] public string AuthUser;
+            [DefaultValue(null)] public string AuthToken;
         }
 
 #pragma warning restore 649
@@ -361,12 +363,6 @@ namespace Vocaluxe.Base
                     PrimaryScreenResolution = Screen.PrimaryScreen.Bounds.Size.ToString(),
                     Directory = CSettings.ProgramFolder
                 };
-
-            //load community profiles
-            if (Config.Community.Active == EOffOn.TR_CONFIG_ON)
-            {
-                CCommunity.loadProfiles();
-            }
         }
 
         private static readonly List<string> _CommentsGot = new List<string>();

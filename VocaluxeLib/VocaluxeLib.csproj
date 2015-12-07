@@ -72,6 +72,10 @@
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -110,7 +114,12 @@
     <Compile Include="Draw\CTextureRef.cs" />
     <Compile Include="Menu\IThemeable.cs" />
     <Compile Include="Menu\SingNotes\CNoteBars.cs" />
+    <Compile Include="Network\CCommunity.cs" />
+    <Compile Include="Network\CFileDownloader.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Utils\Combinatorics\CCombinations.cs" />
+    <Compile Include="Utils\FLVExtractor\FLVExtractor.cs" />
     <Compile Include="XmlStructs.cs" />
     <Compile Include="Xml\CTypeExtensions.cs" />
     <Compile Include="Xml\CXmlDeserializer.cs" />
@@ -148,6 +157,9 @@
     <Compile Include="Utils\Player\CSongPlayer.cs" />
     <Compile Include="Utils\Player\CSoundPlayer.cs" />
     <Compile Include="Xml\SFieldInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

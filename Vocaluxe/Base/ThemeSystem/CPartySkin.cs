@@ -57,8 +57,8 @@ namespace Vocaluxe.Base.ThemeSystem
 
         public override CTextureRef GetTexture(string name)
         {
-            if (_Parent.Name == "Default" && !_Required.Textures.Contains(name))
-                CLog.LogDebug("Non-Default color: " + name);
+            /*if (_Parent.Name == "Default" && !_Required.Textures.Contains(name))*/
+                /*CLog.LogDebug("Non-Default color: " + name);*/
             return base.GetTexture(name) ?? _BaseSkin.GetTexture(name);
         }
     }

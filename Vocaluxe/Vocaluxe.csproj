@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">DebugWin</Configuration>
@@ -216,7 +216,7 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
-    <Reference Include="Mono.Data.Sqlite" Condition=" !('$(Configuration)' == 'DebugWin' Or '$(Configuration)' == 'ReleaseWin' Or '$(Configuration)' == 'InstallerWin')"/>
+    <Reference Include="Mono.Data.Sqlite" Condition=" !('$(Configuration)' == 'DebugWin' Or '$(Configuration)' == 'ReleaseWin' Or '$(Configuration)' == 'InstallerWin')" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base\CBackgroundMusic.cs" />
@@ -297,8 +297,8 @@
     <Compile Include="Lib\Input\CControllerFramework.cs" />
     <Compile Include="Lib\Sound\Playback\GstreamerSharp\CGstreamerSharpAudio.cs" />
     <Compile Include="Lib\Sound\Record\CRecordBase.cs" />
-    <Compile Include="Lib\Sound\Record\DirectSound\CSampleDataEventArgs.cs" Condition=" ('$(Configuration)' == 'DebugWin' Or '$(Configuration)' == 'ReleaseWin' Or '$(Configuration)' == 'InstallerWin')"/>
-    <Compile Include="Lib\Sound\Record\DirectSound\CSoundCardSource.cs" Condition=" ('$(Configuration)' == 'DebugWin' Or '$(Configuration)' == 'ReleaseWin' Or '$(Configuration)' == 'InstallerWin')"/>
+    <Compile Include="Lib\Sound\Record\DirectSound\CSampleDataEventArgs.cs" Condition=" ('$(Configuration)' == 'DebugWin' Or '$(Configuration)' == 'ReleaseWin' Or '$(Configuration)' == 'InstallerWin')" />
+    <Compile Include="Lib\Sound\Record\DirectSound\CSoundCardSource.cs" Condition=" ('$(Configuration)' == 'DebugWin' Or '$(Configuration)' == 'ReleaseWin' Or '$(Configuration)' == 'InstallerWin')" />
     <Compile Include="Lib\Sound\Record\PitchTracker\CPitchTrackerTest.cs" />
     <Compile Include="Lib\Sound\Record\PitchTracker\CPtAKF.cs" />
     <Compile Include="Lib\Sound\Record\PitchTracker\CPtDyWa.cs" />
@@ -307,6 +307,7 @@
     <Compile Include="Lib\Video\Acinerella\CDecoderThread.cs" />
     <Compile Include="Lib\Video\Acinerella\CFramebuffer.cs" />
     <Compile Include="Lib\Sound\Record\CDelayTest.cs" />
+    <Compile Include="Screens\CPopupScreenGeneral.cs" />
     <Compile Include="Screens\CPopupScreenServerQR.cs" />
     <Compile Include="Screens\CScreenOptionsVideoAdjustments.cs" />
     <Compile Include="SongQueue\CSongQueue.cs" />
@@ -536,7 +537,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-  <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">xcopy /E /D /Y "$(ProjectDir)\Website" "$(SolutionDir)\PhoneGap"
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">xcopy /E /D /Y "$(ProjectDir)\Website" "$(SolutionDir)\PhoneGap"
 powershell -command "$version = git describe --long; (Get-Content -Encoding UTF8 '$(ProjectDir)..\Output\Website\js\main.js') |  Foreach-Object {$_ -replace '(?&lt;=var *matchingServerVersion * = *\")\w*(?=\" *;)', "$version"} | Set-Content -Encoding UTF8 '$(ProjectDir)..\Output\Website\js\main.js'"
 powershell -command "(Get-Content -Encoding UTF8 '$(ProjectDir)Properties\AssemblyInfo.cs') | Foreach-Object {$_ -replace '(?&lt;=AssemblyInformationalVersion\()(.*)(?=\))', '\"GITVERSION\"'} | Set-Content -Encoding UTF8 '$(ProjectDir)Properties\AssemblyInfo.cs'"</PostBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">cp -ruT "$(ProjectDir)Website" "$(SolutionDir)/PhoneGap"</PostBuildEvent>

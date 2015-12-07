@@ -278,6 +278,21 @@ namespace VocaluxeLib
         public string ButtonNoLabel;
         public string ButtonOkLabel;
         public string DefaultButton;
+        public bool ProgressBar1Visible;
+        public bool ProgressBar2Visible;
+        public string ProgressBar1Title;
+        public string ProgressBar2Title;
+        public string Username;
+        public string Password;
+    }
+
+    public struct SPopupGeneralProgress
+    {
+        public int target;
+        public string title;
+        public float percentage;
+        public float loaded;
+        public float total;
     }
 
     public struct SPopupGeneralEvent
@@ -410,6 +425,8 @@ namespace VocaluxeLib
         public string Name;
         public EOffOn AutosendScores;
         public string AuthProfile;
+        public string AuthUser;
+        public string AuthToken;
     }
 
     public struct SComPartyOptions

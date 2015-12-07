@@ -113,6 +113,12 @@ namespace Vocaluxe.Screens
                     case Keys.NumPad8:
                         PopupProgressTest(false);
                         break;
+
+                    case Keys.D9:
+                    case Keys.NumPad9:
+                        PopupLoginTest();
+                        break;
+
                     case Keys.F:
                         //FadeAndPause();
                         break;
@@ -219,13 +225,57 @@ namespace Vocaluxe.Screens
                 data.TextMessage = "Loading simple text.";
                 data.ButtonNoLabel = "Cancel";
             }
-           
 
             //set popup display data
             popup.SetDisplayData(data);
             //and show it
             CGraphics.ShowPopup(EPopupScreens.PopupGeneral);
         }
+
+        public void PopupLoginTest()
+        {
+            //get popup screen
+            var popup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
+
+            //reset eventhandlers
+            popup.SetDefaults();
+            //add new eventhandlers
+            popup.AddEventHandler("onKeyReturn,onKeyEscape,onMouseLB", (Action<SPopupGeneralEvent>)PopupLoginCallback);
+
+            SPopupGeneral data = new SPopupGeneral();
+            data.TextTitle   = "Login to somewhere";
+            data.TextMessage = "";
+           
+            data.type = EPopupGeneralType.Login;
+            data.size = EPopupGeneralSize.Medium;
+
+            data.ButtonNoLabel = "Cancel";
+            data.ButtonYesLabel = "Login!";
+            popup.SetDisplayData(data);
+            CGraphics.ShowPopup(EPopupScreens.PopupGeneral);
+        }
+
+        public void PopupLoginCallback(SPopupGeneralEvent eventData)
+        {
+            if (eventData.name.Equals("onKeyEscape") 
+                || (eventData.name.Equals("onKeyReturn") && eventData.target.Equals("ButtonNo"))
+                || (eventData.name.Equals("onMouseLB") && eventData.target.Equals("ButtonNo"))
+            )
+            {
+                CGraphics.HidePopup(EPopupScreens.PopupGeneral);
+            }
+            else if ((eventData.name.Equals("onKeyReturn") && eventData.target.Equals("ButtonYes"))
+                || (eventData.name.Equals("onMouseLB") && eventData.target.Equals("ButtonYes")))
+            {
+                var popup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
+                var data = popup.GetDisplayData();
+
+                data.TextMessage = data.Username + " / " + data.Password + " --> Failed to login...";
+                popup.SetDisplayData(data);
+                CGraphics.ShowPopup(EPopupScreens.PopupGeneral);
+            }
+        }
+
 
         public void PopupProgressTest(Boolean cont)
         {

@@ -19,6 +19,8 @@ using System.Windows.Forms;
 using Vocaluxe.Base;
 using VocaluxeLib;
 using VocaluxeLib.Menu;
+using VocaluxeLib.Profile;
+using VocaluxeLib.Network;
 
 namespace Vocaluxe.Screens
 {
@@ -27,7 +29,7 @@ namespace Vocaluxe.Screens
         // Version number for theme files. Increment it, if you've changed something on the theme files!
         protected override int _ScreenVersion
         {
-            get { return 2; }
+            get { return 3; }
         }
 
         private const string _ButtonSing = "ButtonSing";
@@ -38,19 +40,40 @@ namespace Vocaluxe.Screens
         private const string _StaticWarningProfiles = "StaticWarningProfiles";
         private const string _TextWarningProfiles = "TextWarningProfiles";
         private const string _TextRelease = "TextRelease";
+        #if DEBUG
+            private string themefile;
+        #endif
+        private const string _LoginAvatar = "LoginAvatar";
+        private const string _LoginBG = "LoginStatus";
+        private const string _TextLogin = "TextCLogin";
+        private CAvatar _Avatar;
 
         //CParticleEffect Snowflakes;
         public override void Init()
         {
             base.Init();
 
-            _ThemeStatics = new string[] {"StaticMenuBar", _StaticWarningProfiles};
+            _ThemeStatics = new string[] { "StaticMenuBar", _StaticWarningProfiles, _LoginAvatar, _LoginBG };
             _ThemeButtons = new string[] {_ButtonSing, _ButtonParty, _ButtonOptions, _ButtonProfiles, _ButtonExit};
-            _ThemeTexts = new string[] {_TextRelease, _TextWarningProfiles};
+            _ThemeTexts = new string[] { _TextRelease, _TextWarningProfiles, _TextLogin };
+
+            if (CCommunity.isEnabled())
+            {
+
+                foreach (string path in CConfig.ProfileFolders)
+                {
+                    _Avatar = CAvatar.GetAvatar(System.IO.Path.Combine(path, "community_default.jpg"));
+                    if (_Avatar != null) break;
+                }
+            }
+
         }
 
         public override void LoadTheme(string xmlPath)
         {
+            #if DEBUG
+                themefile = xmlPath;
+            #endif
             base.LoadTheme(xmlPath);
 
             _Texts[_TextRelease].Text = CSettings.GetFullVersionText();
@@ -59,6 +82,21 @@ namespace Vocaluxe.Screens
             // ReSharper restore ConditionIsAlwaysTrueOrFalse
             _Statics[_StaticWarningProfiles].Visible = false;
             _Texts[_TextWarningProfiles].Visible = false;
+
+            if (CCommunity.isEnabled())
+            {
+                _Statics[_LoginAvatar].Aspect = EAspect.Stretch;
+                if (_Avatar != null)
+                {
+                    _Statics[_LoginAvatar].Texture = _Avatar.Texture;
+                }
+            }
+            else
+            {
+                _Statics[_LoginBG].Visible = false;
+                _Statics[_LoginAvatar].Visible = false;
+                _Texts[_TextLogin].Visible = false;
+            }
         }
 
         public override bool HandleInput(SKeyEvent keyEvent)
@@ -70,6 +108,11 @@ namespace Vocaluxe.Screens
             {
                 switch (keyEvent.Key)
                 {
+                    #if DEBUG
+                    case Keys.Space:
+                        ReloadTheme(themefile);
+                        break;
+                    #endif
                     case Keys.O:
                         CGraphics.FadeTo(EScreen.Options);
                         break;
@@ -148,6 +191,14 @@ namespace Vocaluxe.Screens
             _Buttons[_ButtonSing].Selectable = profileOK;
             _Buttons[_ButtonParty].Selectable = profileOK;
             return true;
+        }
+
+
+        public void CommunityLogin()
+        {
+            //create login window
+
+
         }
     }
 }
