@@ -81,8 +81,8 @@ namespace Vocaluxe
         {
             Application.DoEvents();
 
-            try
-            {
+           // try
+           // {
                 // Init Log
                 CLog.Init();
 
@@ -248,7 +248,7 @@ namespace Vocaluxe
                 //Rely on GC doing its job afterwards and call Dispose methods where appropriate
                 GC.Collect();
                 CLog.StopBenchmark("Init Program");
-            }
+          /*  }
             catch (Exception e)
             {
                 MessageBox.Show("Error on start up: " + e.Message);
@@ -257,7 +257,7 @@ namespace Vocaluxe
                     _SplashScreen.Close();
                 _CloseProgram();
                 return;
-            }
+            }*/
             Application.DoEvents();
 
             // Start Main Loop

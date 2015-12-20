@@ -822,7 +822,7 @@ namespace Vocaluxe.Screens
 
                 CGame.Reset();
                 CGame.ClearSongs();
-
+               
                 if (CGame.AddVisibleSong(songNr, gm))
                     CGraphics.FadeTo(EScreen.Names);
             }

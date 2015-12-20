@@ -24,6 +24,7 @@ namespace VocaluxeLib.Menu.SongMenu
         void Update(SScreenSongOptions songOptions);
         void OnShow();
         void OnHide();
+       
 
         bool HandleInput(ref SKeyEvent keyEvent, SScreenSongOptions options);
         bool HandleMouse(ref SMouseEvent mouseEvent, SScreenSongOptions songOptions);

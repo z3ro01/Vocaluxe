@@ -73,16 +73,29 @@ namespace Vocaluxe.Base
             }
         }
 
-        public static bool GetDataBaseSongInfos(string artist, string title, out int numPlayed, out DateTime dateAdded, out int highscoreID)
+        public static bool GetDataBaseSongInfos(string artist, string title, out int numPlayed, out DateTime dateAdded, out string fileHash, out DateTime fileLastMod, out int highscoreID)
         {
             if (_HighscoreDB == null)
             {
                 numPlayed = 0;
                 dateAdded = new DateTime();
                 highscoreID = 0;
+                fileHash = String.Empty;
+                fileLastMod = new DateTime(1970, 1, 1, 0, 0, 0);
                 return false;
             }
-            return _HighscoreDB.GetDataBaseSongInfos(artist, title, out numPlayed, out dateAdded, out highscoreID);
+            return _HighscoreDB.GetDataBaseSongInfos(artist, title, out numPlayed, out dateAdded, out fileHash, out fileLastMod, out highscoreID);
+        }
+
+        public static bool SetDataBaseSongHash(int dbId, string fileHash, DateTime fileLastMod)
+        {
+            return _HighscoreDB == null ? false : _HighscoreDB.SetDataBaseSongHash(dbId, fileHash, fileLastMod);
+        }
+
+        public static bool GetDataBaseSongByHash(string hash, out int songId)
+        {
+            songId = -1;
+             return _HighscoreDB == null ? false : _HighscoreDB.GetDataBaseSongByHash(hash, out songId);
         }
 
         public static List<SDBScoreEntry> LoadScore(int songID, EGameMode gameMode)

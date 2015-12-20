@@ -94,6 +94,7 @@ namespace VocaluxeLib.Songs
         public string FolderName = String.Empty;
         public string FileName = String.Empty;
         public string FileHash = String.Empty;
+        public DateTime FileLastMod;
         public bool Relative;
 
         public string MP3FileName = String.Empty;
@@ -225,6 +226,9 @@ namespace VocaluxeLib.Songs
             Folder = song.Folder;
             FolderName = song.FolderName;
             FileName = song.FileName;
+            FileHash = song.FileHash;
+            FileLastMod = song.FileLastMod;
+
             Relative = song.Relative;
 
             MP3FileName = song.MP3FileName;
@@ -275,11 +279,11 @@ namespace VocaluxeLib.Songs
             Notes = new CNotes(song.Notes);
         }
 
-        public static CSong LoadSong(string filePath)
+        public static CSong LoadSong(string filePath, bool dontCheckFiles = false)
         {
             var song = new CSong();
             var loader = new CSongLoader(song);
-            return loader.InitPaths(filePath) && loader.ReadHeader() ? song : null;
+            return loader.InitPaths(filePath) && loader.ReadHeader(false, dontCheckFiles) ? song : null;
         }
 
         public bool LoadNotes()

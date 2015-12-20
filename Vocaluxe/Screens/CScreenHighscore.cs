@@ -24,7 +24,7 @@ using VocaluxeLib;
 using VocaluxeLib.Game;
 using VocaluxeLib.Menu;
 using VocaluxeLib.Songs;
-using VocaluxeLib.Network;
+using VocaluxeLib.Community;
 
 namespace Vocaluxe.Screens
 {
@@ -603,51 +603,18 @@ namespace Vocaluxe.Screens
 
         private void _ComLoading()
         {
-            var popup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
-            popup.SetDefaults();
-            SPopupGeneral data = new SPopupGeneral();
-            data.TextTitle = CCommunity.getName();
-            data.type = EPopupGeneralType.Loading;
-            data.size = EPopupGeneralSize.Small;
-            data.TextMessage = CLanguage.Translate("TR_COMMUNITY_HS_PROGRESS");
-            popup.SetDisplayData(data);
-            CGraphics.ShowPopup(EPopupScreens.PopupGeneral);
+            CPopupHelper.Loading("TR_COMMUNITY_HS_PROGRESS","");
         }
 
         private void _ComAlert(string message)
         {
-            var popup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
-            popup.SetDefaults();
-            popup.AddEventHandler("onKeyReturn,onKeyEscape,onKeyBack,onMouseLB", delegate(SPopupGeneralEvent eventData)
-            {
-                if (eventData.name.Equals("onMouseLB") && eventData.target != null)
-                {
-                    CGraphics.HidePopup(EPopupScreens.PopupGeneral);
-                }
-                else if (eventData.name.IndexOf("onKey") > -1)
-                {
-                    CGraphics.HidePopup(EPopupScreens.PopupGeneral);
-                }
-            });
-
-            SPopupGeneral data = new SPopupGeneral();
-            data.TextTitle = "Hiba";
-            data.type = EPopupGeneralType.Alert;
-            data.size = EPopupGeneralSize.Medium;
-            data.ButtonOkLabel = "Ok";
-            data.TextMessage = message;
-            popup.SetDisplayData(data);
+            CPopupHelper.Alert("TR_COMMUNITY_ERROR", message);
         }
 
         private void _LoadNetScore(int round)
         {
             CSong song = CGame.GetSong(round);
             EGameMode gameMode = CGame.GetGameMode(round);
-            if (song.FileHash == "")
-            {
-                song.FileHash = CCommunity.hashTextFile(song.Folder, song.FileName);
-            }
-
             _ComLoading();
 
             SComQueryHighScores data = new SComQueryHighScores();
@@ -659,10 +626,11 @@ namespace Vocaluxe.Screens
                 if (ComPartyOpts.CanLoadScores)
                 {
                     data.username = ComPartyOpts.QueryUsername != null ? ComPartyOpts.QueryUsername : null;
-                    data.password = ComPartyOpts.QueryPassword != null ? ComPartyOpts.QueryPassword : null;
+                    data.uuid = ComPartyOpts.QueryPassword != null ? ComPartyOpts.QueryPassword : null;
                     data.queryType = ComPartyOpts.QueryType != null ? ComPartyOpts.QueryType : null;
                     data.method = ComPartyOpts.QueryMethod != null ? ComPartyOpts.QueryMethod : null;
                     data.gameMode = ComPartyOpts.QueryGameMode != null ? ComPartyOpts.QueryGameMode : gameMode.ToString();
+
                     if (ComPartyOpts.QueryDifficulty > 0)
                     {
                         data.difficulty = ComPartyOpts.QueryDifficulty;

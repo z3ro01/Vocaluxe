@@ -19,6 +19,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Security.Cryptography;
 
 namespace VocaluxeLib.Songs
 {
@@ -94,12 +95,15 @@ namespace VocaluxeLib.Songs
                 _LogMsg(msg, false, withLineNr);
             }
 
-            public bool ReadHeader(bool useSetEncoding = false)
+            public bool ReadHeader(bool useSetEncoding = false, bool dontCheckFiles = false)
             {
                 string filePath = Path.Combine(_Song.Folder, _Song.FileName);
-
+               
                 if (!File.Exists(filePath))
                     return false;
+
+                DateTime currentFileMod = File.GetLastWriteTime(filePath);
+                _Song.FileLastMod = currentFileMod;
 
                 _Song.Languages.Clear();
                 _Song.Genres.Clear();
@@ -163,7 +167,7 @@ namespace VocaluxeLib.Songs
                                     sr.Dispose();
                                     sr = null;
                                     _Song.Encoding = newEncoding;
-                                    return ReadHeader(true);
+                                    return ReadHeader(true,dontCheckFiles);
                                 }
                                 break;
                             case "TITLE":
@@ -196,15 +200,29 @@ namespace VocaluxeLib.Songs
                                 _Song.Length = value;
                                 break;
                             case "MP3":
-                                if (File.Exists(Path.Combine(_Song.Folder, value)))
-                                {
-                                    _Song.MP3FileName = value;
-                                    headerFlags |= EHeaderFlags.MP3;
+                                if (dontCheckFiles) {
+                                    if (!String.IsNullOrWhiteSpace(value)) { 
+                                        _Song.MP3FileName = value;
+                                        headerFlags |= EHeaderFlags.MP3;
+                                        _LogWarning("Can't find audio file: " + Path.Combine(_Song.Folder, value));
+                                    }
+                                    else
+                                    {
+                                        _LogError("Empty audio file value in: " + _Song.Folder);
+                                        return false;
+                                    }
                                 }
-                                else
-                                {
-                                    _LogError("Can't find audio file: " + Path.Combine(_Song.Folder, value));
-                                    return false;
+                                else { 
+                                    if (File.Exists(Path.Combine(_Song.Folder, value)))
+                                    {
+                                        _Song.MP3FileName = value;
+                                        headerFlags |= EHeaderFlags.MP3;
+                                    }
+                                    else
+                                    {
+                                        _LogError("Can't find audio file: " + Path.Combine(_Song.Folder, value));
+                                        return false;
+                                    }
                                 }
                                 break;
                             case "BPM":
@@ -440,7 +458,15 @@ namespace VocaluxeLib.Songs
                 sr.Dispose();
                 _Song._CheckFiles();
 
-                CBase.DataBase.GetDataBaseSongInfos(_Song.Artist, _Song.Title, out _Song.NumPlayed, out _Song.DateAdded, out _Song.DataBaseSongID);
+                CBase.DataBase.GetDataBaseSongInfos(_Song.Artist, _Song.Title, out _Song.NumPlayed, out _Song.DateAdded, out _Song.FileHash, out _Song.FileLastMod, out _Song.DataBaseSongID);
+
+                if (_Song.FileLastMod != currentFileMod || _Song.FileLastMod < currentFileMod || _Song.FileHash == null || _Song.FileHash.Length == 0)
+                {
+                    _Song.FileHash      = hashTextFile(filePath);
+                    _Song.FileLastMod = currentFileMod;
+
+                    CBase.DataBase.SetDataBaseSongHash(_Song.DataBaseSongID, _Song.FileHash, _Song.FileLastMod);
+                }
 
                 //Before saving this tags to .txt: Check, if ArtistSorting and Artist are equal, then don't save this tag.
                 if (String.IsNullOrEmpty(_Song.ArtistSorting))
@@ -450,6 +476,46 @@ namespace VocaluxeLib.Songs
                     _Song.TitleSorting = _Song.Title;
 
                 return true;
+            }
+
+            public static string hashTextFile(string path)
+            {
+                byte[] ubyte = File.ReadAllBytes(path);
+                byte[] newbyte = new byte[ubyte.Length];
+                int z = 0;
+                Boolean waitnextline = false;
+
+                for (int i = 0; i < ubyte.Length; i++)
+                {
+                    //skip newlines (cr lf)
+                    if (ubyte[i] == 13 || ubyte[i] == 10)
+                    {
+                        if (ubyte[i] == 10) { waitnextline = false; }
+                    }
+                    else
+                    {
+                        //skip header lines (starts with #)
+                        if (ubyte[i] == 35)
+                        {
+                            waitnextline = true;
+                        }
+                        if (waitnextline == false)
+                        {
+                            newbyte[z] = ubyte[i];
+                            z++;
+                        }
+                    }
+                }
+
+                //resize bytearray for valid hash
+                byte[] hashbytes = new byte[z];
+                for (int e = 0; e < z; e++)
+                {
+                    hashbytes[e] = newbyte[e];
+                }
+
+                byte[] hashedBytes = MD5CryptoServiceProvider.Create().ComputeHash(hashbytes);
+                return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
             }
 
             private static string _UnifyLanguage(string lang)

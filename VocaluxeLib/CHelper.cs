@@ -312,5 +312,28 @@ namespace VocaluxeLib
             }
             return bmp;
         }
+
+        /// <summary>
+        ///     Returns a valid filename from string by removing invalid characters
+        /// </summary>
+        /// <param name="fileName">String from generating filename</param>
+        /// <param name="extension">Optional: Add extension to filename</param>
+        /// <param name="fileName">Optional: Maximum filename length. Default is 50</param>
+        /// <returns>String that can be use as filename</returns>
+        public static string GetFilenameFromString(string fileName, string extension = null, int maxlength = 50)
+        {
+            foreach (char c in System.IO.Path.GetInvalidFileNameChars())
+            {
+               fileName = fileName.Replace(c, '_');
+            }
+
+            if (fileName.Length > maxlength) { 
+                fileName = fileName.Substring(0, maxlength);
+            }
+            if (extension != null) 
+                return fileName + "." + extension;
+            
+            return fileName;
+        }
     }
 }

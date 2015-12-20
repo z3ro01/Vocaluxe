@@ -15,10 +15,12 @@
 // along with Vocaluxe. If not, see <http://www.gnu.org/licenses/>.
 #endregion
 
+using System;
 using System.Windows.Forms;
 using Vocaluxe.Base;
 using VocaluxeLib;
 using VocaluxeLib.Menu;
+using VocaluxeLib.Community;
 
 namespace Vocaluxe.Screens
 {
@@ -27,7 +29,7 @@ namespace Vocaluxe.Screens
         // Version number for theme files. Increment it, if you've changed something on the theme files!
         protected override int _ScreenVersion
         {
-            get { return 2; }
+            get { return 3; }
         }
 
         private const string _SelectSlideLanguage = "SelectSlideLanguage";
@@ -36,20 +38,32 @@ namespace Vocaluxe.Screens
         private const string _SelectSlideSongSorting = "SelectSlideSongSorting";
         private const string _SelectSlideTabs = "SelectSlideTabs";
         private const string _SelectSlideTimerMode = "SelectSlideTimerMode";
+        private const string _SelectSlideComExt = "SelectSlideComext";
 
         private const string _ButtonExit = "ButtonExit";
         private const string _ButtonServer = "ButtonServer";
+        private const string _ButtonComServer = "ButtonComServer";
 
+        private EEditMode _EditMode = EEditMode.None;
+        private string inputString = null;
+
+        private const string _TextComServer = "Text9";
+#if DEBUG
+        private string themefile;
+#endif
         public override void Init()
         {
             base.Init();
-
-            _ThemeButtons = new string[] {_ButtonExit, _ButtonServer};
-            _ThemeSelectSlides = new string[] {_SelectSlideLanguage, _SelectSlideDebugLevel, _SelectSlideSongMenu, _SelectSlideSongSorting, _SelectSlideTabs, _SelectSlideTimerMode};
+            _ThemeTexts = new string[] { _TextComServer };
+            _ThemeButtons = new string[] { _ButtonExit, _ButtonServer, _ButtonComServer};
+            _ThemeSelectSlides = new string[] { _SelectSlideLanguage, _SelectSlideDebugLevel, _SelectSlideSongMenu, _SelectSlideSongSorting, _SelectSlideTabs, _SelectSlideTimerMode, _SelectSlideComExt };
         }
 
         public override void LoadTheme(string xmlPath)
         {
+#if DEBUG
+            themefile = xmlPath;
+#endif
             base.LoadTheme(xmlPath);
 
             _SelectSlides[_SelectSlideLanguage].AddValues(CLanguage.GetLanguageNames());
@@ -60,16 +74,57 @@ namespace Vocaluxe.Screens
             _SelectSlides[_SelectSlideSongSorting].SetValues<ESongSorting>((int)CConfig.Config.Game.SongSorting);
             _SelectSlides[_SelectSlideTabs].SetValues<EOffOn>((int)CConfig.Config.Game.Tabs);
             _SelectSlides[_SelectSlideTimerMode].SetValues<ETimerMode>((int)CConfig.Config.Game.TimerMode);
+            _SelectSlides[_SelectSlideComExt].SetValues<EOffOn>((int)CConfig.Config.Community.Active);
+            _Buttons[_ButtonComServer].Text.Text = CConfig.Config.Community.Server;
+            inputString = CConfig.Config.Community.Server;
+            if (CConfig.Config.Community.Active == EOffOn.TR_CONFIG_ON)
+            {
+                _Buttons[_ButtonComServer].Visible = true;
+                _Texts[_TextComServer].Visible = true;
+            }
+            else
+            {
+                _Buttons[_ButtonComServer].Visible = false;
+                _Texts[_TextComServer].Visible = false;
+            }
         }
 
         public override bool HandleInput(SKeyEvent keyEvent)
         {
+            if (_EditMode != EEditMode.None)
+            {
+                if (keyEvent.KeyPressed && !Char.IsControl(keyEvent.Unicode))
+                {
+                    inputString += keyEvent.Unicode;
+                    renderEditable();
+                    return true;
+                }
+                else if (keyEvent.Key == Keys.Back)
+                {
+                    if (inputString.Length > 0) { inputString = inputString.Remove(inputString.Length - 1); }
+                    renderEditable();
+                    return true;
+                }
+                else if (keyEvent.Key == Keys.Return || keyEvent.Key == Keys.Escape)
+                {
+                    _EditMode = EEditMode.None;
+                    renderEditable();
+                    return true;
+                }
+                return true;
+            }
+
             base.HandleInput(keyEvent);
 
             if (!keyEvent.KeyPressed)
             {
                 switch (keyEvent.Key)
                 {
+#if DEBUG
+                    case Keys.Space:
+                        ReloadTheme(themefile);
+                        break;
+#endif
                     case Keys.Escape:
                     case Keys.Back:
                         _SaveConfig();
@@ -87,8 +142,14 @@ namespace Vocaluxe.Screens
                             _SaveConfig();
                             CGraphics.FadeTo(EScreen.Options);
                         }
-                        else if (_Buttons[_ButtonServer].Selected)
+                        else if (_Buttons[_ButtonServer].Selected) { 
                             CGraphics.ShowPopup(EPopupScreens.PopupServerQR);
+                        }
+                        else if (_Buttons[_ButtonComServer].Selected)
+                        {
+                            _EditMode = EEditMode.ServerAddr;
+                            renderEditable();
+                        }
                         break;
 
                     case Keys.Left:
@@ -105,6 +166,10 @@ namespace Vocaluxe.Screens
 
         public override bool HandleMouse(SMouseEvent mouseEvent)
         {
+            if (_EditMode != EEditMode.None)
+            {
+                return true;
+            }
             base.HandleMouse(mouseEvent);
 
             if (mouseEvent.RB)
@@ -120,14 +185,39 @@ namespace Vocaluxe.Screens
                     CGraphics.FadeTo(EScreen.Options);
                     _SaveConfig();
                 }
-                else if (_Buttons[_ButtonServer].Selected)
+                else if (_Buttons[_ButtonServer].Selected) {
                     CGraphics.ShowPopup(EPopupScreens.PopupServerQR);
+                }
+                else if (_Buttons[_ButtonComServer].Selected)
+                {
+                    _EditMode = EEditMode.ServerAddr;
+                    renderEditable();
+                }
             }
             return true;
         }
 
+        public void renderEditable()
+        {
+            _Buttons[_ButtonComServer].Text.Text = inputString;
+            if (_EditMode == EEditMode.ServerAddr)
+            {
+                _Buttons[_ButtonComServer].Text.Text += "|";
+            }
+        }
+
         public override bool UpdateGame()
         {
+            if ((EOffOn)_SelectSlides[_SelectSlideComExt].Selection == EOffOn.TR_CONFIG_ON)
+            {
+                _Buttons[_ButtonComServer].Visible = true;
+                _Texts[_TextComServer].Visible = true;
+            }
+            else
+            {
+                _Buttons[_ButtonComServer].Visible = false;
+                _Texts[_TextComServer].Visible = false;
+            }
             return true;
         }
 
@@ -140,8 +230,11 @@ namespace Vocaluxe.Screens
             CConfig.Config.Game.SongSorting = (ESongSorting)_SelectSlides[_SelectSlideSongSorting].Selection;
             CConfig.Config.Game.Tabs = (EOffOn)_SelectSlides[_SelectSlideTabs].Selection;
             CConfig.Config.Game.TimerMode = (ETimerMode)_SelectSlides[_SelectSlideTimerMode].Selection;
+            CConfig.Config.Community.Active = (EOffOn)_SelectSlides[_SelectSlideComExt].Selection;
+            CConfig.Config.Community.Server = _Buttons[_ButtonComServer].Text.Text;
 
             CConfig.SaveConfig();
+            CCommunity.LoadConfig();
 
             CSongs.Sorter.SongSorting = CConfig.Config.Game.SongSorting;
             CSongs.Categorizer.Tabs = CConfig.Config.Game.Tabs;

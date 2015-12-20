@@ -37,25 +37,58 @@
       </Rect>
     </Static>
     <!-- Community -->
-    <Static Name="LoginStatus">
-      <Skin>SongMenuBG</Skin>
-      <Color Name="StaticWarningColor" />
+    <Static Name="StaticComMenu">
+      <Skin>Menu</Skin>
+      <Color Name="StaticColor" />
       <Rect>
-        <X>50</X>
-        <Y>50</Y>
-        <W>300</W>
+        <X>40</X>
+        <Y>40</Y>
+        <W>1200</W>
         <H>50</H>
-        <Z>1</Z>
+        <Z>0</Z>
       </Rect>
     </Static>
-    <Static Name="LoginAvatar">
+    <Static Name="StaticLoginAvatar">
+      <Skin />
+      <Color Name="Visible" />
+      <Rect>
+        <X>1200</X>
+        <Y>45</Y>
+        <W>41</W>
+        <H>41</H>
+        <Z>-2</Z>
+      </Rect>
+    </Static>
+    <Static Name="CommunityNewSongsArea">
       <Skin />
       <Color Name="Visible" />
       <Rect>
         <X>55</X>
-        <Y>55</Y>
-        <W>40</W>
-        <H>40</H>
+        <Y>95</Y>
+        <W>600</W>
+        <H>430</H>
+        <Z>0</Z>
+      </Rect>
+    </Static>
+    <Static Name="CommunityNewSongsTitle">
+      <Skin>Menu</Skin>
+      <Color Name="StaticWarningColor" />
+      <Rect>
+        <X>55</X>
+        <Y>530</Y>
+        <W>600</W>
+        <H>50</H>
+        <Z>0</Z>
+      </Rect>
+    </Static>
+    <Static Name="CommunityLoading">
+      <Skin>Random</Skin>
+      <Color Name="ButtonSelColor" />
+      <Rect>
+        <X>1120</X>
+        <Y>9</Y>
+        <W>30</W>
+        <H>30</H>
         <Z>0</Z>
       </Rect>
     </Static>
@@ -90,19 +123,61 @@
       <Text>TR_SCREENMAIN_TEXT_NOPROFILES</Text>
     </Text>
     <!-- Community -->
-    <Text Name="TextCOffline">
-      <X>105</X>
+    <Text Name="TextCSongTitle">
+      <X>355</X>
+      <Y>540</Y>
+      <Z>-2</Z>
+      <H>27</H>
+      <MaxW>600</MaxW>
+      <Color Name="StaticColor" />
+      <SelColor Name="TextSelColor" />
+      <Align>Center</Align>
+      <ResizeAlign>Center</ResizeAlign>
+      <Style>Normal</Style>
+      <Font>Outline</Font>
+      <Text></Text>
+    </Text>
+    <Text Name="TextCNewSongs">
+      <X>55</X>
       <Y>50</Y>
       <Z>-2</Z>
-      <H>50</H>
-      <MaxW>200</MaxW>
-      <Color Name="White" />
-      <SelColor Name="White" />
+      <H>27</H>
+      <MaxW>600</MaxW>
+      <Color Name="StaticColor" />
+      <SelColor Name="TextSelColor" />
       <Align>Left</Align>
       <ResizeAlign>Center</ResizeAlign>
       <Style>Normal</Style>
       <Font>Outline</Font>
-      <Text>You are not logged in</Text>
+      <Text>Whats new</Text>
+    </Text>
+    <Text Name="TextCEvents">
+      <X>660</X>
+      <Y>50</Y>
+      <Z>-2</Z>
+      <H>27</H>
+      <MaxW>600</MaxW>
+      <Color Name="StaticColor" />
+      <SelColor Name="TextSelColor" />
+      <Align>Left</Align>
+      <ResizeAlign>Center</ResizeAlign>
+      <Style>Normal</Style>
+      <Font>Outline</Font>
+      <Text>News and events</Text>
+    </Text>
+    <Text Name="TextCLoading">
+      <X>1240</X>
+      <Y>10</Y>
+      <Z>-2</Z>
+      <H>27</H>
+      <MaxW>300</MaxW>
+      <Color Name="StaticColor" />
+      <SelColor Name="TextSelColor" />
+      <Align>Right</Align>
+      <ResizeAlign>Center</ResizeAlign>
+      <Style>Normal</Style>
+      <Font>Outline</Font>
+      <Text>Loading</Text>
     </Text>
   </Texts>
   <Buttons>
@@ -282,8 +357,38 @@
       </SelReflection>
     </Button>
     <!-- Community -->
- 
-    
+	<Button Name="ButtonLogin">
+      <Skin></Skin>
+      <SkinSelected>SongMenuBG</SkinSelected>
+      <Rect>
+        <X>950</X>
+        <Y>45</Y>
+        <W>291</W>
+        <H>41</H>
+        <Z>0</Z>
+      </Rect>
+      <Color Name="ButtonColor" />
+      <SelColor Name="ButtonSelColor" />
+      <Text Name="Text">
+        <X>240</X>
+        <Y>7</Y>
+        <Z>0</Z>
+        <H>27</H>
+        <MaxW>250</MaxW>
+        <Color Name="ButtonTextColor" />
+        <SelColor Name="ButtonTextSelColor" />
+        <Align>Right</Align>
+        <ResizeAlign>Center</ResizeAlign>
+        <Style>Bold</Style>
+        <Font>Outline</Font>
+        <Text></Text>
+      </Text>
+      <Reflection/>
+      <SelReflection>
+        <Height>26</Height>
+        <Space>10</Space>
+      </SelReflection>
+    </Button>
   </Buttons>
   <SongMenus />
   <Lyrics />

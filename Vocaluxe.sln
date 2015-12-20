@@ -7,7 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vocaluxe", "Vocaluxe\Vocalu
 		{55F89808-4E79-4FFE-BC13-48258913F5C9} = {55F89808-4E79-4FFE-BC13-48258913F5C9}
 		{6F3E1874-F28A-40E9-AFBD-31934D593678} = {6F3E1874-F28A-40E9-AFBD-31934D593678}
 		{6F3E1874-F28A-40E9-AFBD-31934D593679} = {6F3E1874-F28A-40E9-AFBD-31934D593679}
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2} = {9C305483-015E-4063-AAB9-EF2E7326D6A2}
 		{D2B6DDEF-E0E1-4DDF-A73A-E6ACEF5C95EC} = {D2B6DDEF-E0E1-4DDF-A73A-E6ACEF5C95EC}
 		{5A4053F1-5AD5-441F-B254-D97A088127B6} = {5A4053F1-5AD5-441F-B254-D97A088127B6}
 		{54A48AF7-515C-4EDD-B395-2BFFA096050A} = {54A48AF7-515C-4EDD-B395-2BFFA096050A}
@@ -31,8 +30,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Vocaluxe.testsettings = Vocaluxe.testsettings
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PartyModeCommunityContest", "PartyModes\PartyModeCommunityContest\PartyModeCommunityContest.csproj", "{9C305483-015E-4063-AAB9-EF2E7326D6A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -359,46 +356,6 @@ Global
 		{93356718-3A0B-4784-AAE1-215065BFFC66}.ReleaseWin|x64.Build.0 = Release|x64
 		{93356718-3A0B-4784-AAE1-215065BFFC66}.ReleaseWin|x86.ActiveCfg = Release|x86
 		{93356718-3A0B-4784-AAE1-215065BFFC66}.ReleaseWin|x86.Build.0 = Release|x86
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.DebugLinux|Any CPU.ActiveCfg = DebugLinux|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.DebugLinux|Any CPU.Build.0 = DebugLinux|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.DebugLinux|Mixed Platforms.ActiveCfg = DebugLinux|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.DebugLinux|Mixed Platforms.Build.0 = DebugLinux|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.DebugLinux|x64.ActiveCfg = DebugLinux|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.DebugLinux|x64.Build.0 = DebugLinux|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.DebugLinux|x86.ActiveCfg = ReleaseWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.DebugLinux|x86.Build.0 = ReleaseWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.DebugWin|Any CPU.ActiveCfg = DebugWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.DebugWin|Any CPU.Build.0 = DebugWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.DebugWin|Mixed Platforms.ActiveCfg = DebugWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.DebugWin|Mixed Platforms.Build.0 = DebugWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.DebugWin|x64.ActiveCfg = DebugWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.DebugWin|x64.Build.0 = DebugWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.DebugWin|x86.ActiveCfg = ReleaseWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.DebugWin|x86.Build.0 = ReleaseWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.InstallerWin|Any CPU.ActiveCfg = InstallerWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.InstallerWin|Any CPU.Build.0 = InstallerWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.InstallerWin|Mixed Platforms.ActiveCfg = InstallerWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.InstallerWin|Mixed Platforms.Build.0 = InstallerWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.InstallerWin|x64.ActiveCfg = InstallerWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.InstallerWin|x64.Build.0 = InstallerWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.InstallerWin|x86.ActiveCfg = ReleaseWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.InstallerWin|x86.Build.0 = ReleaseWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.ReleaseLinux|Any CPU.ActiveCfg = ReleaseLinux|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.ReleaseLinux|Any CPU.Build.0 = ReleaseLinux|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.ReleaseLinux|Mixed Platforms.ActiveCfg = ReleaseLinux|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.ReleaseLinux|Mixed Platforms.Build.0 = ReleaseLinux|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.ReleaseLinux|x64.ActiveCfg = ReleaseLinux|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.ReleaseLinux|x64.Build.0 = ReleaseLinux|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.ReleaseLinux|x86.ActiveCfg = ReleaseWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.ReleaseLinux|x86.Build.0 = ReleaseWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.ReleaseWin|Any CPU.ActiveCfg = ReleaseWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.ReleaseWin|Any CPU.Build.0 = ReleaseWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.ReleaseWin|Mixed Platforms.ActiveCfg = ReleaseWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.ReleaseWin|Mixed Platforms.Build.0 = ReleaseWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.ReleaseWin|x64.ActiveCfg = ReleaseWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.ReleaseWin|x64.Build.0 = ReleaseWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.ReleaseWin|x86.ActiveCfg = ReleaseWin|Any CPU
-		{9C305483-015E-4063-AAB9-EF2E7326D6A2}.ReleaseWin|x86.Build.0 = ReleaseWin|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

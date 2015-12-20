@@ -163,8 +163,20 @@ namespace Vocaluxe.Base
             cfg.Server = CConfig.Config.Community.Server;
             cfg.Name = CConfig.Config.Community.Name;
             cfg.AutosendScores = CConfig.Config.Community.AutosendScores;
-            cfg.AuthProfile = CConfig.Config.Community.AuthProfile;
+            cfg.AuthUser = CConfig.Config.Community.AuthUser;
+            cfg.AuthUUID = CConfig.Config.Community.AuthUUID;
+            cfg.Lang    = CConfig.Config.Game.Language;
             return cfg;
+        }
+
+        public void SetCommunityConfig(SCommunityConfig cfg)
+        {
+            CConfig.Config.Community.Server = cfg.Server;
+            CConfig.Config.Community.Name = cfg.Name;
+            CConfig.Config.Community.AutosendScores = cfg.AutosendScores;
+            CConfig.Config.Community.AuthUser = cfg.AuthUser;
+            CConfig.Config.Community.AuthUUID = cfg.AuthUUID;
+            CConfig.SaveConfig();
         }
     }
 
@@ -443,6 +455,11 @@ namespace Vocaluxe.Base
         {
             CDraw.DrawRectReflection(color, rect, space, height);
         }
+
+        public void EnqueueTextureUpdate(ref CTextureRef texture, Bitmap bitmap)
+        {
+            CDraw.EnqueueTextureUpdate(texture, bitmap);
+        }
     }
 
     class CBGraphics : IGraphics
@@ -687,7 +704,7 @@ namespace Vocaluxe.Base
             CProfiles.AddProfileChangedCallback(notification);
         }
 
-        public string GetCommunityProfile(int profileID)
+        public SProfileComAuth GetCommunityProfile(int profileID)
         {
             return CProfiles.GetCommunityProfile(profileID);
         }
@@ -812,6 +829,30 @@ namespace Vocaluxe.Base
         {
             CSongs.PrevCategory();
         }
+
+        public int FindSongIdByDbId(int dbId)
+        {
+            return CSongs.FindSongIdByDbId(dbId);
+        }
+
+        public int FindSongIdByHash(string hash)
+        {
+            return CSongs.FindSongIdByHash(hash);
+        }
+
+        public bool ReloadSong(int songId, string newFileName = null)
+        {
+            return CSongs.ReloadSong(songId, newFileName);
+        }
+
+        public CSong CheckSongFile(string filename)
+        {
+            return CSongs.CheckSongFile(filename);
+        }
+        public bool AddNewSong(string filename)
+        {
+            return CSongs.AddNewSong(filename);
+        }
     }
 
     class CBvideo : IVideo
@@ -922,6 +963,11 @@ namespace Vocaluxe.Base
             return CCover.NoCover;
         }
 
+        public CTextureRef GenerateCoverFromBitmap(string text, ECoverGeneratorType type, Bitmap coverBmp)
+        {
+            return CCover.GenerateCoverFromBitmap(text, type, coverBmp);
+        }
+
         public CTextureRef GenerateCover(string text, ECoverGeneratorType type, CSong firstSong)
         {
             return CCover.GenerateCover(text, type, firstSong);
@@ -935,9 +981,19 @@ namespace Vocaluxe.Base
             return CDataBase.GetCover(fileName, ref texture, coverSize);
         }
 
-        public bool GetDataBaseSongInfos(string artist, string title, out int numPlayed, out DateTime dateAdded, out int highscoreID)
+        public bool SetDataBaseSongHash(int dbId, string fileHash, DateTime fileLastMod)
         {
-            return CDataBase.GetDataBaseSongInfos(artist, title, out numPlayed, out dateAdded, out highscoreID);
+            return CDataBase.SetDataBaseSongHash(dbId, fileHash, fileLastMod);
+        }
+
+        public bool GetDataBaseSongInfos(string artist, string title, out int numPlayed, out DateTime dateAdded, out string fileHash, out DateTime fileLastMod, out int highscoreID)
+        {
+            return CDataBase.GetDataBaseSongInfos(artist, title, out numPlayed, out dateAdded, out fileHash, out fileLastMod, out highscoreID);
+        }
+
+        public bool GetDataBaseSongByHash(string hash, out int songId)
+        {
+            return CDataBase.GetDataBaseSongByHash(hash, out songId);
         }
     }
 

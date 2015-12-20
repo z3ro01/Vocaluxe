@@ -96,11 +96,12 @@ namespace Vocaluxe.Lib.Database
             //Do nothing
         }
 
-        public bool GetDataBaseSongInfos(string artist, string title, out int numPlayed, out DateTime dateAdded, out int highscoreID)
+        public bool GetDataBaseSongInfos(string artist, string title, out int numPlayed, out DateTime dateAdded, out string fileHash, out DateTime fileLastMod, out int highscoreID)
         {
             string sArtist;
             string sTitle;
             int songID;
+
             using (var connection = new SQLiteConnection())
             {
                 connection.ConnectionString = "Data Source=" + _FilePath;
@@ -113,11 +114,52 @@ namespace Vocaluxe.Lib.Database
 
                 using (var command = new SQLiteCommand(connection))
                 {
-                    songID = _GetDataBaseSongID(artist, title, 0, command);
+                    songID = _GetDataBaseSongID(artist, title, 0, null, new DateTime(1970,1,1,0,0,0), command);
                     highscoreID = songID;
                 }
             }
-            return _GetDataBaseSongInfos(songID, out sArtist, out sTitle, out numPlayed, out dateAdded, _FilePath);
+            return _GetDataBaseSongInfos(songID, out sArtist, out sTitle, out numPlayed, out dateAdded, out fileHash, out fileLastMod, _FilePath);
+        }
+
+        public bool SetDataBaseSongHash(int dbId, string fileHash, DateTime fileLastMod)
+        {
+            using (var connection = new SQLiteConnection())
+            {
+                connection.ConnectionString = "Data Source=" + _FilePath;
+                try
+                {
+                    connection.Open();
+                }
+                catch (Exception) { }
+
+                using (var command = new SQLiteCommand(connection))
+                {
+                    command.CommandText = "UPDATE Songs SET [FileHash] = @filehash, [FileLastMod] = @lastmod WHERE [ID] = @id";
+                    command.Parameters.Add("@filehash", DbType.String, 0).Value = fileHash;
+                    command.Parameters.Add("@lastmod", DbType.Int64, 0).Value = fileLastMod.Ticks;
+                    command.Parameters.Add("@id", DbType.Int32, 0).Value = dbId;
+                    command.ExecuteNonQuery();
+                }
+            }
+            return true;
+        }
+
+        public bool GetDataBaseSongByHash(string hash, out int songId) {
+            using (var connection = new SQLiteConnection())
+            {
+                connection.ConnectionString = "Data Source=" + _FilePath;
+                try
+                {
+                    connection.Open();
+                }
+                catch (Exception) { }
+
+                using (var command = new SQLiteCommand(connection))
+                {
+                    songId = _GetDataBaseSongIDByHash(hash, command);
+                }
+            }
+            return true;
         }
 
         public void IncreaseSongCounter(int dataBaseSongID)
@@ -155,7 +197,7 @@ namespace Vocaluxe.Lib.Database
 
                 using (var command = new SQLiteCommand(connection))
                 {
-                    int dataBaseSongID = _GetDataBaseSongID(artist, title, numPlayed, command);
+                    int dataBaseSongID = _GetDataBaseSongID(artist, title, numPlayed, null, new DateTime(1970,1,1,0,0,0), command);
                     int result = _AddScore(playerName, score, lineNr, date, medley, duet, shortSong, difficulty, dataBaseSongID, command);
                     return result;
                 }
@@ -350,10 +392,27 @@ namespace Vocaluxe.Lib.Database
             if (song == null)
                 return -1;
 
-            return _GetDataBaseSongID(song.Artist, song.Title, 0, command);
+            return _GetDataBaseSongID(song.Artist, song.Title, 0, song.FileHash, song.FileLastMod, command);
         }
 
-        private int _GetDataBaseSongID(string artist, string title, int defNumPlayed, SQLiteCommand command)
+        private int _GetDataBaseSongIDByHash(string hash, SQLiteCommand command)
+        {
+            command.CommandText = "SELECT id FROM Songs WHERE [FileHash] = @filehash LIMIT 1";
+            command.Parameters.Add("@filehash", DbType.String, 0).Value = hash;
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            if (reader != null && reader.HasRows)
+            {
+                reader.Read();
+                int id = reader.GetInt32(0);
+                reader.Dispose();
+                return id;
+            }
+
+            return -1;
+        }
+
+        private int _GetDataBaseSongID(string artist, string title, int defNumPlayed, string fileHash, DateTime fileLastMod, SQLiteCommand command)
         {
             command.CommandText = "SELECT id FROM Songs WHERE [Title] = @title AND [Artist] = @artist";
             command.Parameters.Add("@title", DbType.String, 0).Value = title;
@@ -372,12 +431,14 @@ namespace Vocaluxe.Lib.Database
             if (reader != null)
                 reader.Close();
 
-            command.CommandText = "INSERT INTO Songs (Title, Artist, NumPlayed, DateAdded) " +
-                                  "VALUES (@title, @artist, @numplayed, @dateadded)";
+            command.CommandText = "INSERT INTO Songs (Title, Artist, NumPlayed, DateAdded, FileHash, FileLastMod) " +
+                                  "VALUES (@title, @artist, @numplayed, @dateadded, @filehash, @filelmt)";
             command.Parameters.Add("@title", DbType.String, 0).Value = title;
             command.Parameters.Add("@artist", DbType.String, 0).Value = artist;
             command.Parameters.Add("@numplayed", DbType.Int32, 0).Value = defNumPlayed;
             command.Parameters.Add("@dateadded", DbType.Int64, 0).Value = DateTime.Now.Ticks;
+            command.Parameters.Add("@filehash", DbType.String, 0).Value = fileHash;
+            command.Parameters.Add("@filelmt", DbType.Int64, 0).Value = fileLastMod.Ticks;
             command.ExecuteNonQuery();
 
             command.CommandText = "SELECT id FROM Songs WHERE [Title] = @title AND [Artist] = @artist";
@@ -397,12 +458,14 @@ namespace Vocaluxe.Lib.Database
             return -1;
         }
 
-        private bool _GetDataBaseSongInfos(int songID, out string artist, out string title, out int numPlayed, out DateTime dateAdded, string filePath)
+        private bool _GetDataBaseSongInfos(int songID, out string artist, out string title, out int numPlayed, out DateTime dateAdded, out string fileHash, out DateTime fileLastMod, string filePath)
         {
             artist = String.Empty;
             title = String.Empty;
             numPlayed = 0;
             dateAdded = DateTime.Today;
+            fileHash = String.Empty;
+            fileLastMod = new DateTime(1970, 1, 1, 0, 0, 0);
 
             using (var connection = new SQLiteConnection())
             {
@@ -419,7 +482,7 @@ namespace Vocaluxe.Lib.Database
 
                 using (var command = new SQLiteCommand(connection))
                 {
-                    command.CommandText = "SELECT Artist, Title, NumPlayed, DateAdded FROM Songs WHERE [id] = @id";
+                    command.CommandText = "SELECT Artist, Title, NumPlayed, DateAdded, FileHash, FileLastMod FROM Songs WHERE [id] = @id";
                     command.Parameters.Add("@id", DbType.String, 0).Value = songID;
 
                     SQLiteDataReader reader;
@@ -435,10 +498,16 @@ namespace Vocaluxe.Lib.Database
                     if (reader != null && reader.HasRows)
                     {
                         reader.Read();
+
                         artist = reader.GetString(0);
                         title = reader.GetString(1);
                         numPlayed = reader.GetInt32(2);
                         dateAdded = new DateTime(reader.GetInt64(3));
+                        if (!reader.IsDBNull(4)) 
+                            fileHash = reader.GetString(4);
+                        if (!reader.IsDBNull(5)) 
+                            fileLastMod = new DateTime(reader.GetInt64(5));
+
                         reader.Dispose();
                         return true;
                     }
@@ -475,7 +544,7 @@ namespace Vocaluxe.Lib.Database
                     command.ExecuteNonQuery();
 
                     command.CommandText = "CREATE TABLE IF NOT EXISTS Songs ( id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                                          "Artist TEXT NOT NULL, Title TEXT NOT NULL, NumPlayed INTEGER, DateAdded BIGING);";
+                                          "Artist TEXT NOT NULL, Title TEXT NOT NULL, NumPlayed INTEGER, DateAdded BIGINT, FileHash TEXT, FileLastMod BINGINT);";
                     command.ExecuteNonQuery();
 
                     command.CommandText = "CREATE TABLE IF NOT EXISTS Scores ( id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
@@ -892,6 +961,8 @@ namespace Vocaluxe.Lib.Database
                 updated &= _ConvertV1toV2(connection);
             if (currentVersion < 3)
                 updated &= _ConvertV2toV3(connection);
+            if (currentVersion < 4)
+                updated &= _ConvertV3toV4(connection);
 
             return updated;
         }
@@ -963,6 +1034,17 @@ namespace Vocaluxe.Lib.Database
             return true;
         }
 
+        private bool _ConvertV3toV4(SQLiteConnection connection)
+        {
+            var command = new SQLiteCommand(connection) { CommandText = "ALTER TABLE Songs ADD FileHash TEXT; ALTER TABLE Songs ADD FileLastMod BIGINT" };
+
+            command.ExecuteNonQuery();
+            command.CommandText = "UPDATE Version SET [Value] = @version";
+            command.Parameters.Add("@version", DbType.Int32, 0).Value = 4;
+            command.ExecuteNonQuery();
+            return true;
+        }
+
         private bool _ImportData(string sourceDBPath)
         {
             #region open db
@@ -1006,11 +1088,13 @@ namespace Vocaluxe.Lib.Database
                         int duet = source.GetInt32(6);
                         int shortsong = source.GetInt32(7);
                         int diff = source.GetInt32(8);
+                        string filehash = String.Empty;
+                        DateTime filelastmod;
 
                         string artist, title;
                         DateTime dateadded;
                         int numplayed;
-                        if (_GetDataBaseSongInfos(songid, out artist, out title, out numplayed, out dateadded, sourceDBPath))
+                        if (_GetDataBaseSongInfos(songid, out artist, out title, out numplayed, out dateadded, out filehash, out filelastmod, sourceDBPath))
                             AddScore(player, score, linenr, date, medley, duet, shortsong, diff, artist, title, numplayed, _FilePath);
                     }
                     #endregion import table scores

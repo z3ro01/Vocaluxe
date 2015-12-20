@@ -59,6 +59,7 @@ namespace VocaluxeLib
 
         bool GetLoadOldThemeFiles();
         SCommunityConfig GetCommunityConfig();
+        void SetCommunityConfig(SCommunityConfig config);
     }
 
     public interface ISettings
@@ -138,6 +139,7 @@ namespace VocaluxeLib
 
         CTextureRef AddTexture(string fileName);
         CTextureRef EnqueueTexture(string fileName);
+        void EnqueueTextureUpdate(ref CTextureRef texture, Bitmap bitmap);
         void RemoveTexture(ref CTextureRef texture);
 
         void DrawRect(SColorF color, SRectF rect);
@@ -222,7 +224,7 @@ namespace VocaluxeLib
         bool IsProfileIDValid(int profileID);
         bool IsGuest(int profileID);
         void AddProfileChangedCallback(ProfileChangedCallback notification);
-        string GetCommunityProfile(int profileID);
+        SProfileComAuth GetCommunityProfile(int profileID);
     }
 
     public interface ISongs
@@ -254,6 +256,12 @@ namespace VocaluxeLib
 
         void NextCategory();
         void PrevCategory();
+
+        int FindSongIdByDbId(int dbId);
+        int FindSongIdByHash(string hash);
+        bool ReloadSong(int songId, string newFileName = null);
+        CSong CheckSongFile(string filename);
+        bool AddNewSong(string filename);
     }
 
     public interface IVideo
@@ -289,12 +297,15 @@ namespace VocaluxeLib
     {
         CTextureRef GetNoCover();
         CTextureRef GenerateCover(string text, ECoverGeneratorType type, CSong firstSong);
+        CTextureRef GenerateCoverFromBitmap(string text, ECoverGeneratorType type, Bitmap coverBmp);
     }
 
     public interface IDataBase
     {
         bool GetCover(string fileName, ref CTextureRef texture, int coverSize);
-        bool GetDataBaseSongInfos(string artist, string title, out int numPlayed, out DateTime dateAdded, out int highscoreID);
+        bool SetDataBaseSongHash(int dbId, string fileHash, DateTime fileLastMod);
+        bool GetDataBaseSongInfos(string artist, string title, out int numPlayed, out DateTime dateAdded, out string fileHash, out DateTime fileLastMod, out int highscoreID);
+        bool GetDataBaseSongByHash(string hash, out int songId);
     }
 
     public interface IControllers

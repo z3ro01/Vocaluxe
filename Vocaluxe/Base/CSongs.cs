@@ -161,6 +161,26 @@ namespace Vocaluxe.Base
             return _Songs.FirstOrDefault(song => song.ID == songID);
         }
 
+        public static int FindSongIdByDbId(int dbId)
+        {
+            var s = _Songs.Find(song => song.DataBaseSongID == dbId);
+            if (s != null)
+            {
+                return s.ID;
+            }
+            return -1;
+        }
+
+        public static int FindSongIdByHash(string hash)
+        {
+            var s = _Songs.Find(song => song.FileHash == hash);
+            if (s != null)
+            {
+                return s.ID;
+            }
+            return -1;
+        }
+
         public static void AddPartySongSung(int songID)
         {
             foreach (CCategory category in Categories)
@@ -329,6 +349,47 @@ namespace Vocaluxe.Base
             Filter.SetOptions(searchString, duetOptions);
             Sorter.SetOptions(sorting, ignoreArticles);
             Categorizer.Tabs = tabs;
+        }
+
+        public static CSong CheckSongFile(string filename)
+        {
+            return CSong.LoadSong(filename, true);
+        }
+
+        public static bool AddNewSong(string filename)
+        {
+            CSong newsong = CSong.LoadSong(filename);
+            if (newsong == null)
+                return false;
+
+            newsong.ID = _Songs.Count;
+            if (newsong.LoadNotes())
+            {
+                _Songs.Add(newsong);
+                return true;
+            }
+            return false;
+        }
+
+        public static bool ReloadSong(int songId, string newFileName = null)
+        {
+            var song = GetSong(songId);
+            if (song == null)
+            {
+                return false;
+            }
+            CSong updatedsong = CSong.LoadSong(System.IO.Path.Combine(song.Folder, song.FileName));
+            if (updatedsong == null)
+                return false;
+
+            updatedsong.ID = songId;
+
+            if (updatedsong.LoadNotes()) { 
+                _Songs[songId] = updatedsong;
+                return true;
+            }
+
+            return false;
         }
 
         public static void LoadSongs()

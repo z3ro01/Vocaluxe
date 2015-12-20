@@ -25,7 +25,7 @@ using VocaluxeLib;
 using VocaluxeLib.Game;
 using VocaluxeLib.Menu;
 using VocaluxeLib.Songs;
-using VocaluxeLib.Network;
+using VocaluxeLib.Community;
 
 namespace Vocaluxe.Screens
 {
@@ -110,7 +110,7 @@ namespace Vocaluxe.Screens
 
                     case Keys.Space:
                         if (CCommunity.isEnabled())
-                            if (CCommunity.canSendNow())
+                            if (CCommunity.CanSendScoresNow())
                                 _ComConfirm();
                         break;
                 }
@@ -440,17 +440,15 @@ namespace Vocaluxe.Screens
             CParty.LeavingScore();
         }
 
-        ///<summary>
-        ///Community - Send players scores to server
-        ///</summary>
         #region Community
-        public void _ComUserEvents(SPopupGeneralEvent eventData)
+
+        public void _ComSendScoreCallback(SPopupGeneralEvent eventData)
         {
-            if (eventData.name.Equals("onKeyReturn") || eventData.name.Equals("onMouseLB"))
+            if (eventData.Name.Equals("onKeyReturn") || eventData.Name.Equals("onMouseLB"))
             {
-                if (eventData.target != null)
+                if (eventData.Target != null)
                 {
-                    if (eventData.target.Equals("ButtonYes") || eventData.target.Equals("ButtonOk"))
+                    if (eventData.Target.Equals("ButtonYes") || eventData.Target.Equals("ButtonOk"))
                     {
                         CGraphics.HidePopup(EPopupScreens.PopupGeneral);
                         _ComLoading();
@@ -463,13 +461,13 @@ namespace Vocaluxe.Screens
                             }
                         });
                     }
-                    else if (eventData.target.Equals("ButtonNo"))
+                    else if (eventData.Target.Equals("ButtonNo"))
                     {
                         CGraphics.HidePopup(EPopupScreens.PopupGeneral);
                     }
                 }
             }
-            else if (eventData.name.Equals("onKeyEscape") || eventData.name.Equals("onKeyBack"))
+            else if (eventData.Name.Equals("onKeyEscape") || eventData.Name.Equals("onKeyBack"))
             {
                 CGraphics.HidePopup(EPopupScreens.PopupGeneral);
             }
@@ -477,60 +475,17 @@ namespace Vocaluxe.Screens
 
         private void _ComAlert(string message)
         {
-            var popup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
-            popup.SetDefaults();
-            popup.AddEventHandler("onKeyReturn,onKeyEscape,onKeyBack,onMouseLB", delegate(SPopupGeneralEvent eventData)
-            {
-                if (eventData.name.Equals("onMouseLB") && eventData.target != null)
-                {
-                    CGraphics.HidePopup(EPopupScreens.PopupGeneral);
-                }
-                else if (eventData.name.IndexOf("onKey") > -1)
-                {
-                    CGraphics.HidePopup(EPopupScreens.PopupGeneral);
-                }
-            });
-
-            SPopupGeneral data = new SPopupGeneral();
-            data.TextTitle = "TR_COMMUNITY_ERROR";
-            data.type = EPopupGeneralType.Alert;
-            data.size = EPopupGeneralSize.Medium;
-            data.ButtonOkLabel = "Ok";
-            data.TextMessage = message;
-            popup.SetDisplayData(data);
-            CGraphics.ShowPopup(EPopupScreens.PopupGeneral);
+            CPopupHelper.Alert("TR_COMMUNITY_ERROR", message);
         }
 
         private void _ComLoading()
         {
-            var popup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
-            popup.SetDefaults();
-            SPopupGeneral data = new SPopupGeneral();
-            data.TextTitle = CCommunity.getName();
-            data.type = EPopupGeneralType.Loading;
-            data.size = EPopupGeneralSize.Small;
-            data.TextMessage =  CLanguage.Translate("TR_COMMUNITY_SENDING");
-            popup.SetDisplayData(data);
-            CGraphics.ShowPopup(EPopupScreens.PopupGeneral);
+            CPopupHelper.Loading("", "TR_COMMUNITY_SENDING");
         }
 
         private void _ComConfirm()
         {
-            var popup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
-            popup.SetDefaults();
-            popup.AddEventHandler("onKeyReturn,onKeyEscape,onKeyBack", (Action<SPopupGeneralEvent>)_ComUserEvents);
-            popup.AddEventHandler("onMouseLB", (Action<SPopupGeneralEvent>)_ComUserEvents);
-
-            SPopupGeneral data = new SPopupGeneral();
-            data.TextTitle = CLanguage.Translate("TR_COMMUNITY_CONFIRMTITLE").Replace("%v", CCommunity.getName());
-            data.type = EPopupGeneralType.Confirm;
-            data.size = EPopupGeneralSize.Small;
-            data.ButtonYesLabel = "TR_COMMUNITY_CONFIRMYES";
-            data.ButtonNoLabel = "TR_COMMUNITY_CONFIRMNO";
-            data.DefaultButton = "ButtonYes";
-            data.TextMessage = CLanguage.Translate("TR_COMMUNITY_CONFIRMSEND");
-            popup.SetDisplayData(data);
-            CGraphics.ShowPopup(EPopupScreens.PopupGeneral);
+            CPopupHelper.Confirm(CLanguage.Translate("TR_COMMUNITY_CONFIRMTITLE").Replace("%v", CCommunity.getName()), "TR_COMMUNITY_CONFIRMSEND", (Action<SPopupGeneralEvent>)_ComSendScoreCallback);
         }
 
         private void _SendComStatistics()
@@ -538,6 +493,8 @@ namespace Vocaluxe.Screens
             if (CCommunity.isEnabled())
             {
                 var toSend = new SComQueryScore();
+                toSend.username = CCommunity.config.AuthUser;
+                toSend.uuid = CCommunity.config.AuthUUID;
 
                 if (CParty.CurrentPartyModeID > -1)
                 {
@@ -563,70 +520,50 @@ namespace Vocaluxe.Screens
                     {
                         //if player has communityProfile
                         var nprofile = CProfiles.GetCommunityProfile(players[p].ProfileID);
-                        if (String.IsNullOrEmpty(nprofile))
+                        if (nprofile.valid)
                         {
-                            guests++;
-                            continue;
-                        }
-                        else
-                        {
-                            SComProfile nprofiledata = CCommunity.getProfileByFile(nprofile);
-                            if (String.IsNullOrEmpty(nprofiledata.Email))
+                            var pdata = new SComQueryScoreItem();
+                            pdata.score = players[p].Points;
+                            pdata.playerId = players[p].ProfileID;
+                            pdata.playerName = CProfiles.GetPlayerName(players[p].ProfileID, p);
+                            pdata.username = nprofile.username;
+                            pdata.uuid = nprofile.uuid;
+                            pdata.gameMode = players[p].GameMode.ToString();
+                            pdata.goldenbonus = players[p].PointsGoldenNotes;
+                            pdata.linebonus = players[p].PointsLineBonus;
+                            pdata.difficulty = CProfiles.GetDifficulty(players[p].ProfileID).ToString();
+                            if (players[p].SongFinished)
                             {
-                                guests++;
-                                continue;
+                                songfinished = true;
                             }
-                            else
+                            if (players[p].GameMode == EGameMode.TR_GAMEMODE_DUET)
                             {
-                                var pdata = new SComQueryScoreItem();
-                                pdata.score = players[p].Points;
-                                pdata.playerId = players[p].ProfileID;
-                                pdata.playerName = CProfiles.GetPlayerName(players[p].ProfileID, p);
-                                pdata.username = nprofiledata.Email;
-                                pdata.password = nprofiledata.Password;
-                                pdata.gameMode = players[p].GameMode.ToString();
-                                pdata.goldenbonus = players[p].PointsGoldenNotes;
-                                pdata.linebonus = players[p].PointsLineBonus;
-                                pdata.difficulty = CProfiles.GetDifficulty(players[p].ProfileID).ToString();
-                                if (players[p].SongFinished)
-                                {
-                                    songfinished = true;
-                                }
-                                if (players[p].GameMode == EGameMode.TR_GAMEMODE_DUET)
-                                {
-                                    pdata.voicenr = players[p].VoiceNr + 1;
-                                }
-
-                                if (string.IsNullOrEmpty(toSend.gameMode))
-                                {
-                                    toSend.gameMode = pdata.gameMode;
-                                }
-                                CSong song = CSongs.GetSong(players[p].SongID);
-                                pdata.artist = song.Artist;
-                                pdata.title = song.Title;
-                                pdata.txtHash = string.IsNullOrEmpty(song.FileHash) ? CCommunity.hashTextFile(song.Folder, song.FileName) : song.FileHash;
-                                pdata.round = round;
-
-                                if (string.IsNullOrEmpty(song.FileHash))
-                                {
-                                    song.FileHash = pdata.txtHash;
-                                }
-                                toSend.scores[scindex] = pdata;
-                                scindex++;
+                                pdata.voicenr = players[p].VoiceNr + 1;
                             }
+                            if (string.IsNullOrEmpty(toSend.gameMode))
+                            {
+                                toSend.gameMode = pdata.gameMode;
+                            }
+                            CSong song = CSongs.GetSong(players[p].SongID);
+                            pdata.artist = song.Artist;
+                            pdata.title = song.Title;
+                            pdata.txtHash = song.FileHash;
+                            pdata.round = round;
+                            toSend.scores[scindex] = pdata;
+                            scindex++;
                         }
+                        else { guests++; continue;  }
                     }
                 }
 
                 toSend.guests = guests;
-                Console.WriteLine("CANSEND? " + songfinished + " / " + scindex);
-                if (CCommunity.canAutoSend())
+
+                if (CCommunity.CanAutoSendScores())
                 {
                     if (songfinished && scindex > 0)
                     {
                         _ComLoading();
-                        CCommunity.setScores(toSend);
-                        //display a sending window
+                        CCommunity.SetScores(toSend);
                         CCommunity.sendScoreAsync(delegate(SComResponse result)
                         {
                             CGraphics.HidePopup(EPopupScreens.PopupGeneral);
@@ -642,7 +579,7 @@ namespace Vocaluxe.Screens
                 {
                     if (songfinished && scindex>0)
                     {
-                        CCommunity.setScores(toSend);
+                        CCommunity.SetScores(toSend);
                         _ComConfirm();
                     }
                 }

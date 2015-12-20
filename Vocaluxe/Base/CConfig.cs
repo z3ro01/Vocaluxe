@@ -29,7 +29,7 @@ using Vocaluxe.Lib.Webcam;
 using VocaluxeLib;
 using VocaluxeLib.Profile;
 using VocaluxeLib.Xml;
-using VocaluxeLib.Network;
+using VocaluxeLib.Community;
 
 namespace Vocaluxe.Base
 {
@@ -168,11 +168,9 @@ namespace Vocaluxe.Base
             [DefaultValue(EOffOn.TR_CONFIG_OFF)] public EOffOn Active;
             [DefaultValue(null)] public string Server;
             [DefaultValue("Vocaluxe Community")] public string Name;
-            [DefaultValue(EOffOn.TR_CONFIG_OFF)]
-            public EOffOn AutosendScores;
-            public string AuthProfile;
+            [DefaultValue(EOffOn.TR_CONFIG_OFF)] public EOffOn AutosendScores;
             [DefaultValue(null)] public string AuthUser;
-            [DefaultValue(null)] public string AuthToken;
+            [DefaultValue(null)] public string AuthUUID;
         }
 
 #pragma warning restore 649

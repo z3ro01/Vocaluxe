@@ -48,10 +48,8 @@ namespace VocaluxeLib.Profile
         [XmlIgnore] public string FilePath;
         [DefaultValue(null)] public byte[] PasswordHash;
         [DefaultValue(null)] public byte[] PasswordSalt;
-        [DefaultValue(null)] public string CommunityProfile;
         [DefaultValue(null)] public string CommunityUsername;
-        [DefaultValue(null)] public EOffOn CommunityStatus;
-        [DefaultValue(null)] public Guid UID;
+        [DefaultValue(null)] public string CommunityUUID;
 
         public EGameDifficulty Difficulty;
 
@@ -96,10 +94,6 @@ namespace VocaluxeLib.Profile
             try
             {
                 xml.Deserialize(FilePath, this);
-                if (UID == null)
-                {
-                    UID = new Guid();
-                }
             }
             catch (Exception e)
             {

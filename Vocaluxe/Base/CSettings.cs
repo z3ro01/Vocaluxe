@@ -58,7 +58,7 @@ namespace Vocaluxe.Base
 
         public const ERevision VersionRevision = ERevision.Beta;
 
-        public const int DatabaseHighscoreVersion = 3;
+        public const int DatabaseHighscoreVersion = 4;
         public const int DatabaseCoverVersion = 1;
         public const int DatabaseCreditsRessourcesVersion = 1;
 

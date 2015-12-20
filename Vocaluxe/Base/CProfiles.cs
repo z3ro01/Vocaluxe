@@ -458,20 +458,31 @@ namespace Vocaluxe.Base
             _Profiles[profileID].Active = option;
         }
 
-        public static void SetCommunityProfile(int profileID, string profileName)
+        public static void SetCommunityProfile(int profileID, string username, string uuid)
         {
             if (!IsProfileIDValid(profileID))
                 return;
 
-            _Profiles[profileID].CommunityProfile = profileName;
+            _Profiles[profileID].CommunityUsername = username;
+            _Profiles[profileID].CommunityUUID = uuid;
         }
 
-        public static String GetCommunityProfile(int profileID)
+        public static SProfileComAuth GetCommunityProfile(int profileID)
         {
-            if (!IsProfileIDValid(profileID))
-                return "";
+            var obj = new SProfileComAuth();
+            if (!IsProfileIDValid(profileID)) { 
+                obj.valid = false;
+                return obj;
+            }
 
-            return _Profiles[profileID].CommunityProfile;
+            obj.username = _Profiles[profileID].CommunityUsername;
+            obj.uuid = _Profiles[profileID].CommunityUUID;
+            if (!String.IsNullOrWhiteSpace(obj.username) && !String.IsNullOrWhiteSpace(obj.uuid)) { obj.valid = true; }
+            else
+            {
+                obj.valid = false;
+            }
+            return obj;
         }
 
         public static bool IsGuestProfile(int profileID)

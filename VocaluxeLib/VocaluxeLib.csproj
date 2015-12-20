@@ -75,7 +75,10 @@
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -85,6 +88,9 @@
     <Compile Include="CEncoding.cs" />
     <Compile Include="CFading.cs" />
     <Compile Include="CFont.cs" />
+    <Compile Include="Community\CComMainScreen.cs" />
+    <Compile Include="Community\CComSong.cs" />
+    <Compile Include="Community\CPopupHelper.cs" />
     <Compile Include="CVideoStream.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
@@ -114,10 +120,7 @@
     <Compile Include="Draw\CTextureRef.cs" />
     <Compile Include="Menu\IThemeable.cs" />
     <Compile Include="Menu\SingNotes\CNoteBars.cs" />
-    <Compile Include="Network\CCommunity.cs" />
-    <Compile Include="Network\CFileDownloader.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Community\CCommunity.cs" />
     <Compile Include="Utils\Combinatorics\CCombinations.cs" />
     <Compile Include="Utils\FLVExtractor\FLVExtractor.cs" />
     <Compile Include="XmlStructs.cs" />
