@@ -67,7 +67,7 @@ namespace Vocaluxe.Screens
         {
             base.Init();
 
-            var texts = new List<string> { _TextSong };
+            var texts = new List<string> {_TextSong};
 
             _BuildTextStrings(ref texts);
 
@@ -78,7 +78,7 @@ namespace Vocaluxe.Screens
 
             _ThemeStatics = statics.ToArray();
 
-            _ThemeScreenSettings = new string[] { _ScreenSettingShortScore, _ScreenSettingShortRating, _ScreenSettingShortDifficulty, _ScreenSettingAnimationDirection };
+            _ThemeScreenSettings = new string[] {_ScreenSettingShortScore, _ScreenSettingShortRating, _ScreenSettingShortDifficulty, _ScreenSettingAnimationDirection};
 
             _StaticPointsBarDrawnPoints = new double[CSettings.MaxNumPlayer];
 
@@ -89,7 +89,7 @@ namespace Vocaluxe.Screens
 
         public override bool HandleInput(SKeyEvent keyEvent)
         {
-            if (keyEvent.KeyPressed) { }
+            if (keyEvent.KeyPressed) {}
             else
             {
                 switch (keyEvent.Key)
@@ -225,10 +225,10 @@ namespace Vocaluxe.Screens
 
         private void _BuildTextStrings(ref List<string> texts)
         {
-            _TextNames = new string[CSettings.MaxNumPlayer, CSettings.MaxNumPlayer];
-            _TextScores = new string[CSettings.MaxNumPlayer, CSettings.MaxNumPlayer];
-            _TextRatings = new string[CSettings.MaxNumPlayer, CSettings.MaxNumPlayer];
-            _TextDifficulty = new string[CSettings.MaxNumPlayer, CSettings.MaxNumPlayer];
+            _TextNames = new string[CSettings.MaxNumPlayer,CSettings.MaxNumPlayer];
+            _TextScores = new string[CSettings.MaxNumPlayer,CSettings.MaxNumPlayer];
+            _TextRatings = new string[CSettings.MaxNumPlayer,CSettings.MaxNumPlayer];
+            _TextDifficulty = new string[CSettings.MaxNumPlayer,CSettings.MaxNumPlayer];
 
             for (int numplayer = 0; numplayer < CSettings.MaxNumPlayer; numplayer++)
             {
@@ -253,9 +253,9 @@ namespace Vocaluxe.Screens
 
         private void _BuildStaticStrings(ref List<string> statics)
         {
-            _StaticPointsBar = new string[CSettings.MaxNumPlayer, CSettings.MaxNumPlayer];
-            _StaticPointsBarBG = new string[CSettings.MaxNumPlayer, CSettings.MaxNumPlayer];
-            _StaticAvatar = new string[CSettings.MaxNumPlayer, CSettings.MaxNumPlayer];
+            _StaticPointsBar = new string[CSettings.MaxNumPlayer,CSettings.MaxNumPlayer];
+            _StaticPointsBarBG = new string[CSettings.MaxNumPlayer,CSettings.MaxNumPlayer];
+            _StaticAvatar = new string[CSettings.MaxNumPlayer,CSettings.MaxNumPlayer];
 
             for (int numplayer = 0; numplayer < CSettings.MaxNumPlayer; numplayer++)
             {

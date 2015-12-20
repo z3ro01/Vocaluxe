@@ -113,11 +113,6 @@ namespace VocaluxeLib.PartyModes
         {
             CBase.Graphics.FadeTo(EScreen.Song);
         }
-
-        public virtual SComPartyOptions GetCommunityOptions()
-        {
-            return new SComPartyOptions();
-        }
         #endregion Implementation
 
         #region Abstract members

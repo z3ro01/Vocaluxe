@@ -88,7 +88,7 @@ namespace Vocaluxe.Base
 
         public ESongMenu GetSongMenuType()
         {
-            return CConfig.Config.Game.SongMenu;
+            return CConfig.SongMenu;
         }
 
         public EOffOn GetVideosToBackground()
@@ -156,7 +156,17 @@ namespace Vocaluxe.Base
             return CConfig.LoadOldThemeFiles;
         }
 
-        public SCommunityConfig GetCommunityConfig()
+        public void AddSongMenuListener(OnSongMenuChanged onSongMenuChanged)
+        {
+            CConfig.SongMenuChanged += onSongMenuChanged;
+        }
+
+        public void RemoveSongMenuListener(OnSongMenuChanged onSongMenuChanged)
+        {
+            CConfig.SongMenuChanged -= onSongMenuChanged;
+        }
+
+		public SCommunityConfig GetCommunityConfig()
         {
             SCommunityConfig cfg = new SCommunityConfig();
             cfg.Active = CConfig.Config.Community.Active;
@@ -168,7 +178,7 @@ namespace Vocaluxe.Base
             cfg.Lang    = CConfig.Config.Game.Language;
             return cfg;
         }
-
+        
         public void SetCommunityConfig(SCommunityConfig cfg)
         {
             CConfig.Config.Community.Server = cfg.Server;

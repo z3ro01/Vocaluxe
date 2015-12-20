@@ -239,7 +239,7 @@
       <SkinSelected>Button</SkinSelected>
       <Rect>
         <X>145</X>
-        <Y>650</Y>
+        <Y>600</Y>
         <W>150</W>
         <H>50</H>
         <Z>0</Z>
@@ -274,7 +274,7 @@
       <SkinSelected>Button</SkinSelected>
       <Rect>
         <X>355</X>
-        <Y>650</Y>
+        <Y>600</Y>
         <W>150</W>
         <H>50</H>
         <Z>0</Z>
@@ -309,7 +309,7 @@
       <SkinSelected>Button</SkinSelected>
       <Rect>
         <X>565</X>
-        <Y>650</Y>
+        <Y>600</Y>
         <W>150</W>
         <H>50</H>
         <Z>0</Z>
@@ -344,7 +344,7 @@
       <SkinSelected>Button</SkinSelected>
       <Rect>
         <X>775</X>
-        <Y>650</Y>
+        <Y>600</Y>
         <W>150</W>
         <H>50</H>
         <Z>0</Z>
@@ -379,7 +379,7 @@
       <SkinSelected>Button</SkinSelected>
       <Rect>
         <X>985</X>
-        <Y>650</Y>
+        <Y>600</Y>
         <W>150</W>
         <H>50</H>
         <Z>0</Z>
@@ -468,7 +468,7 @@
       <SkinSelected>Button</SkinSelected>
       <Rect>
         <X>985</X>
-        <Y>650</Y>
+        <Y>600</Y>
         <W>150</W>
         <H>50</H>
         <Z>0</Z>

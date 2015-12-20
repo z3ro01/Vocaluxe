@@ -77,7 +77,7 @@ namespace Vocaluxe.Base
 #endif
 
             [DefaultValue(ETextureQuality.TR_CONFIG_TEXTURE_MEDIUM)] public ETextureQuality TextureQuality;
-            [XmlRanged(32, 1024), DefaultValue(128)] public int CoverSize;
+            [XmlRanged(32, 1024), DefaultValue(256)] public int CoverSize;
 
             [DefaultValue(1024)] public int ScreenW;
             [DefaultValue(576)] public int ScreenH;
@@ -90,6 +90,7 @@ namespace Vocaluxe.Base
             [DefaultValue(60f)] public float MaxFPS;
             [DefaultValue(EOffOn.TR_CONFIG_ON)] public EOffOn VSync;
             [DefaultValue(EOffOn.TR_CONFIG_ON)] public EOffOn FullScreen;
+            [DefaultValue(EOffOn.TR_CONFIG_OFF)] public EOffOn Stretch;
             [DefaultValue(0.4f), XmlRanged(0, 3)] public float FadeTime;
         }
 
@@ -127,7 +128,9 @@ namespace Vocaluxe.Base
         {
             [DefaultValue(CSettings.FallbackLanguage)] public string Language;
             public string[] SongFolder;
+            // ReSharper disable MemberHidesStaticFromOuterClass
             [DefaultValue(ESongMenu.TR_CONFIG_TILE_BOARD)] public ESongMenu SongMenu;
+            // ReSharper restore MemberHidesStaticFromOuterClass
             [DefaultValue(ESongSorting.TR_CONFIG_ARTIST)] public ESongSorting SongSorting;
             [DefaultValue(EOffOn.TR_CONFIG_ON)] public EOffOn IgnoreArticles;
             [DefaultValue(10)] public float ScoreAnimationTime;
@@ -194,15 +197,18 @@ namespace Vocaluxe.Base
 
         public static SConfig Config;
         public static bool LoadOldThemeFiles;
+        public static event OnSongMenuChanged SongMenuChanged;
 
         //Folders
         public static readonly List<string> SongFolders = new List<string>
             {
-                Path.Combine(CSettings.ProgramFolder, CSettings.FolderNameSongs)
-
-#if INSTALLER
-                ,
+#if WIN
+            CSettings.FolderNameSongs
+#elif INSTALLER
+            CSettings.FolderNameSongs,
                 Path.Combine(CSettings.DataFolder, CSettings.FolderNameSongs)           
+#elif LINUX
+            Path.Combine(CSettings.DataFolder, CSettings.FolderNameSongs)
 #endif
             };
         /// <summary>
@@ -211,10 +217,14 @@ namespace Vocaluxe.Base
         /// </summary>
         public static readonly List<string> ProfileFolders = new List<string>
             {
-#if INSTALLER
-                Path.Combine(Environment.CurrentDirectory, CSettings.FolderNameProfiles),
+#if WIN
+            CSettings.FolderNameProfiles
+#elif INSTALLER
+            CSettings.FolderNameProfiles,
+            Path.Combine(CSettings.DataFolder, CSettings.FolderNameProfiles)
+#elif LINUX
+            Path.Combine(CSettings.DataFolder, CSettings.FolderNameProfiles)
 #endif
-                Path.Combine(CSettings.DataFolder, CSettings.FolderNameProfiles)
             };
 
         //Lists to save parameters and values
@@ -288,6 +298,19 @@ namespace Vocaluxe.Base
             }
         }
 
+        public static ESongMenu SongMenu
+        {
+            get { return Config.Game.SongMenu; }
+            set
+            {
+                if (Config.Game.SongMenu == value)
+                    return;
+                Config.Game.SongMenu = value;
+                if (SongMenuChanged != null)
+                    SongMenuChanged();
+            }
+        }
+
         public static void Init()
         {
             if (_Initialized)
@@ -321,10 +344,14 @@ namespace Vocaluxe.Base
             else
                 Config = xml.DeserializeString<SConfig>("<root />");
 
-            if (Config.Game.SongFolder.Length > 0)
+            if (Config.Game.SongFolder.Length > 0 && Config.Game.SongFolder[0] != "")
             {
                 SongFolders.Clear();
                 SongFolders.AddRange(Config.Game.SongFolder);
+            }
+            else
+            {
+                Config.Game.SongFolder = SongFolders.ToArray();
             }
             if ((Config.Game.ScoreAnimationTime > 0 && Config.Game.ScoreAnimationTime < 1) || Config.Game.ScoreAnimationTime < 0)
                 Config.Game.ScoreAnimationTime = 1;
@@ -481,6 +508,8 @@ namespace Vocaluxe.Base
                     return "Server Encryption On/Off: " + CHelper.ListStrings(Enum.GetNames(typeof(EOffOn)));
                 case "ServerPort":
                     return "Server Port (default: 3000) [1..65535]";
+                case "Stretch":
+                    return "Stretch view to full window size: " + CHelper.ListStrings(Enum.GetNames(typeof(EOffOn)));
                 default:
                     return null;
             }

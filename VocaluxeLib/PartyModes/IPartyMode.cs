@@ -122,7 +122,5 @@ namespace VocaluxeLib.PartyModes
         void FinishedSinging();
         void LeavingScore();
         void LeavingHighscore();
-
-        SComPartyOptions GetCommunityOptions();
     }
 }

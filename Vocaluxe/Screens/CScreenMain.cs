@@ -73,11 +73,14 @@ namespace Vocaluxe.Screens
         {
             base.Init();
 
+            _ThemeStatics = new string[] {"StaticMenuBar", _StaticWarningProfiles};
+            _ThemeButtons = new string[] {_ButtonSing, _ButtonParty, _ButtonOptions, _ButtonProfiles, _ButtonExit};
+            _ThemeTexts = new string[] {_TextRelease, _TextWarningProfiles};
             _ThemeStatics = new string[] { "StaticMenuBar", _StaticWarningProfiles, _LoginAvatar, _StaticComMenu, _StaticSongsArea, _StaticCSongBg, _StaticLoading };
             _ThemeButtons = new string[] { _ButtonLogin, _ButtonSing, _ButtonParty, _ButtonOptions, _ButtonProfiles, _ButtonExit };
             _ThemeTexts = new string[] { _TextRelease, _TextWarningProfiles, _TextCSongTitle, _TextCNewSongs, _TextCEvents, _TextCLoading };
             CommunityInit();
-        }
+                }
 
         public override void LoadTheme(string xmlPath)
         {

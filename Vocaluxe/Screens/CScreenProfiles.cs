@@ -51,6 +51,8 @@ namespace Vocaluxe.Screens
         private const string _SelectSlideAvatars = "SelectSlideAvatars";
         private const string _SelectSlideUserRole = "SelectSlideUserRole";
         private const string _SelectSlideActive = "SelectSlideActive";
+        private const string _SelectSlideCommunityProfile = "SelectSlideCommunityProfile";
+        private const string _TextCommunityProfile = "Text7";
         private const string _ButtonPlayerName = "ButtonPlayerName";
         private const string _ButtonExit = "ButtonExit";
         private const string _ButtonSave = "ButtonSave";
@@ -293,8 +295,6 @@ namespace Vocaluxe.Screens
                 _SelectSlides[_SelectSlideDifficulty].Selection = (int)CProfiles.GetDifficulty(_SelectSlides[_SelectSlideProfiles].SelectedTag);
                 _SelectSlides[_SelectSlideUserRole].Selection = (int)CProfiles.GetUserRoleProfile(_SelectSlides[_SelectSlideProfiles].SelectedTag);
                 _SelectSlides[_SelectSlideActive].Selection = (int)CProfiles.GetActive(_SelectSlides[_SelectSlideProfiles].SelectedTag);
-               // _SelectSlides[_SelectSlideCommunityProfile].SelectedTag = CCommunity.getProfileIdByFile(CProfiles.GetCommunityProfile(_SelectSlides[_SelectSlideProfiles].SelectedTag));
-
                 
                 int avatarID = CProfiles.GetAvatarID(_SelectSlides[_SelectSlideProfiles].SelectedTag);
                 _SelectSlides[_SelectSlideAvatars].SelectedTag = avatarID;
@@ -693,7 +693,6 @@ namespace Vocaluxe.Screens
                     _SelectSlides[_SelectSlideUserRole].Selection = (int)CProfiles.GetUserRoleProfile(selectedProfileID);
                     _SelectSlides[_SelectSlideActive].Selection = (int)CProfiles.GetActive(selectedProfileID);
                     _SelectSlides[_SelectSlideAvatars].SelectedTag = CProfiles.GetAvatarID(selectedProfileID);
-                   // _SelectSlides[_SelectSlideCommunityProfile].SelectedTag = CCommunity.getProfileIdByFile(CProfiles.GetCommunityProfile(selectedProfileID));
                 }
 
                 if (_EditMode == EEditMode.PlayerName)

@@ -577,14 +577,14 @@ namespace Vocaluxe.Screens
                 else
                 {
                     for (int i = 0; i < CGame.NumPlayers; i++)
-                        CGame.Players[i].VoiceNr = voiceAssignments[i];
+                        CGame.Players [i].VoiceNr = voiceAssignments [i];
                 }
             }
 
+            //Attention: This needs to be done after player-assignment!
             _SingNotes[_SingBars].Init(CGame.NumPlayers);
 
-
-                _DynamicLyricsTop = false;
+            _DynamicLyricsTop = false;
             _DynamicLyricsBottom = false;
 
             foreach (CNoteBars notes in _SingNotes[_SingBars].PlayerNotes)
@@ -858,6 +858,32 @@ namespace Vocaluxe.Screens
             _Texts[_TextSongName].Visible = false;
             _Texts[_TextDuetName1].Visible = false;
             _Texts[_TextDuetName2].Visible = false;
+
+            List<string> staticsExtra = new List<string> ();
+            List<string> textsExtra = new List<string> ();
+
+            //Everything Static or Text with Extra should be only visible
+            //If Player-Number matches CGame.NumPlayers
+            foreach(CStatic st in _Statics)
+                if(st.GetThemeName().StartsWith("StaticExtra"))
+                    staticsExtra.Add(st.GetThemeName());
+
+            foreach(CText tx in _Texts)
+                if(tx.GetThemeName().StartsWith("TextExtra"))
+                    textsExtra.Add(tx.GetThemeName());
+
+            string curN = "N"+(CGame.NumPlayers);
+            foreach (string st in staticsExtra) 
+            {
+                string n = st.Substring(st.Length - 2);
+                _Statics[st].Visible = n == curN;        
+            }
+
+            foreach (string tx in textsExtra) 
+            {
+                string n = tx.Substring(tx.Length - 2);
+                _Texts[tx].Visible = n == curN;        
+            }
 
             for (int numplayer = 0; numplayer < CSettings.MaxNumPlayer; numplayer++)
             {
