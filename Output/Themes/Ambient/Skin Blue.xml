@@ -256,8 +256,11 @@
     <Plus>Plus.png</Plus>
     <Random>Random.png</Random>
     <PopupBG>Popup.png</PopupBG>
+<<<<<<< HEAD
     <PopupMediumBG>PopupMedium.png</PopupMediumBG>
     <PopupBigBG>PopupBig.png</PopupBigBG>
+=======
+>>>>>>> caa46763cd12f81832b5e9f39f5fc0ae08d06b1a
     <ScrollUp>ScrollUp.png</ScrollUp>
     <ScrollDown>ScrollDown.png</ScrollDown>
   </Skins>
