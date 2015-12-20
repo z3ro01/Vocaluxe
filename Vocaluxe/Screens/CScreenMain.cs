@@ -66,6 +66,7 @@ namespace Vocaluxe.Screens
         private CComMainScreen newsArea;
         private Boolean _newsAreaVisible = false;
         private Boolean _ThemeLoaded = false;
+        private Boolean _LoadingAnimDirection = false;
 
         //CParticleEffect Snowflakes;
         public override void Init()
@@ -227,9 +228,25 @@ namespace Vocaluxe.Screens
                 CComUpdated = false;
             }
 
+            //loading indicator
             if (_Statics[_StaticLoading].Visible == true)
             {
-                _Statics[_StaticLoading].Alpha = _Statics[_StaticLoading].Alpha == 1 ? _Statics[_StaticLoading].Alpha = 0 : _Statics[_StaticLoading].Alpha = 1;
+                var alpha = _Statics[_StaticLoading].Alpha;
+                if (!_LoadingAnimDirection)
+                {
+                    if (_Statics[_StaticLoading].Alpha == 1) { _LoadingAnimDirection = true; }
+                    else {
+                        alpha += 0.05f;
+                    }
+                }
+                else
+                {
+                    if (_Statics[_StaticLoading].Alpha == 0) { _LoadingAnimDirection = false; }
+                    else {
+                        alpha -= 0.05f;
+                    }
+                }
+                _Statics[_StaticLoading].Alpha = alpha.Clamp(0f, 1f);
             }
 
             return true;
@@ -277,9 +294,6 @@ namespace Vocaluxe.Screens
         private void _OnCommunityEvent(SComEvent eventData)
         {
             //Community status changed (login or connection)
-
-            Console.WriteLine(eventData.eventType.ToString());
-
             CComUpdated = true;
             if (eventData.eventType == EComEventType.loginStatus && eventData.status == 1) { 
                 newsArea.OnLoggedIn();
@@ -313,9 +327,8 @@ namespace Vocaluxe.Screens
         {
             _Statics[_LoginAvatar].Alpha = 1;
             _Buttons[_ButtonLogin].Text.Alpha = 1;
-
             //load default avatar
-            if (CCommunity.isEnabled() && _Avatar != null)
+            if (CCommunity.isEnabled() && _Avatar == null)
             {
                 foreach (string path in CConfig.ProfileFolders)
                 {
@@ -407,6 +420,7 @@ namespace Vocaluxe.Screens
                         }
                     }
                 }
+                //not ready for auth
                 else
                 {
                     _Buttons[_ButtonLogin].Text.Text = CLanguage.Translate("TR_SCREENMAIN_TEXT_CLOGIN");
@@ -416,6 +430,8 @@ namespace Vocaluxe.Screens
                     {
                         _Statics[_LoginAvatar].Texture = _Avatar.Texture;
                     }
+                    _Statics[_StaticLoading].Visible = false;
+                    _Texts[_TextCLoading].Visible = false;
                 }
             }
             else

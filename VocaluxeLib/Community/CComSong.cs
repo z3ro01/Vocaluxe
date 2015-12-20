@@ -160,8 +160,6 @@ namespace VocaluxeLib.Community
 
                     _DownloadProgressCallback = delegate(SComDownloadStatus progress)
                     {
-                        //Console.WriteLine("Progress: " + progress.Percentage);
-                       // Console.WriteLine("Progress: " + progress.BytesReceived + " / "+progress.TotalBytes);
                         if (!silent)
                         {
                             var popup = CBase.Graphics.GetPopup(EPopupScreens.PopupGeneral);
@@ -337,8 +335,6 @@ namespace VocaluxeLib.Community
                         if (newSong == null)
                         {
                             CPopupHelper.Alert("Update error", "Cant load update file!");
-
-                            Console.WriteLine("Cant load update file;" + updateFile);
                             if (callback != null)
                                 callback(false);
                         }

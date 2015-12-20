@@ -127,7 +127,6 @@ namespace VocaluxeLib.Community
 
                             if (news.items[x].coverUrl != null)
                             {
-                                Console.WriteLine(news.items[x].coverUrl);
                                 tt.coverUrl = news.items[x].coverUrl;
                                 tt.coverLoaded = false;
                             }
