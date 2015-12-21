@@ -250,6 +250,8 @@
     <Plus>Plus.png</Plus>
     <Random>Random.png</Random>
     <PopupBG>Popup.png</PopupBG>
+    <PopupMediumBG>PopupMedium.png</PopupMediumBG>
+    <PopupBigBG>PopupBig.png</PopupBigBG>
     <ScrollUp>ScrollUp.png</ScrollUp>
     <ScrollDown>ScrollDown.png</ScrollDown>
   </Skins>

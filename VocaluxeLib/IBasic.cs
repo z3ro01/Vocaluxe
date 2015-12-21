@@ -159,6 +159,10 @@ namespace VocaluxeLib
         IMenu GetNextScreen();
         EScreen GetNextScreenType();
         IMenu GetScreen(EScreen screen);
+
+        IMenu GetPopup(EPopupScreens popupScreen);
+        void ShowPopup(EPopupScreens popupScreen);
+        void HidePopup(EPopupScreens popupScreen);
     }
 
     public interface ILog

@@ -15,6 +15,8 @@
 // along with Vocaluxe. If not, see <http://www.gnu.org/licenses/>.
 #endregion
 
+using System;
+
 namespace VocaluxeLib.Menu
 {
     public interface IMenu
@@ -33,6 +35,14 @@ namespace VocaluxeLib.Menu
         bool HandleMouse(SMouseEvent mouseEvent);
         bool HandleInputThemeEditor(SKeyEvent keyEvent);
         bool HandleMouseThemeEditor(SMouseEvent mouseEvent);
+
+        //PopupScreenGeneral related functions
+        void SetDefaults();
+        void AddEventHandler(string eventType, Action<SPopupGeneralEvent> callback);
+        void RemoveAllEventHandler();
+        void SetDisplayData(SPopupGeneral data);
+        SPopupGeneral GetDisplayData();
+        void SetProgressData(SPopupGeneralProgress data);
 
         bool UpdateGame();
         void Draw();

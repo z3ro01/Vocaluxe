@@ -384,4 +384,39 @@ namespace VocaluxeLib
         public int ID;
     }
     #endregion Game
+
+    #region PopupScreen
+    public struct SPopupGeneral
+    {
+        public EPopupGeneralType Type;
+        public EPopupGeneralSize Size;
+        public string TextTitle;
+        public string TextMessage;
+        public string ButtonYesLabel;
+        public string ButtonNoLabel;
+        public string ButtonOkLabel;
+        public string DefaultButton;
+        public bool ProgressBar1Visible;
+        public bool ProgressBar2Visible;
+        public string ProgressBar1Title;
+        public string ProgressBar2Title;
+        public string Username;
+        public string Password;
+    }
+
+    public struct SPopupGeneralProgress
+    {
+        public int Target;
+        public string Title;
+        public float Percentage;
+        public float Loaded;
+        public float Total;
+    }
+
+    public struct SPopupGeneralEvent
+    {
+        public string Target;
+        public string Name;
+    }
+    #endregion
 }
