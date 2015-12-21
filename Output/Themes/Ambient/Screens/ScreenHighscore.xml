@@ -2,7 +2,7 @@
 <Screen xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Informations>
     <ScreenName>ScreenHighscore</ScreenName>
-    <ScreenVersion>2</ScreenVersion>
+    <ScreenVersion>3</ScreenVersion>
   </Informations>
   <Backgrounds>
     <Background Name="Background1">
@@ -38,7 +38,21 @@
     </Static>
   </Statics>
   <Texts>
-    <Text Name="Text1">
+	<Text Name="HighScoreHelper">
+      <X>60</X>
+      <Y>690</Y>
+      <Z>0</Z>
+      <H>20</H>
+      <MaxW>0</MaxW>
+      <Color Name="StaticColor" />
+      <SelColor Name="TextSelColor" />
+      <Align>Left</Align>
+      <ResizeAlign>Center</ResizeAlign>
+      <Style>Bold</Style>
+      <Font>Outline</Font>
+      <Text>TR_COMMUNITY_HS_HELPER</Text>
+    </Text>
+    <Text Name="HighScoreText">
       <X>60</X>
       <Y>50</Y>
       <Z>0</Z>
@@ -641,7 +655,7 @@
       <Text />
     </Text>
   </Texts>
-  <Buttons />
+  <Buttons/>
   <SongMenus />
   <Lyrics />
   <SelectSlides />

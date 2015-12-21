@@ -176,6 +176,7 @@ namespace Vocaluxe.Base
             cfg.AuthUser = CConfig.Config.Community.AuthUser;
             cfg.AuthUUID = CConfig.Config.Community.AuthUUID;
             cfg.Lang    = CConfig.Config.Game.Language;
+            cfg.Version = CSettings.GetVersion();
             return cfg;
         }
         

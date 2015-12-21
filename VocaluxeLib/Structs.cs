@@ -427,6 +427,7 @@ namespace VocaluxeLib
         public string AuthUser;
         public string AuthUUID;
         public string Lang;
+        public string Version;
     }
 
     public struct SProfileComAuth

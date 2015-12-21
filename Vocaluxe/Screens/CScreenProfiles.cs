@@ -52,7 +52,6 @@ namespace Vocaluxe.Screens
         private const string _SelectSlideUserRole = "SelectSlideUserRole";
         private const string _SelectSlideActive = "SelectSlideActive";
         private const string _SelectSlideCommunityProfile = "SelectSlideCommunityProfile";
-        private const string _TextCommunityProfile = "Text7";
         private const string _ButtonPlayerName = "ButtonPlayerName";
         private const string _ButtonExit = "ButtonExit";
         private const string _ButtonSave = "ButtonSave";

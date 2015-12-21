@@ -340,11 +340,11 @@ namespace Vocaluxe.Screens
             {
                 if (CParty.CurrentPartyModeID > -1)
                 {
-                    var ComPartyOpts = CParty.GetCommunityOptions();
+                   /*  var ComPartyOpts = CParty.GetCommunityOptions();
                     if (ComPartyOpts.CanLoadScores)
                     {
                         _NetScoresAvailable = true;
-                    }
+                    }*/
                 }
                 else
                 {
@@ -622,7 +622,9 @@ namespace Vocaluxe.Screens
 
             if (CParty.CurrentPartyModeID > -1)
             {
-                var ComPartyOpts = CParty.GetCommunityOptions();
+                return;
+
+                /*var ComPartyOpts = CParty.GetCommunityOptions();
                 if (ComPartyOpts.CanLoadScores)
                 {
                     data.username = ComPartyOpts.QueryUsername != null ? ComPartyOpts.QueryUsername : null;
@@ -640,7 +642,7 @@ namespace Vocaluxe.Screens
                     {
                         data.id = ComPartyOpts.QueryId;
                     }
-                }
+                }*/
             }
             else
             {

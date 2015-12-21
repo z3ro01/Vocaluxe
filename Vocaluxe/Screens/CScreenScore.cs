@@ -34,7 +34,7 @@ namespace Vocaluxe.Screens
         // Version number for theme files. Increment it, if you've changed something on the theme files!
         protected override int _ScreenVersion
         {
-            get { return 4; }
+            get { return 3; }
         }
 
         private const string _TextSong = "TextSong";
@@ -498,12 +498,13 @@ namespace Vocaluxe.Screens
 
                 if (CParty.CurrentPartyModeID > -1)
                 {
-                    var ComOptions = CParty.GetCommunityOptions();
+                   /* var ComOptions = CParty.GetCommunityOptions();
                     if (!ComOptions.CanSendScores)
                     {
                         return;
                     }
-                    toSend.partyMode = ComOptions.PartyModeName;
+                    toSend.partyMode = ComOptions.PartyModeName;*/
+                    return;
                 }
 
                 bool songfinished = false;

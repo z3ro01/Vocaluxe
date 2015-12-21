@@ -164,6 +164,11 @@ namespace Vocaluxe.Base
         public const float SlideShowImageTime = 3500f;
         public const float SlideShowFadeTime = 500f;
 
+        public static string GetVersion()
+        {
+            return _Version;
+        }
+
         private static AssemblyName _Assembly
         {
             get { return Assembly.GetExecutingAssembly().GetName(); }
@@ -173,6 +178,7 @@ namespace Vocaluxe.Base
         {
             get { return _Assembly.Name; }
         }
+
         private static string _Version
         {
             get
