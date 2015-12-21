@@ -340,7 +340,7 @@ namespace Vocaluxe.Screens
                     pb1.Percentage = 0;
                     pb1.Title = "Downloading xyz / "+pb2.Loaded;
                     popup.SetProgressData(pb1);
-                    pb2.Title = "Downloading " + pb2.Loaded + "/" + pb2.Total;
+                    pb2.Title = "Downloading "+pb2.Loaded+"/"+pb2.Total;
                     popup.SetProgressData(pb2);
                 }
                 else

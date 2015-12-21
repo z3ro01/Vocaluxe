@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Vocaluxe. If not, see <http://www.gnu.org/licenses/>.
 #endregion
-
 using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
@@ -90,7 +89,7 @@ namespace Vocaluxe.Screens
         private SPopupGeneralProgress _ProgressBar1 = new SPopupGeneralProgress();
         private SPopupGeneralProgress _ProgressBar2 = new SPopupGeneralProgress();
         private string editField = null;
- 
+
         #region Event handling
         private List<evHandler> eventHandlers;
 
@@ -242,11 +241,11 @@ namespace Vocaluxe.Screens
                     }
                     else if (editField.Equals("ButtonPassword"))
                     {
-                        if (_DisplayData.Password != null &&_DisplayData.Password.Length > 0) { _DisplayData.Password = _DisplayData.Password.Remove(_DisplayData.Password.Length - 1); }
+                        if (_DisplayData.Password != null && _DisplayData.Password.Length > 0) { _DisplayData.Password = _DisplayData.Password.Remove(_DisplayData.Password.Length - 1); }
                     }
                     renderEditables();
                     return true;
-                
+
                 }
                 else if (keyEvent.Key == Keys.Return || keyEvent.Key == Keys.Tab)
                 {
@@ -322,8 +321,9 @@ namespace Vocaluxe.Screens
                                     {
                                         editField = key;
                                     }
-                                    else if(editField == key) {
-                                         editField = null;
+                                    else if (editField == key)
+                                    {
+                                        editField = null;
                                     }
                                     else { editField = key; }
                                     renderEditables();
@@ -464,7 +464,7 @@ namespace Vocaluxe.Screens
                 _animTimer.Start();
             }
         }
-       
+
         public void _onTimerEvent(object sender, EventArgs e)
         {
             if (_animDirection >= 0)
@@ -499,9 +499,10 @@ namespace Vocaluxe.Screens
         {
             if (data.Total > 0 && data.Percentage == 0)
             {
-                data.Percentage = (float)Math.Round(data.Loaded / data.Total * 100,2);
+                data.Percentage = (float)Math.Round(data.Loaded / data.Total * 100, 2);
             }
-            if (data.Target == 1) {
+            if (data.Target == 1)
+            {
                 _ProgressBar1 = data;
             }
             else { _ProgressBar2 = data; }
@@ -566,7 +567,7 @@ namespace Vocaluxe.Screens
                 _Texts[_TextMediums[4]].Text = _DisplayData.TextMessage;
             }
 
-            _Texts[_TextMediumLoginUser].Visible     = true;
+            _Texts[_TextMediumLoginUser].Visible = true;
             _Texts[_TextMediumLoginPassword].Visible = true;
 
             _Buttons[_ButtonUsername].Visible = true;
@@ -602,7 +603,8 @@ namespace Vocaluxe.Screens
             {
                 _Buttons[_ButtonPassword].Text.Text = "";
             }
-            if (editField != null) { 
+            if (editField != null)
+            {
                 if (editField.Equals("ButtonUsername"))
                 {
                     _Buttons[_ButtonUsername].Text.Text += "|";
@@ -801,7 +803,8 @@ namespace Vocaluxe.Screens
             _renderedDisplayMode = _DisplayData.Type;
         }
 
-        private void renderProgressBars() {
+        private void renderProgressBars()
+        {
             int pbwidth = 640;
             if (_DisplayData.Type == EPopupGeneralType.Loading && _DisplayData.Size == EPopupGeneralSize.Medium)
             {
@@ -889,7 +892,7 @@ namespace Vocaluxe.Screens
 
                         if (_TextPos == 0)
                         {
-                            _Buttons[_ButtonMediumUp].Visible   = false;
+                            _Buttons[_ButtonMediumUp].Visible = false;
                             _Buttons[_ButtonMediumDown].Visible = true;
                         }
                         else if (_TextPos == _TextLines.Count - _MediumTextLines)
