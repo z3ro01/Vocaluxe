@@ -270,8 +270,8 @@ namespace VocaluxeLib
 
     public struct SPopupGeneral
     {
-        public EPopupGeneralType type;
-        public EPopupGeneralSize size;
+        public EPopupGeneralType Type;
+        public EPopupGeneralSize Size;
         public string TextTitle;
         public string TextMessage;
         public string ButtonYesLabel;
@@ -288,17 +288,17 @@ namespace VocaluxeLib
 
     public struct SPopupGeneralProgress
     {
-        public int target;
-        public string title;
-        public float percentage;
-        public float loaded;
-        public float total;
+        public int Target;
+        public string Title;
+        public float Percentage;
+        public float Loaded;
+        public float Total;
     }
 
     public struct SPopupGeneralEvent
     {
-        public string target;
-        public string name;
+        public string Target;
+        public string Name;
     }
 
     #endregion Drawing

@@ -170,16 +170,16 @@ namespace Vocaluxe.Screens
 
             if (type.Equals("Confirm.Small"))
             {
-                data.type = EPopupGeneralType.Confirm;
-                data.size = EPopupGeneralSize.Small;
+                data.Type = EPopupGeneralType.Confirm;
+                data.Size = EPopupGeneralSize.Small;
                 data.ButtonYesLabel = "YES";
                 data.ButtonNoLabel = "NO";
                 data.TextMessage = "Its a small confirm test.";
             }
             else if (type.Equals("Confirm.Medium"))
             {
-                data.type = EPopupGeneralType.Confirm;
-                data.size = EPopupGeneralSize.Medium;
+                data.Type = EPopupGeneralType.Confirm;
+                data.Size = EPopupGeneralSize.Medium;
                 data.ButtonYesLabel = "YES";
                 data.ButtonNoLabel = "NO";
                 data.DefaultButton = "ButtonYes";
@@ -187,8 +187,8 @@ namespace Vocaluxe.Screens
             }
             else if (type.Equals("Confirm.Big"))
             {
-                data.type = EPopupGeneralType.Confirm;
-                data.size = EPopupGeneralSize.Big;
+                data.Type = EPopupGeneralType.Confirm;
+                data.Size = EPopupGeneralSize.Big;
                 data.ButtonYesLabel = "YES";
                 data.ButtonNoLabel = "NO";
                 data.DefaultButton = "ButtonNo";
@@ -199,29 +199,29 @@ namespace Vocaluxe.Screens
             }
             else if (type.Equals("Alert.Small"))
             {
-                data.type = EPopupGeneralType.Alert;
-                data.size = EPopupGeneralSize.Small;
+                data.Type = EPopupGeneralType.Alert;
+                data.Size = EPopupGeneralSize.Small;
                 data.ButtonOkLabel = "YES";
                 data.TextMessage = "Its a small alert test.";
             }
             else if (type.Equals("Alert.Medium"))
             {
-                data.type = EPopupGeneralType.Alert;
-                data.size = EPopupGeneralSize.Medium;
+                data.Type = EPopupGeneralType.Alert;
+                data.Size = EPopupGeneralSize.Medium;
                 data.ButtonOkLabel = "YES";
                 data.TextMessage = "Its a medium alert popup,\nwith multiline text support.\nDo you see? :)";
             }
             else if (type.Equals("Alert.Big"))
             {
-                data.type = EPopupGeneralType.Alert;
-                data.size = EPopupGeneralSize.Big;
+                data.Type = EPopupGeneralType.Alert;
+                data.Size = EPopupGeneralSize.Big;
                 data.ButtonOkLabel = "YES";
                 data.TextMessage = "Its a big alert popup,\nwith multiline text support.\nDo you see? :)";
             }
             else if (type.Equals("Loading.Small"))
             {
-                data.type = EPopupGeneralType.Loading;
-                data.size = EPopupGeneralSize.Small;
+                data.Type = EPopupGeneralType.Loading;
+                data.Size = EPopupGeneralSize.Small;
                 data.TextMessage = "Loading simple text.";
                 data.ButtonNoLabel = "Cancel";
             }
@@ -246,8 +246,8 @@ namespace Vocaluxe.Screens
             data.TextTitle   = "Login to somewhere";
             data.TextMessage = "";
            
-            data.type = EPopupGeneralType.Login;
-            data.size = EPopupGeneralSize.Medium;
+            data.Type = EPopupGeneralType.Login;
+            data.Size = EPopupGeneralSize.Medium;
 
             data.ButtonNoLabel = "Cancel";
             data.ButtonYesLabel = "Login!";
@@ -257,15 +257,15 @@ namespace Vocaluxe.Screens
 
         public void PopupLoginCallback(SPopupGeneralEvent eventData)
         {
-            if (eventData.name.Equals("onKeyEscape") 
-                || (eventData.name.Equals("onKeyReturn") && eventData.target.Equals("ButtonNo"))
-                || (eventData.name.Equals("onMouseLB") && eventData.target.Equals("ButtonNo"))
+            if (eventData.Name.Equals("onKeyEscape")
+                || (eventData.Name.Equals("onKeyReturn") && eventData.Target.Equals("ButtonNo"))
+                || (eventData.Name.Equals("onMouseLB") && eventData.Target.Equals("ButtonNo"))
             )
             {
                 CGraphics.HidePopup(EPopupScreens.PopupGeneral);
             }
-            else if ((eventData.name.Equals("onKeyReturn") && eventData.target.Equals("ButtonYes"))
-                || (eventData.name.Equals("onMouseLB") && eventData.target.Equals("ButtonYes")))
+            else if ((eventData.Name.Equals("onKeyReturn") && eventData.Target.Equals("ButtonYes"))
+                || (eventData.Name.Equals("onMouseLB") && eventData.Target.Equals("ButtonYes")))
             {
                 var popup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
                 var data = popup.GetDisplayData();
@@ -287,31 +287,31 @@ namespace Vocaluxe.Screens
            
             SPopupGeneral data = new SPopupGeneral();
             data.TextTitle = "Loading sample";
-            data.type = EPopupGeneralType.Loading;
-            data.size = EPopupGeneralSize.Medium;
+            data.Type = EPopupGeneralType.Loading;
+            data.Size = EPopupGeneralSize.Medium;
             data.ButtonNoLabel = "Cancel";
             data.ProgressBar1Visible = true;
             data.ProgressBar2Visible = true;
 
             popup.SetDisplayData(data);
             if (!cont) {
-                pb1.target = 1;
-                pb1.percentage = 0;
+                pb1.Target = 1;
+                pb1.Percentage = 0;
             }
-            pb1.title = "Downloading xyz - zyx ...";
+            pb1.Title = "Downloading xyz - zyx ...";
             popup.SetProgressData(pb1);
 
 
-            pb2.target = 2;
+            pb2.Target = 2;
             if (!cont)
             {
-                pb2.total = 10;
-                pb2.loaded = 0;
-                pb2.title = "Downloading 1/10";
+                pb2.Total = 10;
+                pb2.Loaded = 0;
+                pb2.Title = "Downloading 1/10";
             }
             else
             {
-                pb2.title = "Downloading "+pb2.loaded+"/"+pb2.total;
+                pb2.Title = "Downloading "+pb2.Loaded+"/"+pb2.Total;
             }
             
             popup.SetProgressData(pb2);
@@ -328,19 +328,19 @@ namespace Vocaluxe.Screens
         public void updateProgressBars(object source, System.Timers.ElapsedEventArgs e)
         {
             var popup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
-            if (pb1.percentage < 100) { 
-                 pb1.percentage++;
+            if (pb1.Percentage < 100) { 
+                 pb1.Percentage++;
                  popup.SetProgressData(pb1);
             }
-            else if (pb1.percentage == 100)
+            else if (pb1.Percentage == 100)
             {
-                if (pb2.loaded < pb2.total)
+                if (pb2.Loaded < pb2.Total)
                 {
-                    pb2.loaded++;
-                    pb1.percentage = 0;
-                    pb1.title = "Downloading xyz / "+pb2.loaded;
+                    pb2.Loaded++;
+                    pb1.Percentage = 0;
+                    pb1.Title = "Downloading xyz / "+pb2.Loaded;
                     popup.SetProgressData(pb1);
-                    pb2.title = "Downloading "+pb2.loaded+"/"+pb2.total;
+                    pb2.Title = "Downloading "+pb2.Loaded+"/"+pb2.Total;
                     popup.SetProgressData(pb2);
                 }
                 else
@@ -354,7 +354,7 @@ namespace Vocaluxe.Screens
 
         public void PopupProgressCallback(SPopupGeneralEvent eventData)
         {
-            if (eventData.name.Equals("onKeyEscape") || eventData.name.Equals("onMouseRB"))
+            if (eventData.Name.Equals("onKeyEscape") || eventData.Name.Equals("onMouseRB"))
             {
                 //create new popup
                 var popup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
@@ -362,8 +362,8 @@ namespace Vocaluxe.Screens
                 popup.AddEventHandler("onKeyReturn,onKeyEscape,onMouseLB", (Action<SPopupGeneralEvent>)PopupProgressOnCancel);
                 SPopupGeneral data = new SPopupGeneral();
                 data.TextTitle = "Confirm";
-                data.type = EPopupGeneralType.Confirm;
-                data.size = EPopupGeneralSize.Small;
+                data.Type = EPopupGeneralType.Confirm;
+                data.Size = EPopupGeneralSize.Small;
                 data.ButtonYesLabel = "YES";
                 data.ButtonNoLabel = "NO";
                 data.TextMessage = "Do you want to cancel?";
@@ -375,23 +375,23 @@ namespace Vocaluxe.Screens
 
         public void PopupProgressOnCancel(SPopupGeneralEvent eventData)
         {
-            if (eventData.name.Equals("onKeyReturn") || eventData.name.Equals("onMouseLB"))
+            if (eventData.Name.Equals("onKeyReturn") || eventData.Name.Equals("onMouseLB"))
             {
-                if (eventData.target != null)
+                if (eventData.Target != null)
                 {
-                    if (eventData.target.Equals("ButtonYes") || eventData.target.Equals("ButtonOk"))
+                    if (eventData.Target.Equals("ButtonYes") || eventData.Target.Equals("ButtonOk"))
                     {
                         progressTimer.Enabled = false;
                         progressTimer.Stop();
                         CGraphics.HidePopup(EPopupScreens.PopupGeneral);
                     }
-                    else if (eventData.target.Equals("ButtonNo"))
+                    else if (eventData.Target.Equals("ButtonNo"))
                     {
                         PopupProgressTest(true);
                     }
                 }
             }
-            else if (eventData.name.Equals("onKeyEscape"))
+            else if (eventData.Name.Equals("onKeyEscape"))
             {
                 PopupProgressTest(true);
             }
@@ -399,24 +399,24 @@ namespace Vocaluxe.Screens
 
         public void PopupCallback(SPopupGeneralEvent eventData)
         {
-            if (eventData.name.Equals("onKeyReturn") || eventData.name.Equals("onMouseLB"))
+            if (eventData.Name.Equals("onKeyReturn") || eventData.Name.Equals("onMouseLB"))
             {
-                if (eventData.target != null)
+                if (eventData.Target != null)
                 {
-                    if (eventData.target.Equals("ButtonYes") || eventData.target.Equals("ButtonOk"))
+                    if (eventData.Target.Equals("ButtonYes") || eventData.Target.Equals("ButtonOk"))
                     {
                         var currPopup = CGraphics.GetPopup(EPopupScreens.PopupGeneral);
 
                         Console.WriteLine("You selected YES!");
                         CGraphics.HidePopup(EPopupScreens.PopupGeneral);
                     }
-                    else if (eventData.target.Equals("ButtonNo"))
+                    else if (eventData.Target.Equals("ButtonNo"))
                     {
                         CGraphics.HidePopup(EPopupScreens.PopupGeneral);
                     }
                 }
             }
-            else if (eventData.name.Equals("onKeyEscape") || eventData.name.Equals("onMouseRB"))
+            else if (eventData.Name.Equals("onKeyEscape") || eventData.Name.Equals("onMouseRB"))
             {
                 CGraphics.HidePopup(EPopupScreens.PopupGeneral);
             }

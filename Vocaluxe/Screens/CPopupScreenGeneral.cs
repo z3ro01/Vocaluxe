@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Vocaluxe. If not, see <http://www.gnu.org/licenses/>.
 #endregion
-
 using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
@@ -91,33 +90,18 @@ namespace Vocaluxe.Screens
         private SPopupGeneralProgress _ProgressBar2 = new SPopupGeneralProgress();
         private string editField = null;
 
+        #region Event handling
+        private List<evHandler> eventHandlers;
+
         public struct evHandler
         {
             public string type;
             public Action<SPopupGeneralEvent> callback;
         }
 
-        private List<evHandler> eventHandlers;
-
         public override void RemoveAllEventHandler()
         {
             eventHandlers = new List<evHandler>();
-        }
-
-        public override void OnClose()
-        {
-            base.OnClose();
-            if (_animTimer != null)
-            {
-                _animTimer.Enabled = false;
-                _animTimer.Stop();
-            }
-        }
-
-        public override void LoadTheme(string xmlPath)
-        {
-            themefile = xmlPath;
-            base.LoadTheme(xmlPath);
         }
 
         public override void AddEventHandler(string eventType, Action<SPopupGeneralEvent> callable)
@@ -131,10 +115,9 @@ namespace Vocaluxe.Screens
 
         private void RunEventHandlers(string evName, string target = null)
         {
-
             SPopupGeneralEvent eventCall = new SPopupGeneralEvent();
-            eventCall.target = target;
-            eventCall.name = evName;
+            eventCall.Target = target;
+            eventCall.Name = evName;
             eventHandlers.ForEach(delegate(evHandler eventData)
             {
                 if (eventData.type.IndexOf(evName) > -1)
@@ -142,6 +125,14 @@ namespace Vocaluxe.Screens
                     eventData.callback(eventCall);
                 }
             });
+        }
+
+        #endregion
+
+        public override void LoadTheme(string xmlPath)
+        {
+            themefile = xmlPath;
+            base.LoadTheme(xmlPath);
         }
 
         public override void SetDefaults()
@@ -174,12 +165,57 @@ namespace Vocaluxe.Screens
             _ThemeTexts = texts.ToArray();
         }
 
+        public override void OnClose()
+        {
+            if (_animTimer != null)
+            {
+                _animTimer.Enabled = false;
+                _animTimer.Stop();
+            }
+            base.OnClose();
+        }
+
         public override void OnShow()
         {
             base.OnShow();
             renderDisplayMode();
         }
 
+        public override bool UpdateGame()
+        {
+            if (_DisplayData.Type == EPopupGeneralType.Loading)
+                renderAnimation();
+
+            if (_DisplayData.Type != _renderedDisplayMode)
+            {
+                renderDisplayMode();
+                renderProgressBars();
+            }
+            else if (_needUpdate && _DisplayData.Type != EPopupGeneralType.None)
+            {
+                renderProgressBars();
+                if (_DisplayData.Size == EPopupGeneralSize.Medium && _DisplayData.Type != EPopupGeneralType.Loading)
+                {
+                    if (_TextLines.Count > _MediumTextLines)
+                    {
+                        renderMediumText();
+
+                    }
+                }
+                else if (_DisplayData.Size == EPopupGeneralSize.Big)
+                {
+                    if (_TextLines.Count > _BigTextLines)
+                    {
+                        renderBigText();
+                    }
+                }
+                _needUpdate = false;
+            }
+            return true;
+        }
+
+
+        #region Keyboard / Mouse
         public override bool HandleInput(SKeyEvent keyEvent)
         {
             if (editField != null)
@@ -201,29 +237,38 @@ namespace Vocaluxe.Screens
                 {
                     if (editField.Equals("ButtonUsername"))
                     {
-                        if (_DisplayData.Username.Length > 0) { _DisplayData.Username = _DisplayData.Username.Remove(_DisplayData.Username.Length - 1); }
+                        if (_DisplayData.Username != null && _DisplayData.Username.Length > 0) { _DisplayData.Username = _DisplayData.Username.Remove(_DisplayData.Username.Length - 1); }
                     }
                     else if (editField.Equals("ButtonPassword"))
                     {
-                        if (_DisplayData.Password.Length > 0) { _DisplayData.Password = _DisplayData.Password.Remove(_DisplayData.Password.Length - 1); }
+                        if (_DisplayData.Password != null && _DisplayData.Password.Length > 0) { _DisplayData.Password = _DisplayData.Password.Remove(_DisplayData.Password.Length - 1); }
                     }
                     renderEditables();
                     return true;
-                
+
                 }
-                else if (keyEvent.Key == Keys.Return)
-                {
-                    editField = null;
-                    renderEditables();
-                    return true;
-                }
-                else if (keyEvent.Key == Keys.Tab)
+                else if (keyEvent.Key == Keys.Return || keyEvent.Key == Keys.Tab)
                 {
                     if (editField.Equals("ButtonUsername"))
                     {
                         editField = "ButtonPassword";
                         _Buttons[_ButtonPassword].Selected = true;
                         _Buttons[_ButtonUsername].Selected = false;
+                        renderEditables();
+                        return true;
+                    }
+                    else if (editField.Equals("ButtonPassword"))
+                    {
+                        editField = null;
+                        _Buttons[_ButtonPassword].Selected = false;
+                        _Buttons[_ButtonUsername].Selected = false;
+                        _Buttons[_ButtonMediumYes].Selected = true;
+                        renderEditables();
+                        return true;
+                    }
+                    else
+                    {
+                        editField = null;
                         renderEditables();
                         return true;
                     }
@@ -263,7 +308,7 @@ namespace Vocaluxe.Screens
 
                 foreach (string key in _ThemeButtons)
                 {
-                    if (_DisplayData.type == EPopupGeneralType.Login)
+                    if (_DisplayData.Type == EPopupGeneralType.Login)
                     {
                         if (_Buttons[key].Selected)
                         {
@@ -276,8 +321,9 @@ namespace Vocaluxe.Screens
                                     {
                                         editField = key;
                                     }
-                                    else if(editField == key) {
-                                         editField = null;
+                                    else if (editField == key)
+                                    {
+                                        editField = null;
                                     }
                                     else { editField = key; }
                                     renderEditables();
@@ -341,7 +387,7 @@ namespace Vocaluxe.Screens
             {
                 foreach (string key in _ThemeButtons)
                 {
-                    if (_DisplayData.type == EPopupGeneralType.Login)
+                    if (_DisplayData.Type == EPopupGeneralType.Login)
                     {
                         if (_Buttons[key].Selected)
                         {
@@ -392,41 +438,9 @@ namespace Vocaluxe.Screens
 
             return true;
         }
+        #endregion
 
-        public override bool UpdateGame()
-        {
-            if (_DisplayData.type == EPopupGeneralType.Loading)
-                renderAnimation();
-
-            if (_DisplayData.type != _renderedDisplayMode)
-            {
-                renderDisplayMode();
-                renderProgressBars();
-            }
-            else if (_needUpdate && _DisplayData.type != EPopupGeneralType.None)
-            {
-                renderProgressBars();
-                if (_DisplayData.size == EPopupGeneralSize.Medium && _DisplayData.type != EPopupGeneralType.Loading)
-                {
-                    if (_TextLines.Count > _MediumTextLines)
-                    {
-                        renderMediumText();
-
-                    }
-                }
-                else if (_DisplayData.size == EPopupGeneralSize.Big)
-                {
-                    if (_TextLines.Count > _BigTextLines)
-                    {
-                        renderBigText();
-                    }
-                }
-                _needUpdate = false;
-            }
-            return true;
-        }
-
-
+        #region Animation
         public void renderAnimation()
         {
             if (_Statics[_StaticLoading].Alpha != _animAlpha)
@@ -478,10 +492,67 @@ namespace Vocaluxe.Screens
                 }
             }
         }
+        #endregion
 
-        public void renderLogin()
+        #region Public
+        public override void SetProgressData(SPopupGeneralProgress data)
         {
-              
+            if (data.Total > 0 && data.Percentage == 0)
+            {
+                data.Percentage = (float)Math.Round(data.Loaded / data.Total * 100, 2);
+            }
+            if (data.Target == 1)
+            {
+                _ProgressBar1 = data;
+            }
+            else { _ProgressBar2 = data; }
+            _needUpdate = true;
+        }
+
+        public override SPopupGeneral GetDisplayData()
+        {
+            return _DisplayData;
+        }
+
+        public override void SetDisplayData(SPopupGeneral data)
+        {
+            editField = null;
+            if (data.DefaultButton == null)
+            {
+                data.DefaultButton = "ButtonNo";
+            }
+            if (data.Type == EPopupGeneralType.Loading)
+            {
+                if (data.Size == EPopupGeneralSize.Big)
+                {
+                    data.Size = EPopupGeneralSize.Small;
+                }
+
+                if (EPopupGeneralSize.Small == data.Size)
+                {
+                    startAnimation();
+                }
+                else
+                {
+                    _ProgressBar1 = new SPopupGeneralProgress();
+                    _ProgressBar2 = new SPopupGeneralProgress();
+                    if (data.ProgressBar1Visible)
+                    {
+                        _ProgressBar1.Title = data.ProgressBar1Title;
+                    }
+                    if (data.ProgressBar2Visible)
+                    {
+                        _ProgressBar2.Title = data.ProgressBar2Title;
+                    }
+                }
+            }
+            _DisplayData = data;
+        }
+        #endregion
+
+        #region Private
+        private void renderLogin()
+        {
             _Statics[_StaticMediumBg].Visible = true;
             if (_DisplayData.TextTitle != null)
             {
@@ -496,8 +567,9 @@ namespace Vocaluxe.Screens
                 _Texts[_TextMediums[4]].Text = _DisplayData.TextMessage;
             }
 
-            _Texts[_TextMediumLoginUser].Visible     = true;
+            _Texts[_TextMediumLoginUser].Visible = true;
             _Texts[_TextMediumLoginPassword].Visible = true;
+
             _Buttons[_ButtonUsername].Visible = true;
             _Buttons[_ButtonPassword].Visible = true;
 
@@ -518,16 +590,21 @@ namespace Vocaluxe.Screens
             renderEditables();
         }
 
-        public void renderEditables()
+        private void renderEditables()
         {
             string dd = "";
             if (_DisplayData.Username != null) { _Buttons[_ButtonUsername].Text.Text = _DisplayData.Username; }
+            else
+            {
+                _Buttons[_ButtonUsername].Text.Text = "";
+            }
             if (_DisplayData.Password != null && _DisplayData.Password.Length > 0) { _Buttons[_ButtonPassword].Text.Text = dd.PadLeft(_DisplayData.Password.Length, '•'); }
             else
             {
                 _Buttons[_ButtonPassword].Text.Text = "";
             }
-            if (editField != null) { 
+            if (editField != null)
+            {
                 if (editField.Equals("ButtonUsername"))
                 {
                     _Buttons[_ButtonUsername].Text.Text += "|";
@@ -539,7 +616,7 @@ namespace Vocaluxe.Screens
             }
         }
 
-        public void renderDisplayMode()
+        private void renderDisplayMode()
         {
             _Statics[_StaticSmallBg].Visible = false;
             _Statics[_StaticMediumBg].Visible = false;
@@ -560,14 +637,14 @@ namespace Vocaluxe.Screens
                 _Buttons[btn].Visible = false;
             }
 
-            if (_DisplayData.type == EPopupGeneralType.Login)
+            if (_DisplayData.Type == EPopupGeneralType.Login)
             {
                 renderLogin();
             }
             else
             {
 
-                if (_DisplayData.size == EPopupGeneralSize.Small)
+                if (_DisplayData.Size == EPopupGeneralSize.Small)
                 {
                     _Statics[_StaticSmallBg].Visible = true;
                     if (_DisplayData.TextTitle != null)
@@ -580,7 +657,7 @@ namespace Vocaluxe.Screens
                         _Texts[_TextSmallMessage].Text = _DisplayData.TextMessage;
                         _Texts[_TextSmallMessage].Visible = true;
                     }
-                    if (_DisplayData.type == EPopupGeneralType.Confirm)
+                    if (_DisplayData.Type == EPopupGeneralType.Confirm)
                     {
                         _Buttons[_ButtonSmallYes].Text.Text = _DisplayData.ButtonYesLabel;
                         _Buttons[_ButtonSmallYes].Visible = true;
@@ -595,20 +672,20 @@ namespace Vocaluxe.Screens
                             _SelectElement(_Buttons[_ButtonSmallNo]);
                         }
                     }
-                    else if (_DisplayData.type == EPopupGeneralType.Alert)
+                    else if (_DisplayData.Type == EPopupGeneralType.Alert)
                     {
                         _Buttons[_ButtonSmallOk].Text.Text = _DisplayData.ButtonOkLabel;
                         _Buttons[_ButtonSmallOk].Visible = true;
                         _SelectElement(_Buttons[_ButtonSmallOk]);
                     }
-                    else if (_DisplayData.type == EPopupGeneralType.Loading)
+                    else if (_DisplayData.Type == EPopupGeneralType.Loading)
                     {
                         _Statics[_StaticLoading].Visible = true;
                     }
                 }
-                else if (_DisplayData.size == EPopupGeneralSize.Medium)
+                else if (_DisplayData.Size == EPopupGeneralSize.Medium)
                 {
-                    if (_DisplayData.type == EPopupGeneralType.Confirm || _DisplayData.type == EPopupGeneralType.Alert)
+                    if (_DisplayData.Type == EPopupGeneralType.Confirm || _DisplayData.Type == EPopupGeneralType.Alert)
                     {
                         _TextPos = 0;
                         _Statics[_StaticMediumBg].Visible = true;
@@ -627,7 +704,7 @@ namespace Vocaluxe.Screens
                         renderMediumText();
                     }
 
-                    if (_DisplayData.type == EPopupGeneralType.Confirm)
+                    if (_DisplayData.Type == EPopupGeneralType.Confirm)
                     {
                         _Buttons[_ButtonMediumOk].Selected = false;
                         _Buttons[_ButtonMediumYes].Text.Text = _DisplayData.ButtonYesLabel;
@@ -643,15 +720,18 @@ namespace Vocaluxe.Screens
                             _SelectElement(_Buttons[_ButtonMediumNo]);
                         }
                     }
-                    else if (_DisplayData.type == EPopupGeneralType.Alert)
+                    else if (_DisplayData.Type == EPopupGeneralType.Alert)
                     {
                         _Buttons[_ButtonMediumNo].Selected = false;
                         _Buttons[_ButtonMediumYes].Selected = false;
+                        _Buttons[_ButtonMediumYes].Visible = false;
+                        _Buttons[_ButtonMediumNo].Visible = false;
+
                         _Buttons[_ButtonMediumOk].Text.Text = _DisplayData.ButtonOkLabel;
                         _Buttons[_ButtonMediumOk].Visible = true;
                         _Buttons[_ButtonMediumOk].Selected = true;
                     }
-                    else if (_DisplayData.type == EPopupGeneralType.Loading)
+                    else if (_DisplayData.Type == EPopupGeneralType.Loading)
                     {
                         if (_DisplayData.TextTitle != null)
                         {
@@ -678,7 +758,7 @@ namespace Vocaluxe.Screens
                         }
                     }
                 }
-                else if (_DisplayData.size == EPopupGeneralSize.Big)
+                else if (_DisplayData.Size == EPopupGeneralSize.Big)
                 {
                     _TextPos = 0;
                     _Statics[_StaticBigBg].Visible = true;
@@ -696,7 +776,7 @@ namespace Vocaluxe.Screens
 
                     renderBigText();
 
-                    if (_DisplayData.type == EPopupGeneralType.Confirm)
+                    if (_DisplayData.Type == EPopupGeneralType.Confirm)
                     {
                         _Buttons[_ButtonBigYes].Text.Text = _DisplayData.ButtonYesLabel;
                         _Buttons[_ButtonBigYes].Visible = true;
@@ -711,7 +791,7 @@ namespace Vocaluxe.Screens
                             _SelectElement(_Buttons[_ButtonBigNo]);
                         }
                     }
-                    else if (_DisplayData.type == EPopupGeneralType.Alert)
+                    else if (_DisplayData.Type == EPopupGeneralType.Alert)
                     {
                         _Buttons[_ButtonBigOk].Text.Text = _DisplayData.ButtonOkLabel;
                         _Buttons[_ButtonBigOk].Visible = true;
@@ -720,26 +800,26 @@ namespace Vocaluxe.Screens
 
                 }
             }
-            _renderedDisplayMode = _DisplayData.type;
+            _renderedDisplayMode = _DisplayData.Type;
         }
 
-        public void renderProgressBars() {
+        private void renderProgressBars()
+        {
             int pbwidth = 640;
-
-            if (_DisplayData.type == EPopupGeneralType.Loading && _DisplayData.size == EPopupGeneralSize.Medium)
+            if (_DisplayData.Type == EPopupGeneralType.Loading && _DisplayData.Size == EPopupGeneralSize.Medium)
             {
                 if (_DisplayData.ProgressBar1Visible)
                 {
-                    if (_ProgressBar1.title != null)
+                    if (_ProgressBar1.Title != null)
                     {
-                        _Texts[_TextProgressBar1].Text = _ProgressBar1.title;
+                        _Texts[_TextProgressBar1].Text = _ProgressBar1.Title;
                         _Texts[_TextProgressBar1].Visible = true;
                     }
-                    if (_ProgressBar1.percentage > -1)
+                    if (_ProgressBar1.Percentage > -1)
                     {
                         _Texts[_TextProgressBar1Progress].Visible = true;
-                        _Texts[_TextProgressBar1Progress].Text = _ProgressBar1.percentage.ToString() + "%";
-                        _Statics[_StaticProgressBar1Progress].W = (int)Math.Round(pbwidth * _ProgressBar1.percentage / 100);
+                        _Texts[_TextProgressBar1Progress].Text = _ProgressBar1.Percentage.ToString() + "%";
+                        _Statics[_StaticProgressBar1Progress].W = (int)Math.Round(pbwidth * _ProgressBar1.Percentage / 100);
                     }
                     else
                     {
@@ -748,16 +828,16 @@ namespace Vocaluxe.Screens
                 }
                 if (_DisplayData.ProgressBar2Visible)
                 {
-                    if (_ProgressBar2.title != null)
+                    if (_ProgressBar2.Title != null)
                     {
-                        _Texts[_TextProgressBar2].Text = _ProgressBar2.title;
+                        _Texts[_TextProgressBar2].Text = _ProgressBar2.Title;
                         _Texts[_TextProgressBar2].Visible = true;
                     }
-                    if (_ProgressBar2.percentage > -1)
+                    if (_ProgressBar2.Percentage > -1)
                     {
                         _Texts[_TextProgressBar2Progress].Visible = true;
-                        _Texts[_TextProgressBar2Progress].Text = _ProgressBar2.percentage.ToString() + "%";
-                        _Statics[_StaticProgressBar2Progress].W = (int)Math.Round(pbwidth * _ProgressBar2.percentage / 100);
+                        _Texts[_TextProgressBar2Progress].Text = _ProgressBar2.Percentage.ToString() + "%";
+                        _Statics[_StaticProgressBar2Progress].W = (int)Math.Round(pbwidth * _ProgressBar2.Percentage / 100);
                     }
                     else
                     {
@@ -767,7 +847,7 @@ namespace Vocaluxe.Screens
             }
         }
 
-        public void renderMediumText()
+        private void renderMediumText()
         {
             for (int i = 0; i < _MediumTextLines; i++)
             {
@@ -783,7 +863,7 @@ namespace Vocaluxe.Screens
             }
         }
 
-        public void renderBigText()
+        private void renderBigText()
         {
             for (int i = 0; i < _BigTextLines; i++)
             {
@@ -799,11 +879,11 @@ namespace Vocaluxe.Screens
             }
         }
 
-        public void scrollText(int num)
+        private void scrollText(int num)
         {
-            if (_DisplayData.type == EPopupGeneralType.Alert || _DisplayData.type == EPopupGeneralType.Confirm)
+            if (_DisplayData.Type == EPopupGeneralType.Alert || _DisplayData.Type == EPopupGeneralType.Confirm)
             {
-                if (_DisplayData.size == EPopupGeneralSize.Medium)
+                if (_DisplayData.Size == EPopupGeneralSize.Medium)
                 {
                     if (_TextLines.Count > _MediumTextLines)
                     {
@@ -812,7 +892,7 @@ namespace Vocaluxe.Screens
 
                         if (_TextPos == 0)
                         {
-                            _Buttons[_ButtonMediumUp].Visible   = false;
+                            _Buttons[_ButtonMediumUp].Visible = false;
                             _Buttons[_ButtonMediumDown].Visible = true;
                         }
                         else if (_TextPos == _TextLines.Count - _MediumTextLines)
@@ -829,7 +909,7 @@ namespace Vocaluxe.Screens
                         _needUpdate = true;
                     }
                 }
-                else if (_DisplayData.size == EPopupGeneralSize.Big)
+                else if (_DisplayData.Size == EPopupGeneralSize.Big)
                 {
                     if (_TextLines.Count > _BigTextLines)
                     {
@@ -921,58 +1001,6 @@ namespace Vocaluxe.Screens
             return linesOut;
         }
 
-        public override SPopupGeneral GetDisplayData()
-        {
-            return _DisplayData;
-        }
-
-        public override void SetDisplayData(SPopupGeneral data)
-        {
-            _DisplayData = data;
-            editField = null;
-
-            if (_DisplayData.DefaultButton == null)
-            {
-                _DisplayData.DefaultButton = "ButtonNo";
-            }
-            if (_DisplayData.type == EPopupGeneralType.Loading)
-            {
-                if (_DisplayData.size == EPopupGeneralSize.Big)
-                {
-                    _DisplayData.size = EPopupGeneralSize.Small;
-                }
-                if (EPopupGeneralSize.Small == _DisplayData.size)
-                {
-                    startAnimation();
-                }
-                else
-                {
-                    _ProgressBar1 = new SPopupGeneralProgress();
-                    _ProgressBar2 = new SPopupGeneralProgress();
-                    if (_DisplayData.ProgressBar1Visible)
-                    {
-                        _ProgressBar1.title = _DisplayData.ProgressBar1Title;  
-                    }
-                    if (_DisplayData.ProgressBar2Visible)
-                    {
-                        _ProgressBar2.title = _DisplayData.ProgressBar2Title; 
-                    }
-                }
-            }
-        }
-
-        public override void SetProgressData(SPopupGeneralProgress data)
-        {
-            if (data.total > 0)
-            {
-                data.percentage = (float)Math.Round(data.loaded / data.total * 100);
-            }
-
-            if (data.target == 1) { _ProgressBar1 = data;  }
-            else { _ProgressBar2 = data;  }
-            _needUpdate = true;
-        }
-
         private bool _IsMouseOverElementOnPopup(int x, int y, CInteraction interact)
         {
             bool result = CHelper.IsInBounds(_GetElement(interact).Rect, x, y);
@@ -987,5 +1015,7 @@ namespace Vocaluxe.Screens
             IMenuElement el = _GetElement(_Elements[element]);
             return el != null && (el.Selectable || CBase.Settings.GetProgramState() == EProgramState.EditTheme);
         }
+
+        #endregion
     }
 }
