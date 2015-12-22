@@ -51,11 +51,9 @@ namespace VocaluxeLib.Menu.SingNotes
         private readonly List<CParticleEffect> _Flares = new List<CParticleEffect>();
         private readonly List<CParticleEffect> _PerfectNoteEffect = new List<CParticleEffect>();
         private readonly List<CParticleEffect> _PerfectLineTwinkle = new List<CParticleEffect>();
-        public bool BlindMode { get; set; }
 
         public CNoteBars(int partyModeID, int player, SRectF rect, SThemeSingBar theme)
         {
-            BlindMode = false;
             _Player = player;
             _Theme = theme;
             _PartyModeID = partyModeID;
@@ -89,7 +87,7 @@ namespace VocaluxeLib.Menu.SingNotes
 
             CSongLine line = _Lines[_CurrentLine];
 
-            if (CBase.Config.GetDrawNoteLines() == EOffOn.TR_CONFIG_ON && !BlindMode)
+            if (CBase.Config.GetDrawNoteLines() == EOffOn.TR_CONFIG_ON)
                 _DrawNoteLines(new SColorF(Color.Gray, 0.5f * Alpha));
 
             float beats = line.LastNoteBeat - line.FirstNoteBeat + 1;
@@ -99,7 +97,7 @@ namespace VocaluxeLib.Menu.SingNotes
             float baseLine = line.BaseLine;
             foreach (CSongNote note in line.Notes)
             {
-                if (note.Type != ENoteType.Freestyle && !BlindMode)
+                if (note.Type != ENoteType.Freestyle)
                 {
                     SRectF rect = _GetNoteRect(note);
 
@@ -108,7 +106,7 @@ namespace VocaluxeLib.Menu.SingNotes
                 }
             }
 
-            if (CBase.Config.GetDrawToneHelper() == EOffOn.TR_CONFIG_ON && !BlindMode)
+            if (CBase.Config.GetDrawToneHelper() == EOffOn.TR_CONFIG_ON)
                 _DrawToneHelper((int)baseLine, (CBase.Game.GetMidRecordedBeat() - line.FirstNoteBeat) / beats * Rect.W);
 
             List<CSungLine> sungLines = CBase.Game.GetPlayers()[_Player].SungLines;
@@ -122,8 +120,7 @@ namespace VocaluxeLib.Menu.SingNotes
 
                     float factor = (note.Hit) ? 0.7f : 0.4f;
 
-                    if (!BlindMode)
-                        _DrawNote(rect, color, factor);
+                    _DrawNote(rect, color, factor);
 
                     if (note.EndBeat >= CBase.Game.GetRecordedBeat() && note.Hit && note.HitNote.Type == ENoteType.Golden)
                     {

@@ -974,11 +974,6 @@ namespace Vocaluxe.Base
             return CCover.NoCover;
         }
 
-        public CTextureRef GenerateCoverFromBitmap(string text, ECoverGeneratorType type, Bitmap coverBmp)
-        {
-            return CCover.GenerateCoverFromBitmap(text, type, coverBmp);
-        }
-
         public CTextureRef GenerateCover(string text, ECoverGeneratorType type, CSong firstSong)
         {
             return CCover.GenerateCover(text, type, firstSong);

@@ -160,6 +160,7 @@
     <Compile Include="Base\CCoverGenerator.cs" />
     <Compile Include="Base\CPlaylistElement.cs" />
     <Compile Include="Base\CRecord.cs" />
+    <Compile Include="Base\CTextureLoader.cs" />
     <Compile Include="Base\Server\CWebservice.cs" />
     <Compile Include="Base\Server\ICWebservice.cs" />
     <Compile Include="Base\Server\Session.cs" />
@@ -246,6 +247,10 @@
     <Compile Include="Lib\Sound\Record\CDelayTest.cs" />
     <Compile Include="Screens\CPopupScreenGeneral.cs" />
     <Compile Include="Screens\CPopupScreenServerQR.cs" />
+    <Compile Include="Screens\CScreenCommunityEvents.cs" />
+    <Compile Include="Screens\CScreenCommunitySongs.cs" />
+    <Compile Include="Screens\CScreenCommunityUpdates.cs" />
+    <Compile Include="Screens\CScreenMainCommunity.cs" />
     <Compile Include="Screens\CScreenOptionsVideoAdjustments.cs" />
     <Compile Include="SongQueue\CSongQueue.cs" />
     <Compile Include="GameModes\IGameMode.cs" />

@@ -116,30 +116,6 @@ namespace Vocaluxe.Base
             return texture;
         }
 
-        public static CTextureRef GenerateCoverFromBitmap(string text, ECoverGeneratorType type, Bitmap coverBmp)
-        {
-            CTextureRef texture = Cover(text);
-            if (texture != NoCover)
-                return texture;
-
-            texture = CDraw.CopyTexture(NoCover);
-            Task.Factory.StartNew(() =>
-            {
-                _CancelToken.Token.ThrowIfCancellationRequested();
-                if (coverBmp == null && _CoverGenerators.ContainsKey(ECoverGeneratorType.Default))
-                    coverBmp = _CoverGenerators[ECoverGeneratorType.Default].GetCover(text, null);
-                _CancelToken.Token.ThrowIfCancellationRequested();
-                if (coverBmp != null)
-                    CDraw.EnqueueTextureUpdate(texture, coverBmp);
-                _CancelToken.Token.ThrowIfCancellationRequested();
-            }, _CancelToken.Token);
-            lock (_Covers)
-            {
-                _Covers.Add(text, texture);
-            }
-            return texture;
-        }
-
         /// <summary>
         ///     Returns true if a cover with the given name exists.
         ///     MUST HOLD _Covers lock at this point

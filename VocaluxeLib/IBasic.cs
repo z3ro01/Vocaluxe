@@ -301,7 +301,6 @@ namespace VocaluxeLib
     {
         CTextureRef GetNoCover();
         CTextureRef GenerateCover(string text, ECoverGeneratorType type, CSong firstSong);
-        CTextureRef GenerateCoverFromBitmap(string text, ECoverGeneratorType type, Bitmap coverBmp);
     }
 
     public interface IDataBase

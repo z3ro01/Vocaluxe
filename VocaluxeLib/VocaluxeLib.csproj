@@ -90,8 +90,7 @@
     <Compile Include="CEncoding.cs" />
     <Compile Include="CFading.cs" />
     <Compile Include="CFont.cs" />
-    <Compile Include="Community\CComMainScreen.cs" />
-    <Compile Include="Community\CComSong.cs" />
+    <Compile Include="Community\CCommunitySong.cs" />
     <Compile Include="Community\CPopupHelper.cs" />
     <Compile Include="CVideoStream.cs" />
     <Compile Include="Extensions.cs" />

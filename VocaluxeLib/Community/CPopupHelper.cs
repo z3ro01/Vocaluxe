@@ -51,17 +51,17 @@ namespace VocaluxeLib.Community
             wndopts.Type = EPopupGeneralType.Confirm;
 
             if (wndopts.ButtonYesLabel == null)
-                wndopts.ButtonYesLabel = CBase.Language.Translate("TR_COMMUNITY_BTNYES");
+                wndopts.ButtonYesLabel = "TR_COMMUNITY_BTNYES";
             if (wndopts.ButtonNoLabel == null)
-                wndopts.ButtonNoLabel = CBase.Language.Translate("TR_COMMUNITY_BTNNO");
+                wndopts.ButtonNoLabel = "TR_COMMUNITY_BTNNO";
 
-            wndopts.TextTitle   = Translate(Title);
+            wndopts.TextTitle   = Title;
             wndopts.TextMessage = Translate(Message, true);
             popup.SetDisplayData(wndopts);
             CBase.Graphics.ShowPopup(EPopupScreens.PopupGeneral);
         }
 
-        public static void Alert(string Title, string Message, Action<SPopupGeneralEvent> callback = null)
+        public static void Alert(string Title, string Message, Action<SPopupGeneralEvent> callback = null, SPopupGeneral wndopts = new SPopupGeneral())
         {
             var popup = CBase.Graphics.GetPopup(EPopupScreens.PopupGeneral);
             popup.SetDefaults();
@@ -80,14 +80,11 @@ namespace VocaluxeLib.Community
             }
             else { popup.AddEventHandler("onKeyReturn,onKeyEscape,onMouseLB", callback); }
 
-            SPopupGeneral data = new SPopupGeneral();
-            data.Type = EPopupGeneralType.Alert;
-            data.Size = EPopupGeneralSize.Medium;
-            data.ButtonOkLabel = CBase.Language.Translate("TR_COMMUNITY_BTNOK");
-            data.TextTitle = Translate(Title);
-            data.TextMessage = Translate(Message,true);
-            popup.SetDisplayData(data);
-
+            wndopts.Type = EPopupGeneralType.Alert;
+            wndopts.ButtonOkLabel = "TR_COMMUNITY_BTNOK";
+            wndopts.TextTitle = Title;
+            wndopts.TextMessage = Translate(Message, true);
+            popup.SetDisplayData(wndopts);
             CBase.Graphics.ShowPopup(EPopupScreens.PopupGeneral);
         }
 
@@ -99,27 +96,26 @@ namespace VocaluxeLib.Community
             SPopupGeneral data = new SPopupGeneral();
             data.Type = EPopupGeneralType.Loading;
             data.Size = EPopupGeneralSize.Medium;
-            data.ButtonOkLabel = Translate("TR_COMMUNITY_BTNOK");
-            data.TextTitle = Translate(Title);
+            data.ButtonOkLabel = "TR_COMMUNITY_BTNOK";
+            data.TextTitle = Title;
             data.ProgressBar1Title = Translate(Message);
             data.ProgressBar1Visible = true;
             popup.SetDisplayData(data);
             CBase.Graphics.ShowPopup(EPopupScreens.PopupGeneral);
         }
 
-        public static void Login(string Title, string Message, Action<SPopupGeneralEvent> callback)
+        public static void Login(string Title, string Message, Action<SPopupGeneralEvent> callback, SPopupGeneral wndopts = new SPopupGeneral())
         {
             var popup = CBase.Graphics.GetPopup(EPopupScreens.PopupGeneral);
             popup.SetDefaults();
             popup.AddEventHandler("onKeyReturn,onKeyEscape,onMouseLB", callback);
-            SPopupGeneral data = new SPopupGeneral();
-            data.TextTitle = Translate(Title);
-            data.TextMessage = Translate(Message,true);
-            data.Type = EPopupGeneralType.Login;
-            data.Size = EPopupGeneralSize.Medium;
-            data.ButtonNoLabel = Translate("TR_COMMUNITY_BTNCANCEL");
-            data.ButtonYesLabel = Translate("TR_COMMUNITY_BTNLOGIN");
-            popup.SetDisplayData(data);
+            wndopts.TextTitle = Title;
+            wndopts.TextMessage = Translate(Message, true);
+            wndopts.Type = EPopupGeneralType.Login;
+            wndopts.Size = EPopupGeneralSize.Medium;
+            wndopts.ButtonNoLabel = wndopts.ButtonNoLabel==null?"TR_COMMUNITY_BTNCANCEL":wndopts.ButtonNoLabel;
+            wndopts.ButtonYesLabel =  wndopts.ButtonYesLabel==null?"TR_COMMUNITY_BTNLOGIN":wndopts.ButtonYesLabel;
+            popup.SetDisplayData(wndopts);
             CBase.Graphics.ShowPopup(EPopupScreens.PopupGeneral);
         }
 
@@ -130,8 +126,8 @@ namespace VocaluxeLib.Community
             popup.SetDefaults();
             if (callback != null) { popup.AddEventHandler("onKeyReturn,onKeyEscape,onMouseLB", callback); }
             SPopupGeneral data = new SPopupGeneral();
-            data.TextTitle = Translate(Title);
-            data.TextMessage = Translate(Message);
+            data.TextTitle = Title;
+            data.TextMessage = Message;
             data.Type = EPopupGeneralType.Loading;
             data.Size = EPopupGeneralSize.Small;
             popup.SetDisplayData(data);
@@ -141,6 +137,9 @@ namespace VocaluxeLib.Community
         private static string Translate(string text, bool multiline = false)
         {
             String translated = text;
+            if (String.IsNullOrWhiteSpace(text))
+                return translated;
+
             if (System.Text.RegularExpressions.Regex.IsMatch(text, @"^[A-Z0-9_]+$"))
             {
                 translated = CBase.Language.Translate(text);

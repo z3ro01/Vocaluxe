@@ -24,7 +24,7 @@ using VocaluxeLib.Songs;
 
 namespace VocaluxeLib.Community
 {
-    public static class CComSong
+    public static class CCommunitySong
     {
         private struct SComSongDownload
         {

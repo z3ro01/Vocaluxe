@@ -116,7 +116,6 @@ namespace Vocaluxe.Screens
 
         private bool _Pause;
         private bool _Webcam;
-        private bool _BlindMode = false;
 
         private CBackground _SlideShow;
 
@@ -248,10 +247,6 @@ namespace Vocaluxe.Screens
 
                         if (CConfig.Config.Debug.SaveModifiedSongs == EOffOn.TR_CONFIG_ON)
                             song.Save();
-                        break;
-
-                    case Keys.F1:
-                        _ToggleBlindMode();
                         break;
                 }
             }
@@ -1373,15 +1368,6 @@ namespace Vocaluxe.Screens
                     _Texts[_TextNames[i, CGame.NumPlayers - 1]].Text = CProfiles.GetPlayerName(CGame.Players[i].ProfileID);
                 else
                     _Texts[_TextNames[i, CGame.NumPlayers - 1]].Visible = false;
-            }
-        }
-
-        private void _ToggleBlindMode()
-        {
-            _BlindMode = _BlindMode ? false : true;
-            for (int p = 0; p < CGame.NumPlayers; p++)
-            {
-                _SingNotes[_SingBars].PlayerNotes[p].BlindMode = _BlindMode;
             }
         }
     }

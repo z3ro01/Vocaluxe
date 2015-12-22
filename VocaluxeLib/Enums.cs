@@ -398,6 +398,10 @@ namespace VocaluxeLib
         Credits,
         Party,
 
+        CommunitySongs,
+        CommunityEvents,
+        CommunityUpdates,
+
         CountEntry //Leave this as last entry and never use it!
     }
 

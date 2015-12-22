@@ -48,9 +48,7 @@ namespace Vocaluxe.Screens
         private string inputString = null;
 
         private const string _TextComServer = "Text9";
-#if DEBUG
-        private string themefile;
-#endif
+
         public override void Init()
         {
             base.Init();
@@ -61,9 +59,6 @@ namespace Vocaluxe.Screens
 
         public override void LoadTheme(string xmlPath)
         {
-#if DEBUG
-            themefile = xmlPath;
-#endif
             base.LoadTheme(xmlPath);
 
             _SelectSlides[_SelectSlideLanguage].AddValues(CLanguage.GetLanguageNames());
@@ -120,11 +115,6 @@ namespace Vocaluxe.Screens
             {
                 switch (keyEvent.Key)
                 {
-#if DEBUG
-                    case Keys.Space:
-                        ReloadTheme(themefile);
-                        break;
-#endif
                     case Keys.Escape:
                     case Keys.Back:
                         _SaveConfig();

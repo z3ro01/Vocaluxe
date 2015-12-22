@@ -248,10 +248,18 @@ namespace VocaluxeLib.Community
             return _authWithUUID(data, callback);
         }
 
-        public static void getNewsAsync(Action<SComNewsResult> callback = null)
+        public static void getNewsAsync(Action<SComSongsResult> callback)
         {
             RunEventHandlers(EComEventType.loading, 1);
-            var task = Task<SComNewsResult>.Factory.StartNew(() => _getNews(callback));
+            var data = new SComQueryCmd();
+            data.method = "getnews";
+            var task = Task<SComSongsResult>.Factory.StartNew(() => _getSongs(data, callback));
+        }
+
+        public static void getSongsAsync(SComQueryCmd query, Action<SComSongsResult> callback)
+        {
+            RunEventHandlers(EComEventType.loading, 1);
+            var task = Task<SComSongsResult>.Factory.StartNew(() => _getSongs(query, callback));
         }
 
         public static void getTextAsync(string url, Action<String> callback = null)
@@ -383,10 +391,8 @@ namespace VocaluxeLib.Community
             }
         }
 
-        private static SComNewsResult _getNews(Action<SComNewsResult> callback = null)
+        private static SComSongsResult _getSongs(SComQueryCmd data, Action<SComSongsResult> callback = null)
         {
-            SComQueryCmd data = new SComQueryCmd();
-            data.method = "getnews";
             data.sessionId = currentUser.sessionId;
             if (currentUser.sessionId == null)
             {
@@ -399,7 +405,7 @@ namespace VocaluxeLib.Community
             SComWebResponse response = Request(toJSON(data));
             if (response.status == 1)
             {
-                SComNewsResult jresult;
+                SComSongsResult jresult;
                 if (parseJSON(response.rawdata, out jresult) == false)
                 {
                     jresult.status = 0;
@@ -411,7 +417,7 @@ namespace VocaluxeLib.Community
             }
             else
             {
-                SComNewsResult jresult = new SComNewsResult();
+                SComSongsResult jresult = new SComSongsResult();
                 jresult.status = -1;
                 jresult.message = response.message;
                 if (callback != null) { callback(jresult); }
@@ -946,11 +952,20 @@ namespace VocaluxeLib.Community
 
 //NEW
 
-    public struct SComNewsResult
+    public struct SComResultListInfo
+    {
+        public int count;
+        public int start;
+        public int end;
+        public int limit;
+    }
+
+    public struct SComSongsResult
     {
         public int status;
         public string message;
         public SComRemoteSong[] items;
+        public SComResultListInfo info;
     }
 
     public struct SComRemoteSong
