@@ -1,0 +1,48 @@
+ __     __              _
+ \ \   / /__   ___ __ _| |_   ___  _____
+  \ \ / / _ \ / __/ _` | | | | \ \/ / _ \
+   \ V / (_) | (_| (_| | | |_| |>  <  __/
+    \_/ \___/ \___\__,_|_|\__,_/_/\_\___|
+	
+=================================
+= 1. About                      =
+=================================
+In this branch i would like to extend Vocaluxe with community features.
+
+=================================
+= Features 						=
+=================================
+- Song identifcation solved (hashing txt files)
+- User authentication 
+- Can enable / disable this feature in Game Options
+- Login on MainScreen (can download user informations/user avatar from the server)
+- Users (Guests) can login on Profile screen (roaming profile)
+- Show new songs in MainScreen (loaded from community-server)
+- Songs downloads (Download song and 'install' it at runtime; depending on server configuration)
+- Txt file updates (depending on server configuration)
+- Can send authenticated users scores to the server 
+- Can load higscores from the  server
+
+=================================
+= Under development				=
+=================================
+- Server side source (php) + Website which can display scores, toplist, events ... 
+- Community Songs: Users can view / search songs (this screen can download / update songs depending on server configuration)
+- Community Updates: Auto updating songs if needed.
+---------------------------------
+And of course Community Gamemodes 
+
+
+=================================
+= Test							=
+=================================
+Currently private test available only for Vocaluxe project members.
+Server side sources coming soon!
+
+=================================
+= ScreenShots					=
+=================================
+A few screenshots were uploaded to this folder.
+
+
+
