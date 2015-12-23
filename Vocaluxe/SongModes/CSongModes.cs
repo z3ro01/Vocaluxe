@@ -30,10 +30,10 @@ namespace Vocaluxe.SongModes
         {
             _SongModes = new Dictionary<ESongMode, ISongMode>
                 {
-                    {ESongMode.TR_SONGMODE_NORMAL, new CGameModeNormal()},
-                    {ESongMode.TR_SONGMODE_DUET, new CGameModeDuet()},
-                    {ESongMode.TR_SONGMODE_SHORTSONG, new CGameModeShort()},
-                    {ESongMode.TR_SONGMODE_MEDLEY, new CGameModeMedley()}
+                    {ESongMode.TR_SONGMODE_NORMAL, new CSongModeNormal()},
+                    {ESongMode.TR_SONGMODE_DUET, new CSongModeDuet()},
+                    {ESongMode.TR_SONGMODE_SHORTSONG, new CSongModeShort()},
+                    {ESongMode.TR_SONGMODE_MEDLEY, new CSongModeMedley()}
                 };
         }
 
@@ -48,7 +48,7 @@ namespace Vocaluxe.SongModes
         }
     }
 
-    class CGameModeNormal : CSongMode
+    class CSongModeNormal : CSongMode
     {
         protected override CSong _PrepareSong(CSong song)
         {
@@ -56,7 +56,7 @@ namespace Vocaluxe.SongModes
         }
     }
 
-    class CGameModeDuet : CSongMode
+    class CSongModeDuet : CSongMode
     {
         protected override CSong _PrepareSong(CSong song)
         {
@@ -64,7 +64,7 @@ namespace Vocaluxe.SongModes
         }
     }
 
-    class CGameModeShort : CSongMode
+    class CSongModeShort : CSongMode
     {
         protected override CSong _PrepareSong(CSong song)
         {
@@ -78,7 +78,7 @@ namespace Vocaluxe.SongModes
         }
     }
 
-    class CGameModeMedley : CSongMode
+    class CSongModeMedley : CSongMode
     {
         protected override CSong _PrepareSong(CSong song)
         {

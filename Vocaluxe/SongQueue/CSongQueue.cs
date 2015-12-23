@@ -18,6 +18,7 @@
 using System.Collections.Generic;
 using Vocaluxe.Base;
 using Vocaluxe.SongModes;
+using Vocaluxe.GameModes;
 using VocaluxeLib;
 using VocaluxeLib.Game;
 using VocaluxeLib.Songs;
@@ -44,6 +45,7 @@ namespace Vocaluxe.SongQueue
         private int _CurrentRound;
         private CPoints _Points;
         private CSong _CurrentSong;
+        private CGameMode _CurrentGameMode;
 
         #region Implementation
         public void Init()
@@ -123,6 +125,29 @@ namespace Vocaluxe.SongQueue
             }
             _CurrentRound++;
             _CurrentSong = IsFinished() ? null : CSongModes.Get(GetCurrentSongMode()).GetSong(_SongQueue[_CurrentRound].SongID);
+            if (IsFinished())
+                _CurrentGameMode = new CGameModeNormal();
+            else
+            {
+                switch (_SongQueue[_CurrentRound].GameMode)
+                {
+                    case EGameMode.TR_GAMEMODE_NORMAL:
+                        _CurrentGameMode = new CGameModeNormal();
+                        break;
+
+                    case EGameMode.TR_GAMEMODE_BLIND:
+                        _CurrentGameMode = new CGameModeBlind();
+                        break;
+
+                    case EGameMode.TR_GAMEMODE_UNTIL5000:
+                        _CurrentGameMode = new CGameModeUntil5000();
+                        break;
+
+                    default:
+                        _CurrentGameMode = new CGameModeNormal();
+                        break;
+                }
+            }
         }
 
         public bool IsFinished()
@@ -195,7 +220,7 @@ namespace Vocaluxe.SongQueue
             return GetSongMode(_CurrentRound);
         }
 
-        public EGameMode GetGameMode(int round)
+        public EGameMode GetGameModeName(int round)
         {
             if (round < _SongQueue.Count && round >= 0)
                 return _SongQueue[round].GameMode;
@@ -203,9 +228,15 @@ namespace Vocaluxe.SongQueue
             return EGameMode.TR_GAMEMODE_NORMAL;
         }
 
-        public EGameMode GetCurrentGameMode()
+        public EGameMode GetCurrentGameModeName()
         {
-            return GetGameMode(_CurrentRound);
+            return GetGameModeName(_CurrentRound);
+        }
+
+
+        public CGameMode GetCurrentGameMode()
+        {
+            return _CurrentGameMode;
         }
 
         public CPoints GetPoints()

@@ -15,6 +15,7 @@
 // along with Vocaluxe. If not, see <http://www.gnu.org/licenses/>.
 #endregion
 
+using Vocaluxe.GameModes;
 using VocaluxeLib;
 using VocaluxeLib.Game;
 using VocaluxeLib.Songs;
@@ -45,7 +46,8 @@ namespace Vocaluxe.SongQueue
         CSong GetSong(int round);
         ESongMode GetCurrentSongMode();
         ESongMode GetSongMode(int round);
-        EGameMode GetCurrentGameMode();
-        EGameMode GetGameMode(int round);
+        EGameMode GetCurrentGameModeName();
+        EGameMode GetGameModeName(int round);
+        CGameMode GetCurrentGameMode();
     }
 }
