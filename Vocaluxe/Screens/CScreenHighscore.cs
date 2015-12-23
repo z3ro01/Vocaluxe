@@ -238,7 +238,7 @@ namespace Vocaluxe.Screens
             for (int round = 0; round < rounds; round++)
             {
                 int songID = CGame.GetSong(round).ID;
-                ESongMode gameMode = CGame.GetGameMode(round);
+                ESongMode gameMode = CGame.GetSongMode(round);
                 _Scores[round] = CDataBase.LoadScore(songID, gameMode);
             }
         }
@@ -255,7 +255,7 @@ namespace Vocaluxe.Screens
             if (points.NumRounds > 1)
                 _Texts[_TextSongName].Text += " (" + (_Round + 1) + "/" + points.NumRounds + ")";
 
-            switch (CGame.GetGameMode(_Round))
+            switch (CGame.GetSongMode(_Round))
             {
                 case ESongMode.TR_SONGMODE_NORMAL:
                     _Texts[_TextSongMode].Text = "TR_GAMEMODE_NORMAL";

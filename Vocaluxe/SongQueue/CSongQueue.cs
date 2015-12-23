@@ -28,11 +28,13 @@ namespace Vocaluxe.SongQueue
     {
         public readonly int SongID;
         public readonly ESongMode SongMode;
+        public readonly EGameMode GameMode;
 
-        public SSongQueueEntry(int songID, ESongMode songMode)
+        public SSongQueueEntry(int songID, ESongMode songMode, EGameMode gameMode)
         {
             SongID = songID;
             SongMode = songMode;
+            GameMode = gameMode;
         }
     }
 
@@ -51,27 +53,22 @@ namespace Vocaluxe.SongQueue
             CSongModes.Init();
         }
 
-        public ESongMode GetCurrentSongMode()
+        public bool AddVisibleSong(int visibleIndex, ESongMode songMode, EGameMode gameMode = EGameMode.TR_GAMEMODE_NORMAL)
         {
-            return GetSongMode(_CurrentRound);
+            return CSongs.VisibleSongs.Count > visibleIndex && _AddSong(CSongs.VisibleSongs[visibleIndex].ID, songMode, gameMode);
         }
 
-        public bool AddVisibleSong(int visibleIndex, ESongMode gameMode)
+        public bool AddSong(int absoluteIndex, ESongMode songMode, EGameMode gameMode = EGameMode.TR_GAMEMODE_NORMAL)
         {
-            return CSongs.VisibleSongs.Count > visibleIndex && _AddSong(CSongs.VisibleSongs[visibleIndex].ID, gameMode);
+            return CSongs.AllSongs.Count > absoluteIndex && _AddSong(CSongs.AllSongs[absoluteIndex].ID, songMode, gameMode);
         }
 
-        public bool AddSong(int absoluteIndex, ESongMode gameMode)
+        private bool _AddSong(int songID, ESongMode songMode, EGameMode gameMode = EGameMode.TR_GAMEMODE_NORMAL)
         {
-            return CSongs.AllSongs.Count > absoluteIndex && _AddSong(CSongs.AllSongs[absoluteIndex].ID, gameMode);
-        }
-
-        private bool _AddSong(int songID, ESongMode gameMode)
-        {
-            if (!CSongs.GetSong(songID).IsSongModeAvailable(gameMode))
+            if (!CSongs.GetSong(songID).IsSongModeAvailable(songMode))
                 return false;
 
-            _SongQueue.Add(new SSongQueueEntry(songID, gameMode));
+            _SongQueue.Add(new SSongQueueEntry(songID, songMode, gameMode));
             return true;
         }
 
@@ -181,16 +178,34 @@ namespace Vocaluxe.SongQueue
         }
 
         /// <summary>
-        ///     Get gameMode of specified round
+        ///     Get songMode of specified round
         /// </summary>
         /// <param name="round">Round (0 based)</param>
-        /// <returns>Current song or null if out of bounds</returns>
+        /// <returns>Current song-mode or TR_SONGMODE_NORMAL if out of bounds</returns>
         public ESongMode GetSongMode(int round)
         {
             if (round < _SongQueue.Count && round >= 0)
                 return _SongQueue[round].SongMode;
 
             return ESongMode.TR_SONGMODE_NORMAL;
+        }
+
+        public ESongMode GetCurrentSongMode()
+        {
+            return GetSongMode(_CurrentRound);
+        }
+
+        public EGameMode GetGameMode(int round)
+        {
+            if (round < _SongQueue.Count && round >= 0)
+                return _SongQueue[round].GameMode;
+
+            return EGameMode.TR_GAMEMODE_NORMAL;
+        }
+
+        public EGameMode GetCurrentGameMode()
+        {
+            return GetGameMode(_CurrentRound);
         }
 
         public CPoints GetPoints()

@@ -176,6 +176,9 @@
     <Compile Include="Base\ThemeSystem\CSkin.cs" />
     <Compile Include="Base\XmlStructs.cs" />
     <Compile Include="COSFunctions.cs" />
+    <Compile Include="GameModes\CGameMode.cs" />
+    <Compile Include="GameModes\CGameModeBlind.cs" />
+    <Compile Include="GameModes\CGameModeNormal.cs" />
     <Compile Include="Lib\Database\CCoverDB.cs" />
     <Compile Include="Lib\Database\CDatabaseBase.cs" />
     <Compile Include="Lib\Database\CHighscoreDB.cs" />

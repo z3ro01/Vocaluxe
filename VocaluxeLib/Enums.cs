@@ -353,6 +353,12 @@ namespace VocaluxeLib
         // ReSharper restore InconsistentNaming
     }
 
+    public enum EGameMode
+    {
+        TR_GAMEMODE_NORMAL,
+        TR_GAMEMODE_BLIND
+    }
+
     public enum ENoteType
     {
         Normal,

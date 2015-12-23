@@ -33,6 +33,7 @@ namespace VocaluxeLib.Menu.SingNotes
         public readonly SRectF Rect;
         private readonly SColorF _Color;
         public float Alpha = 1;
+        public bool Visible = true;
         private readonly CSongLine[] _Lines;
 
         /// <summary>
@@ -82,7 +83,7 @@ namespace VocaluxeLib.Menu.SingNotes
 
         public void Draw()
         {
-            if (_CurrentLine == -1 || _CurrentLine >= _Lines.Length)
+            if (_CurrentLine == -1 || _CurrentLine >= _Lines.Length || !Visible)
                 return;
 
             CSongLine line = _Lines[_CurrentLine];

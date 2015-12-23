@@ -329,18 +329,38 @@ namespace Vocaluxe.Screens
 
                 for (int p = 0; p < CGame.NumPlayers; p++)
                 {
-                    _SingNotes[_SingBars].PlayerNotes[p].Alpha = alpha[CGame.Players[p].VoiceNr * 2];
-                    if (CConfig.Config.Theme.FadePlayerInfo == EFadePlayerInfo.TR_CONFIG_FADEPLAYERINFO_INFO ||
+                    //Set Visibility by GameMode
+                    if (!CGame.GameMode.IsNotesVisible(p))
+                        _SingNotes[_SingBars].PlayerNotes[p].Visible = false;
+                    else
+                    {
+                        _SingNotes[_SingBars].PlayerNotes[p].Visible = true;
+                        _SingNotes[_SingBars].PlayerNotes[p].Alpha = alpha[CGame.Players[p].VoiceNr * 2];
+                    }
+
+                    if (!CGame.GameMode.IsPlayerInformationVisible(p))
+                    {
+                        _Statics[_StaticAvatars[p, CGame.NumPlayers - 1]].Visible = false;
+                        _Texts[_TextNames[p, CGame.NumPlayers - 1]].Visible = false;
+                    }
+                    else if (CConfig.Config.Theme.FadePlayerInfo == EFadePlayerInfo.TR_CONFIG_FADEPLAYERINFO_INFO ||
                         CConfig.Config.Theme.FadePlayerInfo == EFadePlayerInfo.TR_CONFIG_FADEPLAYERINFO_ALL)
                     {
+                        _Statics[_StaticAvatars[p, CGame.NumPlayers - 1]].Visible = true;
+                        _Texts[_TextNames[p, CGame.NumPlayers - 1]].Visible = true;
                         _Statics[_StaticAvatars[p, CGame.NumPlayers - 1]].Alpha = alpha[CGame.Players[p].VoiceNr * 2];
                         _Texts[_TextNames[p, CGame.NumPlayers - 1]].Alpha = alpha[CGame.Players[p].VoiceNr * 2];
                     }
-                    if (CConfig.Config.Theme.FadePlayerInfo == EFadePlayerInfo.TR_CONFIG_FADEPLAYERINFO_ALL)
+                    if(!CGame.GameMode.IsPointsVisible(p))
                     {
+                        _Statics[_StaticScores[p, CGame.NumPlayers - 1]].Visible = false;
+                        _Texts[_TextScores[p, CGame.NumPlayers - 1]].Visible = false;
+                    }
+                    else if (CConfig.Config.Theme.FadePlayerInfo == EFadePlayerInfo.TR_CONFIG_FADEPLAYERINFO_ALL)
+                    {
+                        _Statics[_StaticScores[p, CGame.NumPlayers - 1]].Visible = true;
+                        _Texts[_TextScores[p, CGame.NumPlayers - 1]].Visible = true;
                         _Statics[_StaticScores[p, CGame.NumPlayers - 1]].Alpha = alpha[CGame.Players[p].VoiceNr * 2];
-                        _Statics[_StaticAvatars[p, CGame.NumPlayers - 1]].Alpha = alpha[CGame.Players[p].VoiceNr * 2];
-                        _Texts[_TextNames[p, CGame.NumPlayers - 1]].Alpha = alpha[CGame.Players[p].VoiceNr * 2];
                         _Texts[_TextScores[p, CGame.NumPlayers - 1]].Alpha = alpha[CGame.Players[p].VoiceNr * 2];
                     }
                 }

@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using Vocaluxe.SongQueue;
+using Vocaluxe.GameModes;
 using VocaluxeLib;
 using VocaluxeLib.Game;
 using VocaluxeLib.Songs;
@@ -84,6 +85,8 @@ namespace Vocaluxe.Base
 
         public static SPlayer[] Players { get; private set; }
 
+        public static CGameMode GameMode { get; private set; }
+
         public static void Init()
         {
             _SongQueue = new CSongQueue();
@@ -97,14 +100,19 @@ namespace Vocaluxe.Base
             get { return _SongQueue.GetCurrentSongMode(); }
         }
 
-        public static bool AddVisibleSong(int visibleIndex, ESongMode gameMode)
+        public static EGameMode GameModeName
         {
-            return _SongQueue.AddVisibleSong(visibleIndex, gameMode);
+            get { return _SongQueue.GetCurrentGameMode(); }
         }
 
-        public static bool AddSong(int absoluteIndex, ESongMode gameMode)
+        public static bool AddVisibleSong(int visibleIndex, ESongMode songMode, EGameMode gameMode = EGameMode.TR_GAMEMODE_NORMAL)
         {
-            return _SongQueue.AddSong(absoluteIndex, gameMode);
+            return _SongQueue.AddVisibleSong(visibleIndex, songMode, gameMode);
+        }
+
+        public static bool AddSong(int absoluteIndex, ESongMode songMode, EGameMode gameMode = EGameMode.TR_GAMEMODE_NORMAL)
+        {
+            return _SongQueue.AddSong(absoluteIndex, songMode, gameMode);
         }
 
         public static bool RemoveVisibleSong(int visibleIndex)
@@ -135,6 +143,21 @@ namespace Vocaluxe.Base
         public static void NextRound()
         {
             _SongQueue.StartNextRound(Players);
+
+            switch(_SongQueue.GetCurrentGameMode())
+            {
+                case EGameMode.TR_GAMEMODE_NORMAL:
+                    GameMode = new CGameModeNormal();
+                    break;
+
+                case EGameMode.TR_GAMEMODE_BLIND:
+                    GameMode = new CGameModeBlind();
+                    break;
+
+                default:
+                    GameMode = new CGameModeNormal();
+                    break;
+            }
         }
 
         public static bool IsFinished()
@@ -157,9 +180,14 @@ namespace Vocaluxe.Base
             return _SongQueue.GetSong(round);
         }
 
-        public static ESongMode GetGameMode(int round)
+        public static ESongMode GetSongMode(int round)
         {
             return _SongQueue.GetSongMode(round);
+        }
+
+        public static EGameMode GetGameModeName(int round)
+        {
+            return _SongQueue.GetGameMode(round);
         }
 
         public static int GetNumSongs()
