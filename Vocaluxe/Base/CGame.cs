@@ -154,6 +154,10 @@ namespace Vocaluxe.Base
                     GameMode = new CGameModeBlind();
                     break;
 
+                case EGameMode.TR_GAMEMODE_UNTIL5000:
+                    GameMode = new CGameModeUntil5000();
+                    break;
+
                 default:
                     GameMode = new CGameModeNormal();
                     break;

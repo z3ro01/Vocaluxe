@@ -19,6 +19,9 @@
   <string name="TR_SONGMODE_DUET">Duet</string>
   <string name="TR_SONGMODE_MEDLEY">Medley</string>
   <string name="TR_SONGMODE_SHORTSONG">Short version</string>
+  <string name="TR_GAMEMODE_NORMAL">Normal Game</string>
+  <string name="TR_GAMEMODE_BLIND">Blind Mode</string>
+  <string name="TR_GAMEMODE_UNTIL5000">Until 5000</string>
   <string name="TR_RATING_VOCAL_HERO">Vocal Hero</string>
   <string name="TR_RATING_SUPERSTAR">Superstar</string>
   <string name="TR_RATING_LEAD_SINGER">Lead Singer</string>

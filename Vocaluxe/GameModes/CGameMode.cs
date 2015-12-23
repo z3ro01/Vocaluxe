@@ -19,5 +19,10 @@ namespace Vocaluxe.GameModes
         {
             return true;
         }
+
+        public virtual bool IsPlayerFinished(int p, double points, double pointsGolden, double pointsLineBonus)
+        {
+            return false;
+        }
     }
 }

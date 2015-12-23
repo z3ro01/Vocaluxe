@@ -2,7 +2,7 @@
 <Screen xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Informations>
     <ScreenName>ScreenSong</ScreenName>
-    <ScreenVersion>6</ScreenVersion>
+    <ScreenVersion>7</ScreenVersion>
   </Informations>
   <Backgrounds>
     <Background Name="Background1">
@@ -415,7 +415,7 @@
       <SkinSelected>Button</SkinSelected>
       <Rect>
         <X>40</X>
-        <Y>235</Y>
+        <Y>290</Y>
         <W>360</W>
         <H>40</H>
         <Z>-2.11</Z>
@@ -991,7 +991,7 @@
   </SongMenus>
   <Lyrics />
   <SelectSlides>
-    <SelectSlide Name="SelectSlideOptionsMode">
+    <SelectSlide Name="SelectSlideOptionsSongMode">
       <Skin>Button</Skin>
       <SkinArrowLeft>SelectSlideArrowLeft</SkinArrowLeft>
       <SkinArrowRight>SelectSlideArrowRight</SkinArrowRight>
@@ -1033,6 +1033,48 @@
       <TextStyle>Bold</TextStyle>
       <NumVisible>1</NumVisible>
     </SelectSlide>
+    <SelectSlide Name="SelectSlideOptionsGameMode">
+      <Skin>Button</Skin>
+      <SkinArrowLeft>SelectSlideArrowLeft</SkinArrowLeft>
+      <SkinArrowRight>SelectSlideArrowRight</SkinArrowRight>
+      <SkinSelected>SelectSlide</SkinSelected>
+      <SkinArrowLeftSelected>SelectSlideArrowLeft</SkinArrowLeftSelected>
+      <SkinArrowRightSelected>SelectSlideArrowRight</SkinArrowRightSelected>
+      <Rect>
+        <X>40</X>
+        <Y>185</Y>
+        <W>360</W>
+        <H>40</H>
+        <Z>-2.11</Z>
+      </Rect>
+      <RectArrowLeft>
+        <X>45</X>
+        <Y>190</Y>
+        <W>30</W>
+        <H>30</H>
+        <Z>-2.12</Z>
+      </RectArrowLeft>
+      <RectArrowRight>
+        <X>365</X>
+        <Y>190</Y>
+        <W>30</W>
+        <H>30</H>
+        <Z>-2.12</Z>
+      </RectArrowRight>
+      <Color Name="ButtonColor" />
+      <SelColor Name="ButtonSelColor" />
+      <ArrowColor Name="ArrowColor" />
+      <ArrowSelColor Name="ArrowSelColor" />
+      <TextColor Name="TextColor" />
+      <TextSelColor Name="TextSelColor" />
+      <TextH>25</TextH>
+      <TextRelativeX>50</TextRelativeX>
+      <TextRelativeY>0</TextRelativeY>
+      <TextMaxW>280</TextMaxW>
+      <TextFont>Outline</TextFont>
+      <TextStyle>Bold</TextStyle>
+      <NumVisible>1</NumVisible>
+    </SelectSlide>
     <SelectSlide Name="SelectSlideOptionsPlaylistAdd">
       <Skin>Button</Skin>
       <SkinArrowLeft>SelectSlideArrowLeft</SkinArrowLeft>
@@ -1042,21 +1084,21 @@
       <SkinArrowRightSelected>SelectSlideArrowRight</SkinArrowRightSelected>
       <Rect>
         <X>40</X>
-        <Y>190</Y>
+        <Y>245</Y>
         <W>360</W>
         <H>40</H>
         <Z>-2.11</Z>
       </Rect>
       <RectArrowLeft>
         <X>45</X>
-        <Y>195</Y>
+        <Y>250</Y>
         <W>30</W>
         <H>30</H>
         <Z>-2.12</Z>
       </RectArrowLeft>
       <RectArrowRight>
         <X>365</X>
-        <Y>195</Y>
+        <Y>250</Y>
         <W>30</W>
         <H>30</H>
         <Z>-2.12</Z>

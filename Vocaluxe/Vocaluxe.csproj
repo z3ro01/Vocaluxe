@@ -179,6 +179,7 @@
     <Compile Include="GameModes\CGameMode.cs" />
     <Compile Include="GameModes\CGameModeBlind.cs" />
     <Compile Include="GameModes\CGameModeNormal.cs" />
+    <Compile Include="GameModes\CGameModeUntil5000.cs" />
     <Compile Include="Lib\Database\CCoverDB.cs" />
     <Compile Include="Lib\Database\CDatabaseBase.cs" />
     <Compile Include="Lib\Database\CHighscoreDB.cs" />

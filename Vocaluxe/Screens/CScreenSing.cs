@@ -293,6 +293,12 @@ namespace Vocaluxe.Screens
 
                 if (_FinishTime > 0.001 && _CurrentTime >= _FinishTime)
                     finish = true;
+
+                for (int p = 0; p < CGame.NumPlayers; p++)
+                {
+                    if (CGame.GameMode.IsPlayerFinished(p, CGame.Players[p].Points, CGame.Players[p].PointsGoldenNotes, CGame.Players[p].PointsLineBonus))
+                        finish = true;
+                }
             }
             else
                 finish = true;
@@ -308,6 +314,7 @@ namespace Vocaluxe.Screens
             _UpdateTimeLine();
 
             CGame.UpdatePoints(_CurrentTime);
+
             _UpdateLyrics();
             if (CGame.SongMode == ESongMode.TR_SONGMODE_MEDLEY)
                 _UpdateMedleyCountdown();
