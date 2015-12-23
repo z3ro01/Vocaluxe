@@ -25,8 +25,8 @@ namespace Vocaluxe.SongQueue
     {
         void Init();
 
-        bool AddVisibleSong(int visibleIndex, ESongMode gameMode);
-        bool AddSong(int absoluteIndex, ESongMode gameMode);
+        bool AddVisibleSong(int visibleIndex, ESongMode songMode);
+        bool AddSong(int absoluteIndex, ESongMode songMode);
         bool RemoveVisibleSong(int visibleIndex);
         bool RemoveSong(int absoluteIndex);
         void ClearSongs();
@@ -43,7 +43,7 @@ namespace Vocaluxe.SongQueue
 
         CSong GetSong();
         CSong GetSong(int round);
-        ESongMode GetCurrentGameMode();
-        ESongMode GetGameMode(int round);
+        ESongMode GetCurrentSongMode();
+        ESongMode GetSongMode(int round);
     }
 }

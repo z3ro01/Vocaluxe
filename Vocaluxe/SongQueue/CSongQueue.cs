@@ -51,9 +51,9 @@ namespace Vocaluxe.SongQueue
             CSongModes.Init();
         }
 
-        public ESongMode GetCurrentGameMode()
+        public ESongMode GetCurrentSongMode()
         {
-            return GetGameMode(_CurrentRound);
+            return GetSongMode(_CurrentRound);
         }
 
         public bool AddVisibleSong(int visibleIndex, ESongMode gameMode)
@@ -125,7 +125,7 @@ namespace Vocaluxe.SongQueue
                     _SongQueue[_CurrentRound].SongMode);
             }
             _CurrentRound++;
-            _CurrentSong = IsFinished() ? null : CSongModes.Get(GetCurrentGameMode()).GetSong(_SongQueue[_CurrentRound].SongID);
+            _CurrentSong = IsFinished() ? null : CSongModes.Get(GetCurrentSongMode()).GetSong(_SongQueue[_CurrentRound].SongID);
         }
 
         public bool IsFinished()
@@ -185,7 +185,7 @@ namespace Vocaluxe.SongQueue
         /// </summary>
         /// <param name="round">Round (0 based)</param>
         /// <returns>Current song or null if out of bounds</returns>
-        public ESongMode GetGameMode(int round)
+        public ESongMode GetSongMode(int round)
         {
             if (round < _SongQueue.Count && round >= 0)
                 return _SongQueue[round].SongMode;

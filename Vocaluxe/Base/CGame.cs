@@ -94,7 +94,7 @@ namespace Vocaluxe.Base
 
         public static ESongMode SongMode
         {
-            get { return _SongQueue.GetCurrentGameMode(); }
+            get { return _SongQueue.GetCurrentSongMode(); }
         }
 
         public static bool AddVisibleSong(int visibleIndex, ESongMode gameMode)
@@ -159,7 +159,7 @@ namespace Vocaluxe.Base
 
         public static ESongMode GetGameMode(int round)
         {
-            return _SongQueue.GetGameMode(round);
+            return _SongQueue.GetSongMode(round);
         }
 
         public static int GetNumSongs()
@@ -239,8 +239,8 @@ namespace Vocaluxe.Base
             {
                 for (int beat = _LastEvalBeat + 1; beat <= RecordedBeat; beat++)
                 {
-                    if ((_SongQueue.GetCurrentGameMode() == ESongMode.TR_SONGMODE_MEDLEY && song.Medley.EndBeat == beat) ||
-                        (_SongQueue.GetCurrentGameMode() == ESongMode.TR_SONGMODE_SHORTSONG && song.ShortEnd.EndBeat == beat))
+                    if ((_SongQueue.GetCurrentSongMode() == ESongMode.TR_SONGMODE_MEDLEY && song.Medley.EndBeat == beat) ||
+                        (_SongQueue.GetCurrentSongMode() == ESongMode.TR_SONGMODE_SHORTSONG && song.ShortEnd.EndBeat == beat))
                         Players[p].SongFinished = true;
 
                     CSongLine[] lines = song.Notes.GetVoice(Players[p].VoiceNr).Lines;
