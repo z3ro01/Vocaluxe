@@ -369,7 +369,7 @@ namespace VocaluxeLib
         public int CurrentNote;
 
         public int SongID;
-        public EGameMode GameMode;
+        public ESongMode SongMode;
         public long DateTicks;
         public bool SongFinished;
     }

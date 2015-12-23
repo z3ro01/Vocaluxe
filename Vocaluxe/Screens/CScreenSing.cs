@@ -309,7 +309,7 @@ namespace Vocaluxe.Screens
 
             CGame.UpdatePoints(_CurrentTime);
             _UpdateLyrics();
-            if (CGame.GameMode == EGameMode.TR_GAMEMODE_MEDLEY)
+            if (CGame.SongMode == ESongMode.TR_SONGMODE_MEDLEY)
                 _UpdateMedleyCountdown();
 
             float[] alpha = _CalcFadingAlpha();

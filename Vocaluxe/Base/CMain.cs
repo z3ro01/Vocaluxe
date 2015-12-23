@@ -598,7 +598,7 @@ namespace Vocaluxe.Base
             return CGame.GetBeatFromTime(time, bpm, gap);
         }
 
-        public void AddSong(int songID, EGameMode gameMode)
+        public void AddSong(int songID, ESongMode gameMode)
         {
             CGame.AddSong(songID, gameMode);
         }
@@ -970,12 +970,12 @@ namespace Vocaluxe.Base
             CPlaylists.AddSong(playlistID, songID);
         }
 
-        public void AddSong(int playlistID, int songID, EGameMode gameMode)
+        public void AddSong(int playlistID, int songID, ESongMode gameMode)
         {
             CPlaylists.AddSong(playlistID, songID, gameMode);
         }
 
-        public void InsertSong(int playlistID, int positionIndex, int songID, EGameMode gameMode)
+        public void InsertSong(int playlistID, int positionIndex, int songID, ESongMode gameMode)
         {
             CPlaylists.InsertSong(playlistID, positionIndex, songID, gameMode);
         }

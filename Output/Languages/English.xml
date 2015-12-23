@@ -15,10 +15,10 @@
   <string name="TR_DEBUG_SONGS">Loaded songs</string>
   <string name="TR_DEBUG_MOUSE">Mouse</string>
   <string name="TR_DEBUG_MEMORY">Memory usage</string>
-  <string name="TR_GAMEMODE_NORMAL">Normal</string>
-  <string name="TR_GAMEMODE_DUET">Duet</string>
-  <string name="TR_GAMEMODE_MEDLEY">Medley</string>
-  <string name="TR_GAMEMODE_SHORTSONG">Short version</string>
+  <string name="TR_SONGMODE_NORMAL">Normal</string>
+  <string name="TR_SONGMODE_DUET">Duet</string>
+  <string name="TR_SONGMODE_MEDLEY">Medley</string>
+  <string name="TR_SONGMODE_SHORTSONG">Short version</string>
   <string name="TR_RATING_VOCAL_HERO">Vocal Hero</string>
   <string name="TR_RATING_SUPERSTAR">Superstar</string>
   <string name="TR_RATING_LEAD_SINGER">Lead Singer</string>

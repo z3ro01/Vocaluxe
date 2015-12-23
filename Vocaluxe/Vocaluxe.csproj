@@ -229,8 +229,8 @@
     <Compile Include="CSplashScreen.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GameModes\CGameMode.cs" />
-    <Compile Include="GameModes\CGameModes.cs" />
+    <Compile Include="SongModes\CSongMode.cs" />
+    <Compile Include="SongModes\CSongModes.cs" />
     <Compile Include="Lib\Input\CControllerFramework.cs" />
     <Compile Include="Lib\Sound\Playback\GstreamerSharp\CGstreamerSharpAudio.cs" />
     <Compile Include="Lib\Sound\Record\CRecordBase.cs" />
@@ -247,7 +247,7 @@
     <Compile Include="Screens\CPopupScreenServerQR.cs" />
     <Compile Include="Screens\CScreenOptionsVideoAdjustments.cs" />
     <Compile Include="SongQueue\CSongQueue.cs" />
-    <Compile Include="GameModes\IGameMode.cs" />
+    <Compile Include="SongModes\ISongMode.cs" />
     <Compile Include="SongQueue\ISongQueue.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Lib\Draw\CDirect3D.cs" Condition=" ('$(Configuration)' == 'DebugWin' Or '$(Configuration)' == 'ReleaseWin' Or '$(Configuration)' == 'InstallerWin')">

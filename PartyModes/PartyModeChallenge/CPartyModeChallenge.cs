@@ -336,7 +336,7 @@ namespace VocaluxeLib.PartyModes.Challenge
 
         public override void SongSelected(int songID)
         {
-            const EGameMode gm = EGameMode.TR_GAMEMODE_NORMAL;
+            const ESongMode gm = ESongMode.TR_SONGMODE_NORMAL;
 
             CBase.Game.Reset();
             CBase.Game.ClearSongs();

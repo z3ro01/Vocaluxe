@@ -80,7 +80,7 @@ namespace Vocaluxe.Screens
         private readonly List<string> _ButtonsJoker = new List<string>();
         private readonly List<string> _TextsPlayer = new List<string>();
         private ESongOptionsView _CurSongOptionsView;
-        private readonly List<EGameMode> _AvailableGameModes;
+        private readonly List<ESongMode> _AvailableGameModes;
         private SScreenSongOptions _Sso;
 
         private CStatic _DragAndDropCover;
@@ -100,7 +100,7 @@ namespace Vocaluxe.Screens
 
         public CScreenSong()
         {
-            _AvailableGameModes = new List<EGameMode>();
+            _AvailableGameModes = new List<ESongMode>();
         }
 
         public override void Init()
@@ -824,11 +824,11 @@ namespace Vocaluxe.Screens
         {
             if (CSongs.IsInCategory && (songNr >= 0))
             {
-                EGameMode gm;
+                ESongMode gm;
                 if (_AvailableGameModes.Count >= _SelectSlides[_SelectSlideOptionsMode].Selection)
                     gm = _AvailableGameModes[_SelectSlides[_SelectSlideOptionsMode].Selection];
                 else
-                    gm = CSongs.VisibleSongs[songNr].IsDuet ? EGameMode.TR_GAMEMODE_DUET : EGameMode.TR_GAMEMODE_NORMAL;
+                    gm = CSongs.VisibleSongs[songNr].IsDuet ? ESongMode.TR_SONGMODE_DUET : ESongMode.TR_SONGMODE_NORMAL;
 
                 CGame.Reset();
                 CGame.ClearSongs();
@@ -842,7 +842,7 @@ namespace Vocaluxe.Screens
         {
             if (CSongs.IsInCategory && songNr >= 0 && CSongs.NumSongsVisible > songNr)
             {
-                EGameMode gm = CSongs.VisibleSongs[songNr].IsDuet ? EGameMode.TR_GAMEMODE_DUET : EGameMode.TR_GAMEMODE_NORMAL;
+                ESongMode gm = CSongs.VisibleSongs[songNr].IsDuet ? ESongMode.TR_SONGMODE_DUET : ESongMode.TR_SONGMODE_NORMAL;
 
                 CGame.Reset();
                 CGame.ClearSongs();
@@ -856,12 +856,12 @@ namespace Vocaluxe.Screens
         {
             if (CSongs.IsInCategory && (songNr >= 0))
             {
-                if (!CSongs.VisibleSongs[songNr].IsGameModeAvailable(EGameMode.TR_GAMEMODE_MEDLEY))
+                if (!CSongs.VisibleSongs[songNr].IsSongModeAvailable(ESongMode.TR_SONGMODE_MEDLEY))
                     return;
 
                 CGame.Reset();
                 CGame.ClearSongs();
-                if (CGame.AddVisibleSong(songNr, EGameMode.TR_GAMEMODE_MEDLEY))
+                if (CGame.AddVisibleSong(songNr, ESongMode.TR_SONGMODE_MEDLEY))
                     CGraphics.FadeTo(EScreen.Names);
             }
         }
@@ -879,9 +879,9 @@ namespace Vocaluxe.Screens
             {
                 int songNr = ids[CGame.Rand.Next(ids.Count)];
 
-                var gm = EGameMode.TR_GAMEMODE_NORMAL;
+                var gm = ESongMode.TR_SONGMODE_NORMAL;
                 if (CSongs.AllSongs[songNr].IsDuet)
-                    gm = EGameMode.TR_GAMEMODE_DUET;
+                    gm = ESongMode.TR_SONGMODE_DUET;
 
                 CGame.AddSong(songNr, gm);
 
@@ -903,9 +903,9 @@ namespace Vocaluxe.Screens
             {
                 int songNr = ids[CGame.Rand.Next(ids.Count)];
 
-                var gm = EGameMode.TR_GAMEMODE_NORMAL;
+                var gm = ESongMode.TR_SONGMODE_NORMAL;
                 if (CSongs.AllSongs[songNr].IsDuet)
-                    gm = EGameMode.TR_GAMEMODE_DUET;
+                    gm = ESongMode.TR_SONGMODE_DUET;
 
                 CGame.AddSong(songNr, gm);
 
@@ -935,9 +935,9 @@ namespace Vocaluxe.Screens
             {
                 int songNr = ids[CGame.Rand.Next(ids.Count)];
 
-                foreach (EGameMode gm in CSongs.AllSongs[songNr].AvailableGameModes)
+                foreach (ESongMode gm in CSongs.AllSongs[songNr].AvailableSongModes)
                 {
-                    if (gm == EGameMode.TR_GAMEMODE_MEDLEY)
+                    if (gm == ESongMode.TR_SONGMODE_MEDLEY)
                     {
                         CGame.AddSong(songNr, gm);
                         s++;
@@ -1177,26 +1177,26 @@ namespace Vocaluxe.Screens
                 _ShowSongOptionsMedley();
         }
 
-        private void _CheckAndAddGameMode(EGameMode gameMode)
+        private void _CheckAndAddGameMode(ESongMode gameMode)
         {
-            if (CSongs.VisibleSongs[_SongMenu.GetPreviewSongNr()].IsGameModeAvailable(gameMode))
+            if (CSongs.VisibleSongs[_SongMenu.GetPreviewSongNr()].IsSongModeAvailable(gameMode))
             {
-                _SelectSlides[_SelectSlideOptionsMode].AddValue(Enum.GetName(typeof(EGameMode), gameMode), null, (int)gameMode);
+                _SelectSlides[_SelectSlideOptionsMode].AddValue(Enum.GetName(typeof(ESongMode), gameMode), null, (int)gameMode);
                 _AvailableGameModes.Add(gameMode);
             }
         }
 
         private void _ShowSongOptionsSong()
         {
-            var lastMode = EGameMode.TR_GAMEMODE_NORMAL;
+            var lastMode = ESongMode.TR_SONGMODE_NORMAL;
             if (_AvailableGameModes.Count > 0)
                 lastMode = _AvailableGameModes[_SelectSlides[_SelectSlideOptionsMode].Selection];
             _AvailableGameModes.Clear();
             _SelectSlides[_SelectSlideOptionsMode].Clear();
-            _CheckAndAddGameMode(EGameMode.TR_GAMEMODE_NORMAL);
-            _CheckAndAddGameMode(EGameMode.TR_GAMEMODE_DUET);
-            _CheckAndAddGameMode(EGameMode.TR_GAMEMODE_SHORTSONG);
-            _CheckAndAddGameMode(EGameMode.TR_GAMEMODE_MEDLEY);
+            _CheckAndAddGameMode(ESongMode.TR_SONGMODE_NORMAL);
+            _CheckAndAddGameMode(ESongMode.TR_SONGMODE_DUET);
+            _CheckAndAddGameMode(ESongMode.TR_SONGMODE_SHORTSONG);
+            _CheckAndAddGameMode(ESongMode.TR_SONGMODE_MEDLEY);
 
             //Set SelectSlide-Selection to last selected game-mode if possible
             _SelectSlides[_SelectSlideOptionsMode].SelectedTag = (int)lastMode;
@@ -1292,13 +1292,13 @@ namespace Vocaluxe.Screens
             {
                 //Open an existing playlist and add song
                 //Check selected game-mode
-                EGameMode gm;
+                ESongMode gm;
                 if (_AvailableGameModes.Count >= _SelectSlides[_SelectSlideOptionsMode].Selection)
                     gm = _AvailableGameModes[_SelectSlides[_SelectSlideOptionsMode].Selection];
                 else if (CSongs.VisibleSongs[_SongMenu.GetPreviewSongNr()].IsDuet)
-                    gm = EGameMode.TR_GAMEMODE_DUET;
+                    gm = ESongMode.TR_SONGMODE_DUET;
                 else
-                    gm = EGameMode.TR_GAMEMODE_NORMAL;
+                    gm = ESongMode.TR_SONGMODE_NORMAL;
 
                 //Check if Playlist really exists
                 if (_SelectSlides[_SelectSlideOptionsPlaylistAdd].Selection - 1 >= 0)
@@ -1318,13 +1318,13 @@ namespace Vocaluxe.Screens
             {
                 //Create a new playlist and add song
                 //Check selected game-mode
-                EGameMode gm;
+                ESongMode gm;
                 if (_AvailableGameModes.Count >= _SelectSlides[_SelectSlideOptionsMode].Selection)
                     gm = _AvailableGameModes[_SelectSlides[_SelectSlideOptionsMode].Selection];
                 else if (CSongs.VisibleSongs[_SongMenu.GetPreviewSongNr()].IsDuet)
-                    gm = EGameMode.TR_GAMEMODE_DUET;
+                    gm = ESongMode.TR_SONGMODE_DUET;
                 else
-                    gm = EGameMode.TR_GAMEMODE_NORMAL;
+                    gm = ESongMode.TR_SONGMODE_NORMAL;
 
                 //Create new playlist
                 _Playlist.ActivePlaylistID = CPlaylists.NewPlaylist();
@@ -1343,13 +1343,13 @@ namespace Vocaluxe.Screens
             {
                 //Add song to loaded playlist
                 //Check selected game-mode
-                EGameMode gm;
+                ESongMode gm;
                 if (_AvailableGameModes.Count >= _SelectSlides[_SelectSlideOptionsMode].Selection)
                     gm = _AvailableGameModes[_SelectSlides[_SelectSlideOptionsMode].Selection];
                 else if (CSongs.VisibleSongs[_SongMenu.GetPreviewSongNr()].IsDuet)
-                    gm = EGameMode.TR_GAMEMODE_DUET;
+                    gm = ESongMode.TR_SONGMODE_DUET;
                 else
-                    gm = EGameMode.TR_GAMEMODE_NORMAL;
+                    gm = ESongMode.TR_SONGMODE_NORMAL;
                 CPlaylists.AddSong(_Playlist.ActivePlaylistID, CSongs.VisibleSongs[_SongMenu.GetPreviewSongNr()].ID, gm);
                 _Playlist.UpdatePlaylist();
                 _Playlist.ScrollToBottom();

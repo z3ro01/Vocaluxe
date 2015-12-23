@@ -142,7 +142,7 @@ namespace Vocaluxe.Base.Server
         [DataMember]
         public int PlaylistPosition;
         [DataMember]
-        public int GameMode;
+        public int SongMode;
     }
 
     [DataContract]

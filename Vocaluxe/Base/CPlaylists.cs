@@ -142,14 +142,14 @@ namespace Vocaluxe.Base
                 pl.AddSong(songID);
         }
 
-        public static void AddSong(int playlistID, int songID, EGameMode gameMode)
+        public static void AddSong(int playlistID, int songID, ESongMode gameMode)
         {
             CPlaylistFile pl = Get(playlistID);
             if (pl != null)
                 pl.AddSong(songID, gameMode);
         }
 
-        public static void InsertSong(int playlistID, int positionIndex, int songID, EGameMode gameMode)
+        public static void InsertSong(int playlistID, int positionIndex, int songID, ESongMode gameMode)
         {
             CPlaylistFile pl = Get(playlistID);
             if (pl != null)

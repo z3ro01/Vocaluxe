@@ -92,17 +92,17 @@ namespace Vocaluxe.Base
             ResetPlayer();
         }
 
-        public static EGameMode GameMode
+        public static ESongMode SongMode
         {
             get { return _SongQueue.GetCurrentGameMode(); }
         }
 
-        public static bool AddVisibleSong(int visibleIndex, EGameMode gameMode)
+        public static bool AddVisibleSong(int visibleIndex, ESongMode gameMode)
         {
             return _SongQueue.AddVisibleSong(visibleIndex, gameMode);
         }
 
-        public static bool AddSong(int absoluteIndex, EGameMode gameMode)
+        public static bool AddSong(int absoluteIndex, ESongMode gameMode)
         {
             return _SongQueue.AddSong(absoluteIndex, gameMode);
         }
@@ -157,7 +157,7 @@ namespace Vocaluxe.Base
             return _SongQueue.GetSong(round);
         }
 
-        public static EGameMode GetGameMode(int round)
+        public static ESongMode GetGameMode(int round)
         {
             return _SongQueue.GetGameMode(round);
         }
@@ -205,7 +205,7 @@ namespace Vocaluxe.Base
                 Players[i].CurrentLine = -1;
                 Players[i].CurrentNote = -1;
                 Players[i].SongID = -1;
-                Players[i].GameMode = EGameMode.TR_GAMEMODE_NORMAL;
+                Players[i].SongMode = ESongMode.TR_SONGMODE_NORMAL;
                 Players[i].DateTicks = DateTime.Now.Ticks;
                 Players[i].SongFinished = false;
             }
@@ -239,8 +239,8 @@ namespace Vocaluxe.Base
             {
                 for (int beat = _LastEvalBeat + 1; beat <= RecordedBeat; beat++)
                 {
-                    if ((_SongQueue.GetCurrentGameMode() == EGameMode.TR_GAMEMODE_MEDLEY && song.Medley.EndBeat == beat) ||
-                        (_SongQueue.GetCurrentGameMode() == EGameMode.TR_GAMEMODE_SHORTSONG && song.ShortEnd.EndBeat == beat))
+                    if ((_SongQueue.GetCurrentGameMode() == ESongMode.TR_SONGMODE_MEDLEY && song.Medley.EndBeat == beat) ||
+                        (_SongQueue.GetCurrentGameMode() == ESongMode.TR_SONGMODE_SHORTSONG && song.ShortEnd.EndBeat == beat))
                         Players[p].SongFinished = true;
 
                     CSongLine[] lines = song.Notes.GetVoice(Players[p].VoiceNr).Lines;

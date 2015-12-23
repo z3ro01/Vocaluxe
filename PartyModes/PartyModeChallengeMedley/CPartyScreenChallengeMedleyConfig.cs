@@ -199,7 +199,7 @@ namespace VocaluxeLib.PartyModes.ChallengeMedley
                         for (int i = 0; i < CBase.Playlist.GetSongCount(_PartyMode.GameData.PlaylistID); i++)
                         {
                             int id = CBase.Playlist.GetSong(_PartyMode.GameData.PlaylistID, i).SongID;
-                            _ConfigOk = CBase.Songs.GetSongByID(id).AvailableGameModes.Any(mode => mode == EGameMode.TR_GAMEMODE_MEDLEY);
+                            _ConfigOk = CBase.Songs.GetSongByID(id).AvailableSongModes.Any(mode => mode == ESongMode.TR_SONGMODE_MEDLEY);
                             if (_ConfigOk)
                                 break;
                         }
@@ -222,7 +222,7 @@ namespace VocaluxeLib.PartyModes.ChallengeMedley
                     _ConfigOk = false;
                     foreach (CSong song in CBase.Songs.GetVisibleSongs())
                     {
-                        _ConfigOk = song.AvailableGameModes.Any(mode => mode == EGameMode.TR_GAMEMODE_MEDLEY);
+                        _ConfigOk = song.AvailableSongModes.Any(mode => mode == ESongMode.TR_SONGMODE_MEDLEY);
                         if (_ConfigOk)
                             break;
                     }
@@ -235,7 +235,7 @@ namespace VocaluxeLib.PartyModes.ChallengeMedley
                 {
                     for (int i = 0; i < CBase.Songs.GetNumSongs(); i++)
                     {
-                        _ConfigOk = CBase.Songs.GetSongByID(i).AvailableGameModes.Any(mode => mode == EGameMode.TR_GAMEMODE_MEDLEY);
+                        _ConfigOk = CBase.Songs.GetSongByID(i).AvailableSongModes.Any(mode => mode == ESongMode.TR_SONGMODE_MEDLEY);
                         if (_ConfigOk)
                             break;
                     }

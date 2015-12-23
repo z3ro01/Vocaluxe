@@ -89,7 +89,7 @@ namespace Vocaluxe.Lib.Playlist
                     CLog.LogError("Can't find song '" + songEntry.Title + "' from '" + songEntry.Artist + "' in playlist file: " + File);
                 else
                 {
-                    var playlistSong = new CPlaylistSong(plSong.ID, songEntry.GameMode);
+                    var playlistSong = new CPlaylistSong(plSong.ID, songEntry.SongMode);
                     Songs.Add(playlistSong);
                 }
             }
@@ -101,13 +101,13 @@ namespace Vocaluxe.Lib.Playlist
             var song = new CPlaylistSong
                 {
                     SongID = songID,
-                    GameMode = CSongs.GetSong(songID).IsGameModeAvailable(EGameMode.TR_GAMEMODE_DUET) ? EGameMode.TR_GAMEMODE_DUET : EGameMode.TR_GAMEMODE_NORMAL
+                    SongMode = CSongs.GetSong(songID).IsSongModeAvailable(ESongMode.TR_SONGMODE_DUET) ? ESongMode.TR_SONGMODE_DUET : ESongMode.TR_SONGMODE_NORMAL
                 };
 
             Songs.Add(song);
         }
 
-        public void AddSong(int songID, EGameMode gm)
+        public void AddSong(int songID, ESongMode gm)
         {
             var song = new CPlaylistSong(songID, gm);
 
@@ -141,7 +141,7 @@ namespace Vocaluxe.Lib.Playlist
             Songs.Insert(destNr, song);
         }
 
-        public void InsertSong(int destNr, int songID, EGameMode gm)
+        public void InsertSong(int destNr, int songID, ESongMode gm)
         {
             if (destNr < 0 || destNr >= Songs.Count)
                 return;

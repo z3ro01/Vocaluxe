@@ -180,28 +180,28 @@ namespace VocaluxeLib.Songs
         // Notes
         public readonly CNotes Notes = new CNotes();
 
-        public IList<EGameMode> AvailableGameModes
+        public IList<ESongMode> AvailableSongModes
         {
             get
             {
-                var gms = new List<EGameMode> {IsDuet ? EGameMode.TR_GAMEMODE_DUET : EGameMode.TR_GAMEMODE_NORMAL};
+                var sms = new List<ESongMode> {IsDuet ? ESongMode.TR_SONGMODE_DUET : ESongMode.TR_SONGMODE_NORMAL};
                 if (Medley.Source != EDataSource.None)
-                    gms.Add(EGameMode.TR_GAMEMODE_MEDLEY);
+                    sms.Add(ESongMode.TR_SONGMODE_MEDLEY);
                 if (ShortEnd.Source != EDataSource.None)
-                    gms.Add(EGameMode.TR_GAMEMODE_SHORTSONG);
+                    sms.Add(ESongMode.TR_SONGMODE_SHORTSONG);
 
-                return gms;
+                return sms;
             }
         }
 
         /// <summary>
-        ///     Returns true if the requested game mode is available
+        ///     Returns true if the requested song mode is available
         /// </summary>
-        /// <param name="gameMode"></param>
-        /// <returns>true if the requested game mode is available</returns>
-        public bool IsGameModeAvailable(EGameMode gameMode)
+        /// <param name="songMode"></param>
+        /// <returns>true if the requested song mode is available</returns>
+        public bool IsSongModeAvailable(ESongMode songMode)
         {
-            return AvailableGameModes.Any(gm => gm == gameMode);
+            return AvailableSongModes.Any(gm => gm == songMode);
         }
 
         //No point creating a song without a text file --> Use factory method LoadSong

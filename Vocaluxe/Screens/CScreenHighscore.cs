@@ -238,7 +238,7 @@ namespace Vocaluxe.Screens
             for (int round = 0; round < rounds; round++)
             {
                 int songID = CGame.GetSong(round).ID;
-                EGameMode gameMode = CGame.GetGameMode(round);
+                ESongMode gameMode = CGame.GetGameMode(round);
                 _Scores[round] = CDataBase.LoadScore(songID, gameMode);
             }
         }
@@ -257,20 +257,20 @@ namespace Vocaluxe.Screens
 
             switch (CGame.GetGameMode(_Round))
             {
-                case EGameMode.TR_GAMEMODE_NORMAL:
+                case ESongMode.TR_SONGMODE_NORMAL:
                     _Texts[_TextSongMode].Text = "TR_GAMEMODE_NORMAL";
                     break;
 
-                case EGameMode.TR_GAMEMODE_MEDLEY:
+                case ESongMode.TR_SONGMODE_MEDLEY:
                     _Texts[_TextSongMode].Text = "TR_GAMEMODE_MEDLEY";
                     break;
 
-                case EGameMode.TR_GAMEMODE_DUET:
+                case ESongMode.TR_SONGMODE_DUET:
                     _Texts[_TextSongMode].Text = "TR_GAMEMODE_DUET";
                     _IsDuet = true;
                     break;
 
-                case EGameMode.TR_GAMEMODE_SHORTSONG:
+                case ESongMode.TR_SONGMODE_SHORTSONG:
                     _Texts[_TextSongMode].Text = "TR_GAMEMODE_SHORTSONG";
                     break;
 

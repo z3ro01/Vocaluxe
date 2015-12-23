@@ -119,7 +119,7 @@ namespace VocaluxeLib.PartyModes.TicTacToe
             public int CategoryIndex;
             public int PlaylistID;
 
-            public EGameMode GameMode;
+            public ESongMode SongMode;
 
             public List<CRound> Rounds;
             public List<int> Songs;
@@ -160,7 +160,7 @@ namespace VocaluxeLib.PartyModes.TicTacToe
                     SongSource = ESongSource.TR_ALLSONGS,
                     PlaylistID = 0,
                     CategoryIndex = 0,
-                    GameMode = EGameMode.TR_GAMEMODE_NORMAL,
+                    SongMode = ESongMode.TR_SONGMODE_NORMAL,
                     Rounds = new List<CRound>(),
                     Songs = new List<int>(),
                     NumJokerRandom = new int[2],
@@ -426,20 +426,20 @@ namespace VocaluxeLib.PartyModes.TicTacToe
                     for (int i = 0; i < CBase.Playlist.GetSongCount(GameData.PlaylistID); i++)
                     {
                         int id = CBase.Playlist.GetSong(GameData.PlaylistID, i).SongID;
-                        if (CBase.Songs.GetSongByID(id).AvailableGameModes.Contains(GameData.GameMode))
+                        if (CBase.Songs.GetSongByID(id).AvailableSongModes.Contains(GameData.SongMode))
                             GameData.Songs.Add(id);
                     }
                     break;
 
                 case ESongSource.TR_ALLSONGS:
                     ReadOnlyCollection<CSong> avSongs = CBase.Songs.GetSongs();
-                    GameData.Songs.AddRange(avSongs.Where(song => song.AvailableGameModes.Contains(GameData.GameMode)).Select(song => song.ID));
+                    GameData.Songs.AddRange(avSongs.Where(song => song.AvailableSongModes.Contains(GameData.SongMode)).Select(song => song.ID));
                     break;
 
                 case ESongSource.TR_CATEGORY:
                     CBase.Songs.SetCategory(GameData.CategoryIndex);
                     avSongs = CBase.Songs.GetVisibleSongs();
-                    GameData.Songs.AddRange(avSongs.Where(song => song.AvailableGameModes.Contains(GameData.GameMode)).Select(song => song.ID));
+                    GameData.Songs.AddRange(avSongs.Where(song => song.AvailableSongModes.Contains(GameData.SongMode)).Select(song => song.ID));
 
                     CBase.Songs.SetCategory(-1);
                     break;
@@ -487,7 +487,7 @@ namespace VocaluxeLib.PartyModes.TicTacToe
             if (isDuet)
                 players[1].VoiceNr = 1;
 
-            CBase.Game.AddSong(round.SongID, GameData.GameMode);
+            CBase.Game.AddSong(round.SongID, GameData.SongMode);
         }
 
         private void _SetNumJokers()

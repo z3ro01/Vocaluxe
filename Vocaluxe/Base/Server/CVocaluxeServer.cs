@@ -745,7 +745,7 @@ namespace Vocaluxe.Base.Server
             if (playlistSong != null)
             {
                 result.PlaylistId = playlistId;
-                result.GameMode = (int)playlistSong.GameMode;
+                result.SongMode = (int)playlistSong.SongMode;
                 result.PlaylistPosition = playlistPos;
                 result.Song = _GetSongInfo(CSongs.GetSong(playlistSong.SongID), true);
             }

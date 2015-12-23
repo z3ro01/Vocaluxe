@@ -331,7 +331,7 @@ namespace VocaluxeLib.PartyModes.ChallengeMedley
             {
                 if (GameData.Songs.Count == 0)
                     _UpdateSongList();
-                CBase.Game.AddSong(GameData.Songs[0], EGameMode.TR_GAMEMODE_MEDLEY);
+                CBase.Game.AddSong(GameData.Songs[0], ESongMode.TR_SONGMODE_MEDLEY);
                 GameData.Songs.RemoveAt(0);
             }
             return true;
@@ -349,20 +349,20 @@ namespace VocaluxeLib.PartyModes.ChallengeMedley
                     for (int i = 0; i < CBase.Playlist.GetSongCount(GameData.PlaylistID); i++)
                     {
                         int id = CBase.Playlist.GetSong(GameData.PlaylistID, i).SongID;
-                        if (CBase.Songs.GetSongByID(id).AvailableGameModes.Contains(EGameMode.TR_GAMEMODE_MEDLEY))
+                        if (CBase.Songs.GetSongByID(id).AvailableSongModes.Contains(ESongMode.TR_SONGMODE_MEDLEY))
                             GameData.Songs.Add(id);
                     }
                     break;
 
                 case ESongSource.TR_ALLSONGS:
                     ReadOnlyCollection<CSong> avSongs = CBase.Songs.GetSongs();
-                    GameData.Songs.AddRange(avSongs.Where(song => song.AvailableGameModes.Contains(EGameMode.TR_GAMEMODE_MEDLEY)).Select(song => song.ID));
+                    GameData.Songs.AddRange(avSongs.Where(song => song.AvailableSongModes.Contains(ESongMode.TR_SONGMODE_MEDLEY)).Select(song => song.ID));
                     break;
 
                 case ESongSource.TR_CATEGORY:
                     CBase.Songs.SetCategory(GameData.CategoryIndex);
                     avSongs = CBase.Songs.GetVisibleSongs();
-                    GameData.Songs.AddRange(avSongs.Where(song => song.AvailableGameModes.Contains(EGameMode.TR_GAMEMODE_MEDLEY)).Select(song => song.ID));
+                    GameData.Songs.AddRange(avSongs.Where(song => song.AvailableSongModes.Contains(ESongMode.TR_SONGMODE_MEDLEY)).Select(song => song.ID));
 
                     CBase.Songs.SetCategory(-1);
                     break;

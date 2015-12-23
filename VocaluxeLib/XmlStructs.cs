@@ -24,6 +24,6 @@ namespace VocaluxeLib
     public struct SPlaylistSong
     {
         public string Artist, Title;
-        [DefaultValue(EGameMode.TR_GAMEMODE_NORMAL)] public EGameMode GameMode;
+        [DefaultValue(ESongMode.TR_SONGMODE_NORMAL)] public ESongMode SongMode;
     }
 }

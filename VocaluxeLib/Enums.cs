@@ -343,13 +343,13 @@ namespace VocaluxeLib
         EditTheme
     }
 
-    public enum EGameMode
+    public enum ESongMode
     {
         // ReSharper disable InconsistentNaming
-        TR_GAMEMODE_NORMAL,
-        TR_GAMEMODE_MEDLEY,
-        TR_GAMEMODE_DUET,
-        TR_GAMEMODE_SHORTSONG
+        TR_SONGMODE_NORMAL,
+        TR_SONGMODE_MEDLEY,
+        TR_SONGMODE_DUET,
+        TR_SONGMODE_SHORTSONG
         // ReSharper restore InconsistentNaming
     }
 
