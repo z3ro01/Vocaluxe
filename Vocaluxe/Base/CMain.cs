@@ -598,9 +598,9 @@ namespace Vocaluxe.Base
             return CGame.GetBeatFromTime(time, bpm, gap);
         }
 
-        public void AddSong(int songID, ESongMode gameMode)
+        public void AddSong(int songID, ESongMode songMode, EGameMode gameMode = EGameMode.TR_GAMEMODE_NORMAL)
         {
-            CGame.AddSong(songID, gameMode);
+            CGame.AddSong(songID, songMode, gameMode);
         }
 
         public void Reset()

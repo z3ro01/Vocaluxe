@@ -99,6 +99,7 @@ namespace VocaluxeLib.PartyModes.TicTacToe
         private enum EStage
         {
             Config,
+            GameModes,
             Names,
             Main,
             Singing
@@ -123,6 +124,8 @@ namespace VocaluxeLib.PartyModes.TicTacToe
 
             public List<CRound> Rounds;
             public List<int> Songs;
+            public List<EGameMode> GameModes;
+            public List<EGameMode> GameModesAvailable;
 
             public int CurrentRoundNr;
             public int FieldNr;
@@ -163,6 +166,8 @@ namespace VocaluxeLib.PartyModes.TicTacToe
                     SongMode = ESongMode.TR_SONGMODE_NORMAL,
                     Rounds = new List<CRound>(),
                     Songs = new List<int>(),
+                    GameModes = new List<EGameMode>(),
+                    GameModesAvailable = new List<EGameMode>(),
                     NumJokerRandom = new int[2],
                     NumJokerRetry = new int[2]
                 };
@@ -184,6 +189,8 @@ namespace VocaluxeLib.PartyModes.TicTacToe
             GameData.Rounds.Clear();
             GameData.PlayerTeam1.Clear();
             GameData.PlayerTeam2.Clear();
+            GameData.GameModes.Clear();
+            GameData.GameModesAvailable.Clear();
         }
 
         public override bool Init()
@@ -210,6 +217,8 @@ namespace VocaluxeLib.PartyModes.TicTacToe
             {
                 case EStage.Config:
                     return _Screens["CPartyScreenTicTacToeConfig"];
+                case EStage.GameModes:
+                    return _Screens["CPartyScreenTicTacToeGameModes"];
                 case EStage.Names:
                     return _Screens["CPartyScreenTicTacToeNames"];
                 case EStage.Main:
@@ -232,6 +241,9 @@ namespace VocaluxeLib.PartyModes.TicTacToe
             switch (_Stage)
             {
                 case EStage.Config:
+                    _Stage = EStage.GameModes;
+                    break;
+                case EStage.GameModes:
                     _Stage = EStage.Names;
                     break;
                 case EStage.Names:
@@ -265,8 +277,11 @@ namespace VocaluxeLib.PartyModes.TicTacToe
                 case EStage.Config:
                     CBase.Graphics.FadeTo(EScreen.Party);
                     return;
-                case EStage.Names:
+                case EStage.GameModes:
                     _Stage = EStage.Config;
+                    break;
+                case EStage.Names:
+                    _Stage = EStage.GameModes;
                     break;
                 case EStage.Main:
                     _Stage = EStage.Names;
@@ -461,6 +476,15 @@ namespace VocaluxeLib.PartyModes.TicTacToe
                 _PreparePlayerList(2);
         }
 
+        private void _UpdateGameModesList()
+        {
+            if (GameData.GameModes.Count > 0)
+                return;
+
+            GameData.GameModes.AddRange(GameData.GameModesAvailable);
+            GameData.GameModes.Shuffle();
+        }
+
         private void _StartRound(int roundNr)
         {
             CBase.Game.Reset();
@@ -493,7 +517,12 @@ namespace VocaluxeLib.PartyModes.TicTacToe
             if (isDuet)
                 players[1].VoiceNr = 1;
 
-            CBase.Game.AddSong(round.SongID, GameData.SongMode);
+            _UpdateGameModesList();
+
+            EGameMode gm = GameData.GameModes[0];
+            GameData.GameModes.RemoveAt(0);
+
+            CBase.Game.AddSong(round.SongID, GameData.SongMode, gm);
         }
 
         private void _SetNumJokers()

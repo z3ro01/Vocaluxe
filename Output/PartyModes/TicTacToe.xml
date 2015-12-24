@@ -8,12 +8,13 @@
     <Folder>TicTacToe</Folder>
 	<PartyModeFile>CPartyModeTicTacToe</PartyModeFile>
     <PartyModeVersionMajor>0</PartyModeVersionMajor>
-    <PartyModeVersionMinor>1</PartyModeVersionMinor>
+    <PartyModeVersionMinor>2</PartyModeVersionMinor>
 	<TargetAudience>TR_PARTYMODE_AUDIENCE</TargetAudience>
   </Info>
   <PartyScreens>
     <ScreenFile>CPartyScreenTicTacToeMain</ScreenFile>
 	<ScreenFile>CPartyScreenTicTacToeConfig</ScreenFile>
 	<ScreenFile>CPartyScreenTicTacToeNames</ScreenFile>
+	<ScreenFile>CPartyScreenTicTacToeGameModes</ScreenFile>
   </PartyScreens>
 </root>

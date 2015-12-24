@@ -199,7 +199,7 @@ namespace VocaluxeLib
         float GetTimeFromBeats(float beat, float bpm);
         float GetBeatFromTime(float time, float bpm, float gap);
 
-        void AddSong(int songID, ESongMode gameMode);
+        void AddSong(int songID, ESongMode songMode, EGameMode gameMode = EGameMode.TR_GAMEMODE_NORMAL);
         void Reset();
         void ClearSongs();
         int GetNumSongs();

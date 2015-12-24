@@ -90,6 +90,9 @@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CPartyScreenTicTacToeGameModes.cs" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">if exist "$(SolutionDir)Output\PartyModes\$(TargetName)\Code" rd "$(SolutionDir)Output\PartyModes\$(TargetName)\Code" /S /Q

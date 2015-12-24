@@ -22,6 +22,8 @@
   <string name="TR_GAMEMODE_NORMAL">Normales Spiel</string>
   <string name="TR_GAMEMODE_BLIND">Blind singen</string>  
   <string name="TR_GAMEMODE_UNTIL5000">Bis 5000</string>  
+  <string name="TR_GAMEMODE_ALL">Alle Modi zufällig</string>
+  <string name="TR_GAMEMODE_CUSTOM">Gewählte Modi zufällig</string>
   <string name="TR_RATING_VOCAL_HERO">Vocal Hero</string>
   <string name="TR_RATING_SUPERSTAR">Superstar</string>
   <string name="TR_RATING_LEAD_SINGER">Hit-Künstler</string>
