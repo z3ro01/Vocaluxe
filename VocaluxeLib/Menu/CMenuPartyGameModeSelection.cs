@@ -23,11 +23,28 @@ using VocaluxeLib.Profile;
 
 namespace VocaluxeLib.Menu
 {
+    public struct SPartyGameMode
+    {
+        public EGameMode GameMode;
+        public string GameModeName;
+        public bool IsPartyGameMode
+        {
+            get
+            {
+                return !string.IsNullOrWhiteSpace(GameModeName);
+            }
+        }
+    }
+
     public abstract class CMenuPartyGameModeSelection : CMenuParty
     {
+        //Add elements to this lists to distinct available game-modes
         protected List<EGameMode> _Whitelist;
         protected List<EGameMode> _Blacklist;
-        protected List<EGameMode> _SelectedModes;
+        //Add strings to this list to provide own party-mode-special game-mides
+        protected List<SPartyGameMode> _OwnGameModes;
+        //This list will contain all selected game-modes
+        protected List<SPartyGameMode> _SelectedModes;
 
         private const string _ButtonNext = "ButtonNext";
         private const string _ButtonBack = "ButtonBack";
@@ -40,9 +57,7 @@ namespace VocaluxeLib.Menu
             base.Init();
             _Whitelist = new List<EGameMode>();
             _Blacklist = new List<EGameMode>();
-            _SelectedModes = new List<EGameMode>();
-
-            _SelectedModes.Add(EGameMode.TR_GAMEMODE_BLIND);
+            _SelectedModes = new List<SPartyGameMode>();
 
             _ThemeButtons = new string[] { _ButtonBack, _ButtonNext };
             _ThemeSelectSlides = new string[] { _SelectSlideGameMode };
@@ -103,38 +118,75 @@ namespace VocaluxeLib.Menu
 
         public override bool UpdateGame()
         {
+            //Only update _SelectedModes if something has changed
             if(_SelectSlides[_SelectSlideGameMode].Selection != _CurrentSelection)
             {
                 _CurrentSelection = _SelectSlides[_SelectSlideGameMode].Selection;
                 _SelectedModes.Clear();
+
+                //First value: Select all
                 if(_CurrentSelection == 0)
                 {
+                    //Elements in whitelist: Only use these ones and party-based game-mides
                     if (_Whitelist.Count > 0)
-                        _SelectedModes.AddRange(_Whitelist);
+                    {
+                        foreach(EGameMode gm in _Whitelist)
+                        {
+                            SPartyGameMode pgm = new SPartyGameMode();
+                            pgm.GameMode = gm;
+
+                            _SelectedModes.Add(pgm);
+                        }
+                        _SelectedModes.AddRange(_OwnGameModes);
+                    }
+                    //Otherwise: Check if gm is on blacklist before adding
                     else
                     {
-                        foreach(EGameMode gm in Enum.GetValues(typeof(EGameMode)))
+                        foreach (EGameMode gm in Enum.GetValues(typeof(EGameMode)))
                         {
                             if (!_Blacklist.Contains(gm))
-                                _SelectedModes.Add(gm);
+                            {
+                                SPartyGameMode pgm = new SPartyGameMode();
+                                pgm.GameMode = gm;
+
+                                _SelectedModes.Add(pgm);
+                            }
                         }
                     }
                 }
+                //Last value: Custom selection
                 else if(_CurrentSelection == _SelectSlides[_SelectSlideGameMode].NumValues - 1)
                 {
                     //TODO
                 }
+                //Only one game-mode will be used
                 else
                 {
                     if (_Whitelist.Count > 0 && _Whitelist.Count < _CurrentSelection - 1)
-                        _SelectedModes.Add(_Whitelist[_CurrentSelection - 1]);
-                    else if (_Blacklist.Count > 0)
                     {
+                        SPartyGameMode pgm = new SPartyGameMode();
+                        pgm.GameMode = _Whitelist[_CurrentSelection - 1];
 
+                        _SelectedModes.Add(pgm);                       
+                    }
+                    else if (_Whitelist.Count > 0 && _CurrentSelection - 1 - _Whitelist.Count < _OwnGameModes.Count)
+                    {
+                        _SelectedModes.Add(_OwnGameModes[_CurrentSelection - 1 - _Whitelist.Count]);
                     }
                     else
                     {
-                        _SelectedModes.Add((EGameMode)Enum.GetValues(typeof(EGameMode)).GetValue(_CurrentSelection - 1));
+                        int numGameModes = Enum.GetValues(typeof(EGameMode)).Length;
+                        if (_CurrentSelection - 1 < numGameModes)
+                        {
+                            SPartyGameMode pgm = new SPartyGameMode();
+                            pgm.GameMode = (EGameMode)Enum.GetValues(typeof(EGameMode)).GetValue(_CurrentSelection - 1);
+
+                            _SelectedModes.Add(pgm);
+                        }
+                        else if(_CurrentSelection - 1 - numGameModes < _OwnGameModes.Count)
+                        {
+                            _SelectedModes.Add(_OwnGameModes[_CurrentSelection - 1 - numGameModes]);
+                        }
                     }
                         
 
