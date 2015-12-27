@@ -22,7 +22,6 @@
   <string name="TR_GAMEMODE_NORMAL">Normal Game</string>
   <string name="TR_GAMEMODE_BLIND">Blind Mode</string>
   <string name="TR_GAMEMODE_UNTIL5000">Until 5000</string>
-  <string name="TR_GAMEMODE_HOLDTHELINE">Hold The Line</string>
   <string name="TR_GAMEMODE_ALL">All modes random</string>
   <string name="TR_GAMEMODE_CUSTOM">Choosen modes random</string>
   <string name="TR_RATING_VOCAL_HERO">Vocal Hero</string>

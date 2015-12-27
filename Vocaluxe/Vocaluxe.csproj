@@ -178,7 +178,6 @@
     <Compile Include="COSFunctions.cs" />
     <Compile Include="GameModes\CGameMode.cs" />
     <Compile Include="GameModes\CGameModeBlind.cs" />
-    <Compile Include="GameModes\CGameModeHoldTheLine.cs" />
     <Compile Include="GameModes\CGameModeNormal.cs" />
     <Compile Include="GameModes\CGameModeUntil5000.cs" />
     <Compile Include="Lib\Database\CCoverDB.cs" />

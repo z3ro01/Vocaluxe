@@ -143,10 +143,6 @@ namespace Vocaluxe.SongQueue
                         _CurrentGameMode = new CGameModeUntil5000();
                         break;
 
-                    case EGameMode.TR_GAMEMODE_HOLDTHELINE:
-                        _CurrentGameMode = new CGameModeHoldTheLine();
-                        break;
-
                     default:
                         _CurrentGameMode = new CGameModeNormal();
                         break;
