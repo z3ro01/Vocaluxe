@@ -357,7 +357,8 @@ namespace VocaluxeLib
     {
         TR_GAMEMODE_NORMAL,
         TR_GAMEMODE_BLIND,
-        TR_GAMEMODE_UNTIL5000
+        TR_GAMEMODE_UNTIL5000,
+        TR_GAMEMODE_HOLDTHELINE
     }
 
     public enum ENoteType

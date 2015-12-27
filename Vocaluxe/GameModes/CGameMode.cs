@@ -7,6 +7,9 @@ namespace Vocaluxe.GameModes
 {
     public abstract class CGameMode
     {
+        public CGameMode()
+        {
+        }
         public virtual bool IsNotesVisible(int p)
         {
             return true;
@@ -24,5 +27,17 @@ namespace Vocaluxe.GameModes
         {
             return false;
         }
+
+        #region events / graphics
+        public virtual void OnUpdate(float time)
+        {
+            return;
+        }
+
+        public virtual void OnDraw(float time)
+        {
+            return;
+        }
+        #endregion
     }
 }
