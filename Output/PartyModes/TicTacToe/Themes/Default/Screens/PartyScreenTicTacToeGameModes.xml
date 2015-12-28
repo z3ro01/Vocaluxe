@@ -41,6 +41,118 @@
       <Font>Outline</Font>
       <Text>TR_SCREENCONFIG_TITLE</Text>
     </Text>
+    <Text Name="TextGameMode1">
+      <X>455</X>
+      <Y>189</Y>
+      <Z>0</Z>
+      <H>27</H>
+      <MaxW>870</MaxW>
+      <Color Name="StaticColor" />
+      <SelColor Name="TextSelColor" />
+      <Align>Center</Align>
+      <ResizeAlign>Center</ResizeAlign>
+      <Style>Bold</Style>
+      <Font>Outline</Font>
+      <Text />
+    </Text>
+    <Text Name="TextGameMode2">
+      <X>455</X>
+      <Y>259</Y>
+      <Z>0</Z>
+      <H>27</H>
+      <MaxW>870</MaxW>
+      <Color Name="StaticColor" />
+      <SelColor Name="TextSelColor" />
+      <Align>Center</Align>
+      <ResizeAlign>Center</ResizeAlign>
+      <Style>Bold</Style>
+      <Font>Outline</Font>
+      <Text />
+    </Text>
+    <Text Name="TextGameMode3">
+      <X>455</X>
+      <Y>329</Y>
+      <Z>0</Z>
+      <H>27</H>
+      <MaxW>870</MaxW>
+      <Color Name="StaticColor" />
+      <SelColor Name="TextSelColor" />
+      <Align>Center</Align>
+      <ResizeAlign>Center</ResizeAlign>
+      <Style>Bold</Style>
+      <Font>Outline</Font>
+      <Text />
+    </Text>
+    <Text Name="TextGameMode4">
+      <X>455</X>
+      <Y>399</Y>
+      <Z>0</Z>
+      <H>27</H>
+      <MaxW>870</MaxW>
+      <Color Name="StaticColor" />
+      <SelColor Name="TextSelColor" />
+      <Align>Center</Align>
+      <ResizeAlign>Center</ResizeAlign>
+      <Style>Bold</Style>
+      <Font>Outline</Font>
+      <Text />
+    </Text>
+    <Text Name="TextGameModeDesc1">
+      <X>455</X>
+      <Y>216</Y>
+      <Z>0</Z>
+      <H>26</H>
+      <MaxW>870</MaxW>
+      <Color Name="StaticColor" />
+      <SelColor Name="TextSelColor" />
+      <Align>Center</Align>
+      <ResizeAlign>Center</ResizeAlign>
+      <Style>Normal</Style>
+      <Font>Outline</Font>
+      <Text />
+    </Text>
+    <Text Name="TextGameModeDesc2">
+      <X>455</X>
+      <Y>286</Y>
+      <Z>0</Z>
+      <H>26</H>
+      <MaxW>870</MaxW>
+      <Color Name="StaticColor" />
+      <SelColor Name="TextSelColor" />
+      <Align>Center</Align>
+      <ResizeAlign>Center</ResizeAlign>
+      <Style>Normal</Style>
+      <Font>Outline</Font>
+      <Text />
+    </Text>
+    <Text Name="TextGameModeDesc3">
+      <X>455</X>
+      <Y>356</Y>
+      <Z>0</Z>
+      <H>26</H>
+      <MaxW>870</MaxW>
+      <Color Name="StaticColor" />
+      <SelColor Name="TextSelColor" />
+      <Align>Center</Align>
+      <ResizeAlign>Center</ResizeAlign>
+      <Style>Normal</Style>
+      <Font>Outline</Font>
+      <Text />
+    </Text>
+    <Text Name="TextGameModeDesc4">
+      <X>455</X>
+      <Y>426</Y>
+      <Z>0</Z>
+      <H>26</H>
+      <MaxW>870</MaxW>
+      <Color Name="StaticColor" />
+      <SelColor Name="TextSelColor" />
+      <Align>Center</Align>
+      <ResizeAlign>Center</ResizeAlign>
+      <Style>Normal</Style>
+      <Font>Outline</Font>
+      <Text />
+    </Text>
   </Texts>
   <Buttons>
     <Button Name="ButtonNext">
@@ -159,7 +271,7 @@
       <TextStyle>Bold</TextStyle>
       <NumVisible>3</NumVisible>
     </SelectSlide>
-    <SelectSlide Name="SelectSlideSongSource">
+    <SelectSlide Name="SelectSlideGameMode1">
       <Skin/>
       <SkinArrowLeft>SelectSlideArrowLeft</SkinArrowLeft>
       <SkinArrowRight>SelectSlideArrowRight</SkinArrowRight>
@@ -167,22 +279,22 @@
       <SkinArrowLeftSelected>SelectSlideArrowLeft</SkinArrowLeftSelected>
       <SkinArrowRightSelected>SelectSlideArrowRight</SkinArrowRightSelected>
       <Rect>
-        <X>500</X>
-        <Y>160</Y>
-        <W>700</W>
-        <H>50</H>
+        <X>40</X>
+        <Y>180</Y>
+        <W>1200</W>
+        <H>70</H>
         <Z>0</Z>
       </Rect>
       <RectArrowLeft>
-        <X>505</X>
-        <Y>165</Y>
+        <X>915</X>
+        <Y>195</Y>
         <W>40</W>
         <H>40</H>
         <Z>0</Z>
       </RectArrowLeft>
       <RectArrowRight>
         <X>1170</X>
-        <Y>165</Y>
+        <Y>195</Y>
         <W>40</W>
         <H>40</H>
         <Z>0</Z>
@@ -194,12 +306,138 @@
       <TextColor Name="TextColor" />
       <TextSelColor Name="TextSelColor" />
       <TextH>27</TextH>
-      <TextRelativeX>50</TextRelativeX>
+      <TextRelativeX>920</TextRelativeX>
       <TextRelativeY>0</TextRelativeY>
       <TextMaxW>205.33</TextMaxW>
       <TextFont>Outline</TextFont>
       <TextStyle>Bold</TextStyle>
-      <NumVisible>3</NumVisible>
+      <NumVisible>2</NumVisible>
+    </SelectSlide>
+    <SelectSlide Name="SelectSlideGameMode2">
+      <Skin/>
+      <SkinArrowLeft>SelectSlideArrowLeft</SkinArrowLeft>
+      <SkinArrowRight>SelectSlideArrowRight</SkinArrowRight>
+      <SkinSelected>SelectSlide</SkinSelected>
+      <SkinArrowLeftSelected>SelectSlideArrowLeft</SkinArrowLeftSelected>
+      <SkinArrowRightSelected>SelectSlideArrowRight</SkinArrowRightSelected>
+      <Rect>
+        <X>40</X>
+        <Y>260</Y>
+        <W>1200</W>
+        <H>70</H>
+        <Z>0</Z>
+      </Rect>
+      <RectArrowLeft>
+        <X>915</X>
+        <Y>265</Y>
+        <W>40</W>
+        <H>40</H>
+        <Z>0</Z>
+      </RectArrowLeft>
+      <RectArrowRight>
+        <X>1170</X>
+        <Y>265</Y>
+        <W>40</W>
+        <H>40</H>
+        <Z>0</Z>
+      </RectArrowRight>
+      <Color Name="SelectSlideColor" />
+      <SelColor Name="SelectSlideSelColor" />
+      <ArrowColor Name="ArrowColor" />
+      <ArrowSelColor Name="ArrowSelColor" />
+      <TextColor Name="TextColor" />
+      <TextSelColor Name="TextSelColor" />
+      <TextH>27</TextH>
+      <TextRelativeX>920</TextRelativeX>
+      <TextRelativeY>0</TextRelativeY>
+      <TextMaxW>205.33</TextMaxW>
+      <TextFont>Outline</TextFont>
+      <TextStyle>Bold</TextStyle>
+      <NumVisible>2</NumVisible>
+    </SelectSlide>
+    <SelectSlide Name="SelectSlideGameMode3">
+      <Skin/>
+      <SkinArrowLeft>SelectSlideArrowLeft</SkinArrowLeft>
+      <SkinArrowRight>SelectSlideArrowRight</SkinArrowRight>
+      <SkinSelected>SelectSlide</SkinSelected>
+      <SkinArrowLeftSelected>SelectSlideArrowLeft</SkinArrowLeftSelected>
+      <SkinArrowRightSelected>SelectSlideArrowRight</SkinArrowRightSelected>
+      <Rect>
+        <X>40</X>
+        <Y>330</Y>
+        <W>1200</W>
+        <H>70</H>
+        <Z>0</Z>
+      </Rect>
+      <RectArrowLeft>
+        <X>915</X>
+        <Y>345</Y>
+        <W>40</W>
+        <H>40</H>
+        <Z>0</Z>
+      </RectArrowLeft>
+      <RectArrowRight>
+        <X>1170</X>
+        <Y>345</Y>
+        <W>40</W>
+        <H>40</H>
+        <Z>0</Z>
+      </RectArrowRight>
+      <Color Name="SelectSlideColor" />
+      <SelColor Name="SelectSlideSelColor" />
+      <ArrowColor Name="ArrowColor" />
+      <ArrowSelColor Name="ArrowSelColor" />
+      <TextColor Name="TextColor" />
+      <TextSelColor Name="TextSelColor" />
+      <TextH>27</TextH>
+      <TextRelativeX>920</TextRelativeX>
+      <TextRelativeY>0</TextRelativeY>
+      <TextMaxW>205.33</TextMaxW>
+      <TextFont>Outline</TextFont>
+      <TextStyle>Bold</TextStyle>
+      <NumVisible>2</NumVisible>
+    </SelectSlide>
+    <SelectSlide Name="SelectSlideGameMode4">
+      <Skin/>
+      <SkinArrowLeft>SelectSlideArrowLeft</SkinArrowLeft>
+      <SkinArrowRight>SelectSlideArrowRight</SkinArrowRight>
+      <SkinSelected>SelectSlide</SkinSelected>
+      <SkinArrowLeftSelected>SelectSlideArrowLeft</SkinArrowLeftSelected>
+      <SkinArrowRightSelected>SelectSlideArrowRight</SkinArrowRightSelected>
+      <Rect>
+        <X>40</X>
+        <Y>400</Y>
+        <W>1200</W>
+        <H>70</H>
+        <Z>0</Z>
+      </Rect>
+      <RectArrowLeft>
+        <X>915</X>
+        <Y>415</Y>
+        <W>40</W>
+        <H>40</H>
+        <Z>0</Z>
+      </RectArrowLeft>
+      <RectArrowRight>
+        <X>1170</X>
+        <Y>415</Y>
+        <W>40</W>
+        <H>40</H>
+        <Z>0</Z>
+      </RectArrowRight>
+      <Color Name="SelectSlideColor" />
+      <SelColor Name="SelectSlideSelColor" />
+      <ArrowColor Name="ArrowColor" />
+      <ArrowSelColor Name="ArrowSelColor" />
+      <TextColor Name="TextColor" />
+      <TextSelColor Name="TextSelColor" />
+      <TextH>27</TextH>
+      <TextRelativeX>920</TextRelativeX>
+      <TextRelativeY>0</TextRelativeY>
+      <TextMaxW>205.33</TextMaxW>
+      <TextFont>Outline</TextFont>
+      <TextStyle>Bold</TextStyle>
+      <NumVisible>2</NumVisible>
     </SelectSlide>
   </SelectSlides>
   <SingNotes />

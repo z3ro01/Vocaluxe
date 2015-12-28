@@ -49,6 +49,9 @@ namespace VocaluxeLib.Menu
         private const string _ButtonNext = "ButtonNext";
         private const string _ButtonBack = "ButtonBack";
         private const string _SelectSlideGameMode = "SelectSlideGameMode";
+        private List<string> _SelectSlideGameModes;
+        private List<string> _TextGameMode;
+        private List<string> _TextGameModeDesc;
 
         private int _CurrentSelection = -1;
 
@@ -57,10 +60,33 @@ namespace VocaluxeLib.Menu
             base.Init();
             _Whitelist = new List<EGameMode>();
             _Blacklist = new List<EGameMode>();
+            _OwnGameModes = new List<SPartyGameMode>();
             _SelectedModes = new List<SPartyGameMode>();
 
+            _SelectSlideGameModes = new List<string>();
+            _TextGameMode = new List<string>();
+            _TextGameModeDesc = new List<string>();
+
+            for (int i = 0; i < 4; i++)
+            {
+                _SelectSlideGameModes.Add("SelectSlideGameMode" + (i + 1));
+                _TextGameMode.Add("TextGameMode" + (i + 1));
+                _TextGameModeDesc.Add("TextGameModeDesc" + (i + 1));
+            }
+
+            List<string> themeHelper = new List<string>();
+            themeHelper.Add(_SelectSlideGameMode);
+            themeHelper.AddRange(_SelectSlideGameModes);
+
             _ThemeButtons = new string[] { _ButtonBack, _ButtonNext };
-            _ThemeSelectSlides = new string[] { _SelectSlideGameMode };
+            _ThemeSelectSlides = themeHelper.ToArray();
+
+            themeHelper.Clear();
+            themeHelper.AddRange(_TextGameMode);
+            themeHelper.AddRange(_TextGameModeDesc);
+
+            _ThemeTexts = themeHelper.ToArray();
+
         }
 
         public override void LoadTheme(string xmlPath)
@@ -69,7 +95,16 @@ namespace VocaluxeLib.Menu
 
             _SelectSlides[_SelectSlideGameMode].AddValue("TR_GAMEMODE_ALL");
             _SelectSlides[_SelectSlideGameMode].AddValues(Enum.GetNames(typeof(EGameMode)));
+            foreach (SPartyGameMode pgm in _OwnGameModes)
+                _SelectSlides[_SelectSlideGameMode].AddValue(pgm.GameModeName);
             _SelectSlides[_SelectSlideGameMode].AddValue("TR_GAMEMODE_CUSTOM");
+
+            for(int i=0; i< _SelectSlideGameModes.Count; i++)
+            {
+                _SelectSlides[_SelectSlideGameModes[i]].SetValues<EOffOn>((int)EOffOn.TR_CONFIG_ON);
+                _Texts[_TextGameMode[i]].Text = "Test";
+                _Texts[_TextGameModeDesc[i]].Text = "Dies ist eine Beschreibung des entsprechenden Spiel-Modus, damit alle wissen was da so abgeht";
+            }
         }
 
         public override bool HandleInput(SKeyEvent keyEvent)
