@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using VocaluxeLib.Draw;
@@ -23,7 +24,7 @@ using VocaluxeLib.Profile;
 
 namespace VocaluxeLib.Menu
 {
-    public struct SPartyGameMode
+    public class CPartyGameMode
     {
         public EGameMode GameMode;
         public string GameModeName;
@@ -34,15 +35,23 @@ namespace VocaluxeLib.Menu
                 return !string.IsNullOrWhiteSpace(GameModeName);
             }
         }
+
+        public EOffOn Active;
+        public string TranslationName
+        {
+            get
+            {
+                return IsPartyGameMode ? GameModeName : GameMode.ToString();
+            }
+        }
     }
 
     public abstract class CMenuPartyGameModeSelection : CMenuParty
     {
-        //Add elements to this lists to distinct available game-modes
-        protected List<SPartyGameMode> _GameModes;
-        //This list will contain all selected game-modes
-        protected List<SPartyGameMode> _SelectedModes;
+        //This list will contain all available game-modes for this party-mode
+        private List<CPartyGameMode> _GameModes;
 
+        private const int _NumGMSelectSlides = 5;
         private const string _ButtonNext = "ButtonNext";
         private const string _ButtonBack = "ButtonBack";
         private const string _SelectSlideGameMode = "SelectSlideGameMode";
@@ -50,19 +59,19 @@ namespace VocaluxeLib.Menu
         private List<string> _TextGameMode;
         private List<string> _TextGameModeDesc;
 
-        private int _CurrentSelection = -1;
+        private int _CurrentGlobalSelection = -1;
+        private int _Offset = 0;
 
         public override void Init()
         {
             base.Init();
-            _GameModes = new List<SPartyGameMode>();
-            _SelectedModes = new List<SPartyGameMode>();
+            _GameModes = new List<CPartyGameMode>();
 
             _SelectSlideGameModes = new List<string>();
             _TextGameMode = new List<string>();
             _TextGameModeDesc = new List<string>();
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < _NumGMSelectSlides; i++)
             {
                 _SelectSlideGameModes.Add("SelectSlideGameMode" + (i + 1));
                 _TextGameMode.Add("TextGameMode" + (i + 1));
@@ -90,21 +99,37 @@ namespace VocaluxeLib.Menu
             base.LoadTheme(xmlPath);
 
             _SelectSlides[_SelectSlideGameMode].AddValue("TR_GAMEMODE_ALL");
-            _SelectSlides[_SelectSlideGameMode].AddValues(Enum.GetNames(typeof(EGameMode)));
-            foreach (SPartyGameMode pgm in _GameModes)
-                _SelectSlides[_SelectSlideGameMode].AddValue(pgm.GameModeName);
+            foreach (CPartyGameMode pgm in _GameModes)
+                _SelectSlides[_SelectSlideGameMode].AddValue(pgm.TranslationName);
             _SelectSlides[_SelectSlideGameMode].AddValue("TR_GAMEMODE_CUSTOM");
 
-            for(int i=0; i< _SelectSlideGameModes.Count; i++)
-            {
-                _SelectSlides[_SelectSlideGameModes[i]].SetValues<EOffOn>((int)EOffOn.TR_CONFIG_ON);
-                _Texts[_TextGameMode[i]].Text = "Test";
-                _Texts[_TextGameModeDesc[i]].Text = "Dies ist eine Beschreibung des entsprechenden Spiel-Modus, damit alle wissen was da so abgeht";
-            }
+            _UpdateGameModeSelectSlides();
         }
 
         public override bool HandleInput(SKeyEvent keyEvent)
         {
+            switch(keyEvent.Key)
+            {
+                case Keys.Down:
+                    if(_SelectSlides[_SelectSlideGameModes[_NumGMSelectSlides - 1]].Selected
+                        && _Offset + _NumGMSelectSlides < _GameModes.Count)
+                    {
+                        _Offset++;
+                        _UpdateGameModeSelectSlides();
+                        return true;
+                    }
+                    break;
+
+                case Keys.Up:
+                    if (_SelectSlides[_SelectSlideGameModes[0]].Selected
+                        && _Offset > 0)
+                    {
+                        _Offset--;
+                        _UpdateGameModeSelectSlides();
+                        return true;
+                    }
+                    break;
+            }
             base.HandleInput(keyEvent);
 
             switch (keyEvent.Key)
@@ -120,7 +145,29 @@ namespace VocaluxeLib.Menu
 
                     if (_Buttons[_ButtonNext].Selected)
                         Next();
+                    break;
 
+                case Keys.Left:
+                case Keys.Right:
+                    int selection = -1;
+                    for(int i =0; i < Math.Min(_GameModes.Count, _NumGMSelectSlides); i++)
+                    { 
+                        if (_SelectSlides[_SelectSlideGameModes[i]].Selected 
+                            && _GameModes[i + _Offset].Active != (EOffOn)_SelectSlides[_SelectSlideGameModes[i]].Selection)
+                        {
+                            selection = i;
+                            break;
+                        }
+                    }
+                    if (selection > -1 && _CurrentGlobalSelection == _SelectSlides[_SelectSlideGameMode].NumValues - 1)
+                    {
+                        _GameModes[selection + _Offset].Active = (EOffOn)_SelectSlides[_SelectSlideGameModes[selection]].Selection;
+                    }
+                    else if(selection > -1)
+                    { 
+                        _CurrentGlobalSelection = _SelectSlides[_SelectSlideGameMode].NumValues - 1;
+                        _SelectSlides[_SelectSlideGameMode].Selection = _SelectSlides[_SelectSlideGameMode].NumValues - 1;
+                    }
                     break;
             }
             return true;
@@ -140,6 +187,24 @@ namespace VocaluxeLib.Menu
             if (mouseEvent.RB)
                 Back();
 
+            if (mouseEvent.Wheel != 0)
+            {
+                for (int i = 0; i < Math.Min(_GameModes.Count, _NumGMSelectSlides); i++)
+                {
+                    if (CHelper.IsInBounds(_SelectSlides[_SelectSlideGameModes[i]].Rect, mouseEvent))
+                    {
+                        _Offset += mouseEvent.Wheel;
+                        if (_Offset < 0)
+                            _Offset = 0;
+                        else if (_Offset + _NumGMSelectSlides > _GameModes.Count)
+                            _Offset = _GameModes.Count - _NumGMSelectSlides;
+
+                        _UpdateGameModeSelectSlides();
+                        break;
+                    }
+                }
+            }
+
             return true;
         }
 
@@ -150,30 +215,37 @@ namespace VocaluxeLib.Menu
         public override bool UpdateGame()
         {
             //Only update _SelectedModes if something has changed
-            if(_SelectSlides[_SelectSlideGameMode].Selection != _CurrentSelection)
+            if(_SelectSlides[_SelectSlideGameMode].Selection != _CurrentGlobalSelection)
             {
-                _CurrentSelection = _SelectSlides[_SelectSlideGameMode].Selection;
-                _SelectedModes.Clear();
+                _CurrentGlobalSelection = _SelectSlides[_SelectSlideGameMode].Selection;
 
-                //First value: Select all
-                if (_CurrentSelection == 0)
+                //First value: Select all, Last value: Select custom (on default: all)
+                if (_CurrentGlobalSelection == 0 || _CurrentGlobalSelection == _SelectSlides[_SelectSlideGameMode].NumValues - 1)
                 {
-                    _SelectedModes.Clear();
-                    _SelectedModes.AddRange(_GameModes);
-                }
-                //Last value: Custom selection
-                else if (_CurrentSelection == _SelectSlides[_SelectSlideGameMode].NumValues - 1)
-                {
-                    //TODO
+                    foreach(CPartyGameMode pgm in _GameModes)
+                        pgm.Active = EOffOn.TR_CONFIG_ON;
+
+                    _UpdateGameModeSelectSlides();
                 }
                 //Only one game-mode will be used
                 else
                 {
-                    _SelectedModes.Clear();
-                    _SelectedModes.Add(_GameModes[_SelectSlides[_SelectSlideGameMode].SelectedTag]);
+                    for(int i=0; i<_GameModes.Count; i++)
+                    {
+                        if (i == _CurrentGlobalSelection - 1)
+                            _GameModes[i].Active = EOffOn.TR_CONFIG_ON;
+                        else
+                            _GameModes[i].Active = EOffOn.TR_CONFIG_OFF;
+                    }
+                    _UpdateGameModeSelectSlides();
                 }
             }
             return true;
+        }
+
+        protected List<CPartyGameMode> _GetSelectedGameModes()
+        {
+            return _GameModes.Where(s => s.Active == EOffOn.TR_CONFIG_ON).ToList();
         }
 
         protected abstract List<EGameMode> _GetBlacklist();
@@ -187,7 +259,8 @@ namespace VocaluxeLib.Menu
             {
                 foreach(EGameMode gm in _GetWhitelist())
                 {
-                    SPartyGameMode pgm = new SPartyGameMode();
+                    CPartyGameMode pgm = new CPartyGameMode();
+                    pgm.Active = EOffOn.TR_CONFIG_ON;
                     pgm.GameMode = gm;
                     _GameModes.Add(pgm);
                 }
@@ -198,7 +271,8 @@ namespace VocaluxeLib.Menu
                 {
                     if(!_GetBlacklist().Contains(gm))
                     {
-                        SPartyGameMode pgm = new SPartyGameMode();
+                        CPartyGameMode pgm = new CPartyGameMode();
+                        pgm.Active = EOffOn.TR_CONFIG_ON;
                         pgm.GameMode = gm;
                         _GameModes.Add(pgm);
                     }
@@ -208,7 +282,8 @@ namespace VocaluxeLib.Menu
             {
                 foreach (EGameMode gm in Enum.GetValues(typeof(EGameMode)))
                 {
-                    SPartyGameMode pgm = new SPartyGameMode();
+                    CPartyGameMode pgm = new CPartyGameMode();
+                    pgm.Active = EOffOn.TR_CONFIG_ON;
                     pgm.GameMode = gm;
                     _GameModes.Add(pgm);
                 }
@@ -216,9 +291,34 @@ namespace VocaluxeLib.Menu
 
             foreach(string gm in _GetPartyModeGames())
             {
-                SPartyGameMode pgm = new SPartyGameMode();
+                CPartyGameMode pgm = new CPartyGameMode();
+                pgm.Active = EOffOn.TR_CONFIG_ON;
                 pgm.GameModeName = gm;
                 _GameModes.Add(pgm);
+            }
+        }
+
+        private void _UpdateGameModeSelectSlides()
+        {
+            for (int i = 0; i < _SelectSlideGameModes.Count; i++)
+            {
+                if (i + _Offset < _GameModes.Count)
+                {
+                    _SelectSlides[_SelectSlideGameModes[i]].Visible = true;
+                    _Texts[_TextGameMode[i]].Visible = true;
+                    _Texts[_TextGameModeDesc[i]].Visible = true;
+
+                    _SelectSlides[_SelectSlideGameModes[i]].Clear();
+                    _SelectSlides[_SelectSlideGameModes[i]].SetValues<EOffOn>((int)_GameModes[i + _Offset].Active);
+                    _Texts[_TextGameMode[i]].Text = _GameModes[i + _Offset].TranslationName;
+                    _Texts[_TextGameModeDesc[i]].Text = _GameModes[i + _Offset].TranslationName + "_DESC";
+                }
+                else
+                {
+                    _SelectSlides[_SelectSlideGameModes[i]].Visible = false;
+                    _Texts[_TextGameMode[i]].Visible = false;
+                    _Texts[_TextGameModeDesc[i]].Visible = false;
+                }
             }
         }
     }

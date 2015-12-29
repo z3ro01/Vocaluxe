@@ -28,7 +28,7 @@ namespace VocaluxeLib.PartyModes.TicTacToe
         public override void Next()
         {
             _PartyMode.GameData.GameModesAvailable.Clear();
-            _PartyMode.GameData.GameModesAvailable.AddRange(_SelectedModes);
+            _PartyMode.GameData.GameModesAvailable.AddRange(_GetSelectedGameModes());
             _PartyMode.Next();
         }
 

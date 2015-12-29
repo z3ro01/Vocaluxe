@@ -124,8 +124,8 @@ namespace VocaluxeLib.PartyModes.TicTacToe
 
             public List<CRound> Rounds;
             public List<int> Songs;
-            public List<SPartyGameMode> GameModes;
-            public List<SPartyGameMode> GameModesAvailable;
+            public List<CPartyGameMode> GameModes;
+            public List<CPartyGameMode> GameModesAvailable;
 
             public int CurrentRoundNr;
             public int FieldNr;
@@ -166,8 +166,8 @@ namespace VocaluxeLib.PartyModes.TicTacToe
                     SongMode = ESongMode.TR_SONGMODE_NORMAL,
                     Rounds = new List<CRound>(),
                     Songs = new List<int>(),
-                    GameModes = new List<SPartyGameMode>(),
-                    GameModesAvailable = new List<SPartyGameMode>(),
+                    GameModes = new List<CPartyGameMode>(),
+                    GameModesAvailable = new List<CPartyGameMode>(),
                     NumJokerRandom = new int[2],
                     NumJokerRetry = new int[2]
                 };
@@ -520,7 +520,7 @@ namespace VocaluxeLib.PartyModes.TicTacToe
             _UpdateGameModesList();
 
             EGameMode gm = EGameMode.TR_GAMEMODE_NORMAL;
-            SPartyGameMode pgm = GameData.GameModes[0];
+            CPartyGameMode pgm = GameData.GameModes[0];
             if (!pgm.IsPartyGameMode)
                 gm = pgm.GameMode;
             GameData.GameModes.RemoveAt(0);

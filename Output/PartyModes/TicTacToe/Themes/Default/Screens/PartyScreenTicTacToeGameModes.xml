@@ -57,7 +57,7 @@
     </Text>
     <Text Name="TextGameMode2">
       <X>455</X>
-      <Y>259</Y>
+      <Y>269</Y>
       <Z>0</Z>
       <H>27</H>
       <MaxW>870</MaxW>
@@ -71,7 +71,7 @@
     </Text>
     <Text Name="TextGameMode3">
       <X>455</X>
-      <Y>329</Y>
+      <Y>349</Y>
       <Z>0</Z>
       <H>27</H>
       <MaxW>870</MaxW>
@@ -85,7 +85,21 @@
     </Text>
     <Text Name="TextGameMode4">
       <X>455</X>
-      <Y>399</Y>
+      <Y>429</Y>
+      <Z>0</Z>
+      <H>27</H>
+      <MaxW>870</MaxW>
+      <Color Name="StaticColor" />
+      <SelColor Name="TextSelColor" />
+      <Align>Center</Align>
+      <ResizeAlign>Center</ResizeAlign>
+      <Style>Bold</Style>
+      <Font>Outline</Font>
+      <Text />
+    </Text>
+    <Text Name="TextGameMode5">
+      <X>455</X>
+      <Y>509</Y>
       <Z>0</Z>
       <H>27</H>
       <MaxW>870</MaxW>
@@ -113,7 +127,7 @@
     </Text>
     <Text Name="TextGameModeDesc2">
       <X>455</X>
-      <Y>286</Y>
+      <Y>296</Y>
       <Z>0</Z>
       <H>26</H>
       <MaxW>870</MaxW>
@@ -127,7 +141,7 @@
     </Text>
     <Text Name="TextGameModeDesc3">
       <X>455</X>
-      <Y>356</Y>
+      <Y>376</Y>
       <Z>0</Z>
       <H>26</H>
       <MaxW>870</MaxW>
@@ -141,7 +155,21 @@
     </Text>
     <Text Name="TextGameModeDesc4">
       <X>455</X>
-      <Y>426</Y>
+      <Y>456</Y>
+      <Z>0</Z>
+      <H>26</H>
+      <MaxW>870</MaxW>
+      <Color Name="StaticColor" />
+      <SelColor Name="TextSelColor" />
+      <Align>Center</Align>
+      <ResizeAlign>Center</ResizeAlign>
+      <Style>Normal</Style>
+      <Font>Outline</Font>
+      <Text />
+    </Text>
+    <Text Name="TextGameModeDesc5">
+      <X>455</X>
+      <Y>536</Y>
       <Z>0</Z>
       <H>26</H>
       <MaxW>870</MaxW>
@@ -329,14 +357,14 @@
       </Rect>
       <RectArrowLeft>
         <X>915</X>
-        <Y>265</Y>
+        <Y>275</Y>
         <W>40</W>
         <H>40</H>
         <Z>0</Z>
       </RectArrowLeft>
       <RectArrowRight>
         <X>1170</X>
-        <Y>265</Y>
+        <Y>275</Y>
         <W>40</W>
         <H>40</H>
         <Z>0</Z>
@@ -364,21 +392,21 @@
       <SkinArrowRightSelected>SelectSlideArrowRight</SkinArrowRightSelected>
       <Rect>
         <X>40</X>
-        <Y>330</Y>
+        <Y>340</Y>
         <W>1200</W>
         <H>70</H>
         <Z>0</Z>
       </Rect>
       <RectArrowLeft>
         <X>915</X>
-        <Y>345</Y>
+        <Y>355</Y>
         <W>40</W>
         <H>40</H>
         <Z>0</Z>
       </RectArrowLeft>
       <RectArrowRight>
         <X>1170</X>
-        <Y>345</Y>
+        <Y>355</Y>
         <W>40</W>
         <H>40</H>
         <Z>0</Z>
@@ -406,21 +434,63 @@
       <SkinArrowRightSelected>SelectSlideArrowRight</SkinArrowRightSelected>
       <Rect>
         <X>40</X>
-        <Y>400</Y>
+        <Y>420</Y>
         <W>1200</W>
         <H>70</H>
         <Z>0</Z>
       </Rect>
       <RectArrowLeft>
         <X>915</X>
-        <Y>415</Y>
+        <Y>435</Y>
         <W>40</W>
         <H>40</H>
         <Z>0</Z>
       </RectArrowLeft>
       <RectArrowRight>
         <X>1170</X>
-        <Y>415</Y>
+        <Y>435</Y>
+        <W>40</W>
+        <H>40</H>
+        <Z>0</Z>
+      </RectArrowRight>
+      <Color Name="SelectSlideColor" />
+      <SelColor Name="SelectSlideSelColor" />
+      <ArrowColor Name="ArrowColor" />
+      <ArrowSelColor Name="ArrowSelColor" />
+      <TextColor Name="TextColor" />
+      <TextSelColor Name="TextSelColor" />
+      <TextH>27</TextH>
+      <TextRelativeX>920</TextRelativeX>
+      <TextRelativeY>0</TextRelativeY>
+      <TextMaxW>205.33</TextMaxW>
+      <TextFont>Outline</TextFont>
+      <TextStyle>Bold</TextStyle>
+      <NumVisible>2</NumVisible>
+    </SelectSlide>
+    <SelectSlide Name="SelectSlideGameMode5">
+      <Skin/>
+      <SkinArrowLeft>SelectSlideArrowLeft</SkinArrowLeft>
+      <SkinArrowRight>SelectSlideArrowRight</SkinArrowRight>
+      <SkinSelected>SelectSlide</SkinSelected>
+      <SkinArrowLeftSelected>SelectSlideArrowLeft</SkinArrowLeftSelected>
+      <SkinArrowRightSelected>SelectSlideArrowRight</SkinArrowRightSelected>
+      <Rect>
+        <X>40</X>
+        <Y>500</Y>
+        <W>1200</W>
+        <H>70</H>
+        <Z>0</Z>
+      </Rect>
+      <RectArrowLeft>
+        <X>915</X>
+        <Y>515</Y>
+        <W>40</W>
+        <H>40</H>
+        <Z>0</Z>
+      </RectArrowLeft>
+      <RectArrowRight>
+        <X>1170</X>
+        <Y>515</Y>
         <W>40</W>
         <H>40</H>
         <Z>0</Z>
