@@ -784,7 +784,7 @@
             };
 
             var pagebeforeshowDisplayProfile = function () {
-                if (pageHandler.profileIdRequest >= 0) {
+                if (pageHandler.profileIdRequest != -1) {
                     var promise = request({
                         url: "getProfile?profileId=" + pageHandler.profileIdRequest
                     }).done(function (result) {
@@ -946,7 +946,7 @@
                     $('#selectProfileList').children().remove();
 
                     function handleProfileSelectLineClick(e) {
-                        pageHandler.profileIdRequest = parseInt(e.currentTarget.id.replace("ProfileSelectLine_", ""));
+                        pageHandler.profileIdRequest = e.currentTarget.id.replace("ProfileSelectLine_", "");
                         $.mobile.changePage("#displayProfile", { transition: "slidefade" });
                     }
 
@@ -973,7 +973,7 @@
                     $('#selectUserAdminList').children().remove();
 
                     function handleSelectUserAdminLineClick(e) {
-                        pageHandler.profileIdRequest = parseInt(e.currentTarget.id.replace("SelectUserAdminLine_", ""));
+                        pageHandler.profileIdRequest = e.currentTarget.id.replace("SelectUserAdminLine_", "");
                         $.mobile.changePage("#displayUserAdmin", { transition: "slidefade" });
                     }
 
