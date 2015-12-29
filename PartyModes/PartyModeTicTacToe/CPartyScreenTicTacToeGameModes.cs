@@ -36,5 +36,20 @@ namespace VocaluxeLib.PartyModes.TicTacToe
         {
             return base.UpdateGame();
         }
+
+        protected override List<EGameMode> _GetBlacklist()
+        {
+            return new List<EGameMode>();
+        }
+
+        protected override List<EGameMode> _GetWhitelist()
+        {
+            return new List<EGameMode>();
+        }
+
+        protected override List<string> _GetPartyModeGames()
+        {
+            return new List<string>();
+        }
     }
 }
