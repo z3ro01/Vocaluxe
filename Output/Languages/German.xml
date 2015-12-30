@@ -20,8 +20,13 @@
   <string name="TR_SONGMODE_MEDLEY">Medley</string>
   <string name="TR_SONGMODE_SHORTSONG">Kurz-Version</string>
   <string name="TR_GAMEMODE_NORMAL">Normales Spiel</string>
+  <string name="TR_GAMEMODE_NORMAL_DESC">Normales Spiel. Höchste Punktzahl gewinnt.</string>
   <string name="TR_GAMEMODE_BLIND">Blind singen</string>  
+  <string name="TR_GAMEMODE_BLIND_DESC">Erreiche blind die höchste Punktzahl.</string>  
   <string name="TR_GAMEMODE_UNTIL5000">Bis 5000</string>  
+  <string name="TR_GAMEMODE_UNTIL5000_DESC">Wer zuerst 5000 Punkte hat, gewinnt.</string>  
+  <string name="TR_GAMEMODE_HOLDTHELINE">Balken halten</string>  
+  <string name="TR_GAMEMODE_HOLDTHELINE_DESC">Halte die Bewertungsanzeige im angezeigten Bereich.</string>  
   <string name="TR_GAMEMODE_ALL">Alle Modi zufällig</string>
   <string name="TR_GAMEMODE_CUSTOM">Gewählte Modi zufällig</string>
   <string name="TR_RATING_VOCAL_HERO">Vocal Hero</string>
