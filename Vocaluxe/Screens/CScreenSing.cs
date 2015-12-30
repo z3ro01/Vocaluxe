@@ -401,6 +401,9 @@ namespace Vocaluxe.Screens
             if (_Webcam)
                 CWebcam.GetFrame(ref _CurrentWebcamFrameTexture);
 
+            if (CGame.GameMode != null)
+                CGame.GameMode.OnUpdate(_CurrentTime);
+
             return true;
         }
 
@@ -487,6 +490,8 @@ namespace Vocaluxe.Screens
             }
 
             _DrawLyricHelper();
+            if (CGame.GameMode != null)
+                CGame.GameMode.OnDraw(_CurrentTime);
         }
 
         public override void OnClose()
