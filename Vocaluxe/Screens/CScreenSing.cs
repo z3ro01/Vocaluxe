@@ -313,7 +313,11 @@ namespace Vocaluxe.Screens
 
             _UpdateTimeLine();
 
-            CGame.UpdatePoints(_CurrentTime);
+            CGame.UpdatePoints(_CurrentTime, delegate(float time, float beat)
+            {
+                if (CGame.GameMode != null)
+                    CGame.GameMode.OnPointsUpdated(time, beat);
+            });
 
             _UpdateLyrics();
             if (CGame.SongMode == ESongMode.TR_SONGMODE_MEDLEY)

@@ -225,7 +225,7 @@ namespace Vocaluxe.Base
             MidRecordedBeat = -100;
         }
 
-        public static void UpdatePoints(float time)
+        public static void UpdatePoints(float time, Action<float,float> callback = null)
         {
             CSong song = _SongQueue.GetSong();
 
@@ -248,6 +248,7 @@ namespace Vocaluxe.Base
 
             for (int p = 0; p < _NumPlayers; p++)
             {
+                if (Players[p].SongFinished) { continue;  }
                 for (int beat = _LastEvalBeat + 1; beat <= RecordedBeat; beat++)
                 {
                     if ((_SongQueue.GetCurrentSongMode() == ESongMode.TR_SONGMODE_MEDLEY && song.Medley.EndBeat == beat) ||
@@ -378,6 +379,9 @@ namespace Vocaluxe.Base
                 }
             }
             _LastEvalBeat = RecordedBeat;
+
+            if (callback != null)
+                callback(time, _LastEvalBeat);
         }
 
         public static void ResetToLastLine(int soundStream, CVideoStream vidStream)

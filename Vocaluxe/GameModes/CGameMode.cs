@@ -34,6 +34,11 @@ namespace Vocaluxe.GameModes
             return;
         }
 
+        public virtual void OnPointsUpdated(float time, float beat)
+        {
+            return;
+        }
+
         public virtual void OnDraw(float time)
         {
             return;

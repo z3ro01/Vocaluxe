@@ -10,9 +10,20 @@ namespace Vocaluxe.GameModes
 {
     class CGameModeHoldTheLine : CGameMode
     {
+        /*configuration*/
+        private float _RequiredRatingEasy = 0.6f;
+        private float _RequiredRatingNormal = 0.7f;
+        private float _RequiredRatingHard = 0.8f;
+        //dont kick players for the first x line.
+        private float _Warmup = 2;
+        //increase required rating to full at x percentage of current song
+        private float _IncreaseToFull = 0.5f;
+        //increase required rating randomly after reach required rating
+        private float _IncreaseAfterFull = 0.01f;
+        private int _IncreaseAfterFactor = 5;
+
         private IMenu _Screen;
         private CSong _Song;
-        private float _RequiredPercentage = 0.75f;
         private int _Winner = -1;
 
         private class CGModeHLineIndicators
@@ -27,18 +38,24 @@ namespace Vocaluxe.GameModes
             public float AvatarH;
             public float AvatarY;
             public float AvatarX;
+            public int LastBeat = -1;
+            public int FirstLine = -1;
+            public float Rating = 1;
+            public float RatingLimit = 0;
+            public float RequiredRating = 0;
             public int LastLine = -1;
-            public int LastCalculatedLine = -1;
-            public double MaxPoints;
             public bool Lost = false;
         }
 
         private List<CGModeHLineIndicators> _Indicators = new List<CGModeHLineIndicators>();
 
+
         public CGameModeHoldTheLine() : base()
         {
             _Song = CBase.Game.GetSong();
             _Screen = CBase.Graphics.GetScreen(EScreen.Sing);
+            var players = CBase.Game.GetPlayers();
+
             for (int i = 0; i < CBase.Game.GetNumPlayer(); i++)
             {
                 //get players avatar position (we draw the indicator here)
@@ -57,12 +74,30 @@ namespace Vocaluxe.GameModes
                         AvatarH = element.Rect.H,
                         AvatarX = element.Rect.X,
                         AvatarY = element.Rect.Y,
-                        P = 0.5f, 
-                        LastLine = -1, 
+                        P = 1, 
                         Lost = false });
                 }
                 catch
                 {
+                }
+
+                CSongLine[] lines = _Song.Notes.GetVoice(players[i].VoiceNr).Lines;
+                _Indicators[i].LastBeat = lines[lines.Count() - 1].EndBeat;
+
+                switch (CBase.Profiles.GetDifficulty(players[i].ProfileID))
+                {
+                    case EGameDifficulty.TR_CONFIG_EASY:
+                        _Indicators[i].RequiredRating = _RequiredRatingEasy;
+                        break;
+                    case EGameDifficulty.TR_CONFIG_NORMAL:
+                        _Indicators[i].RequiredRating = _RequiredRatingNormal;
+                        break;
+                    case EGameDifficulty.TR_CONFIG_HARD:
+                        _Indicators[i].RequiredRating = _RequiredRatingHard;
+                        break;
+                    default:
+                        _Indicators[i].RequiredRating = _RequiredRatingNormal;
+                        break;
                 }
             }
         }
@@ -93,74 +128,58 @@ namespace Vocaluxe.GameModes
             return false;
         }
 
-        public override void OnUpdate(float time)
+        //calculate players rating
+        public override void OnPointsUpdated(float time, float beat)
         {
-            base.OnUpdate(time);
-            if (_Winner > -1)
-                return;
-
-            int beat = (int)Math.Floor(CBase.Game.GetBeatFromTime(time, _Song.BPM, _Song.Gap));
             var players = CBase.Game.GetPlayers();
             for (int i = 0; i < CBase.Game.GetNumPlayer(); i++)
             {
-                if (!_Indicators[i].Lost) {
-                    CSongLine[] lines = _Song.Notes.GetVoice(players[i].VoiceNr).Lines;
-                    var line = players[i].CurrentLine-1;
-                    if (line < 0) { continue; }
-                    if (lines[line].Points > 0 && _Indicators[i].LastLine < line)
-                    {
-                        //calculate the maximum available score per line (without line bonuses) 
-                        double points = 0;
-                        for (int n = 0; n < lines[line].Notes.Count(); n++)
+                var maxScore = _GetMaxScore(i, beat);
+                if (maxScore > 0 && beat <= _Indicators[i].LastBeat)
+                {
+                    var newRating = (float)(players[i].Points / maxScore);
+                    //can be higher than 1 (linebonuses not calculated by _GetMaxScore, player can increase his line with linebonuses)
+                    _Indicators[i].Rating = newRating.Clamp(0, 1);
+
+                    if (_Indicators[i].FirstLine + _Warmup < players[i].CurrentLine) { 
+                        if (beat <= 0)
                         {
-                            points += (9000) * (double)lines[line].Notes[n].Points / _Song.Notes.GetVoice(players[i].VoiceNr).Points;
+                            _Indicators[i].RatingLimit = 0;
                         }
-                        _Indicators[i].MaxPoints += points;
-                        _Indicators[i].LastLine = line;
-                    }
-
-                    //set requiredPercentage by player difficulty
-                    switch (CBase.Profiles.GetDifficulty(players[i].ProfileID))
-                    {
-                        case EGameDifficulty.TR_CONFIG_EASY:
-                            _RequiredPercentage = 0.70f;
-                            break;
-                        case EGameDifficulty.TR_CONFIG_NORMAL:
-                            _RequiredPercentage = 0.75f;
-                            break;
-                        case EGameDifficulty.TR_CONFIG_HARD:
-                            _RequiredPercentage = 0.8f;
-                            break;
-                        default:
-                            _RequiredPercentage = 0.75f;
-                            break;
-                    }
-
-                    if (_Indicators[i].LastLine > -1) {
-
-                        if (_Indicators[i].LastCalculatedLine != _Indicators[i].LastLine && lines[_Indicators[i].LastLine].LastNoteBeat < beat)
+                        else if (beat < _Indicators[i].LastBeat * _IncreaseToFull)
                         {
-                            float _limit = ((float)_Indicators[i].MaxPoints * _RequiredPercentage);
-                            float _rating = (float)players[i].Points / _limit;
-                            if (_rating < 1)
+                            _Indicators[i].RatingLimit = (beat / (_Indicators[i].LastBeat * _IncreaseToFull)) * _Indicators[i].RequiredRating;
+                        }
+                        else
+                        {
+                            _Indicators[i].RatingLimit = _Indicators[i].RequiredRating;
+                            //make it harder
+                            if (_Indicators[i].LastLine < players[i].CurrentLine)
                             {
-                                _Indicators[i].P = 0;
-                                _Indicators[i].Lost = true;
-                                _Winner = _CheckWinner();
-                                if (_Winner > -1)
-                                    break;
+                                _IncreaseRequiredRatings();
+                                _Indicators[i].LastLine = players[i].CurrentLine;
                             }
-                            else
-                            {
-                                float _newPercentage = (float)Math.Round(((float)players[i].Points - _limit) / ((float)_Indicators[i].MaxPoints-_limit), 2);
-                                //can be higher than 1 (linebonuses!)
-                                _Indicators[i].P = _newPercentage.Clamp(0, 1);
-                            }
-                            _Indicators[i].LastCalculatedLine = _Indicators[i].LastLine;
+                        }
+
+                        if (_Indicators[i].Rating < _Indicators[i].RatingLimit)
+                        {
+                            _Indicators[i].Lost = true;
+                            players[i].SongFinished = true;
+                        
+                            _Winner = _CheckWinner();
+                            if (_Winner > -1)
+                                break;
                         }
                     }
+
+                    _Indicators[i].P = _Indicators[i].Rating;
                 }
             }
+        }
+
+        public override void OnUpdate(float time)
+        {
+            return;
         }
 
         public override void OnDraw(float time)
@@ -173,7 +192,7 @@ namespace Vocaluxe.GameModes
                 {
                     if (_Indicators[i].Lost != true) {
                         float alpha;
-                        if (_Indicators[i].P < 0.3f)
+                        if (_Indicators[i].P - _Indicators[i].RatingLimit < 0.1f)
                         {
                             alpha = (float)((Math.Cos(time * Math.PI * 2) + 1) / 2.0) / 2f + 0.5f;
                         }
@@ -181,24 +200,24 @@ namespace Vocaluxe.GameModes
                         {
                             alpha = 1;
                         }
+
                         //draw bar
                         var color = new SColorF(1, 1, 1, alpha);
                         var rect = new SRectF(_Indicators[i].X, _Indicators[i].Y, _Indicators[i].W, _Indicators[i].H, -2.01f);
                         CBase.Drawing.DrawRect(color, rect);
 
-                        //current progress
+                        //current rating
                         SColorF pcolor;
-
                         var width = _Indicators[i].W * _Indicators[i].P;
-                        if (_Indicators[i].P < 0.33)
+                        if (_Indicators[i].Rating < 0.33)
                         {
                             pcolor = new SColorF(0.870f, 0.243f, 0.243f, alpha);
                         }
-                        else if (_Indicators[i].P < 0.66)
+                        else if (_Indicators[i].Rating < 0.66)
                         {
                             pcolor = new SColorF(0.870f, 0.576f, 0.243f, alpha);
                         }
-                        else if (_Indicators[i].P > 0.66)
+                        else if (_Indicators[i].Rating > 0.66)
                         {
                             pcolor = new SColorF(0.450f, 0.870f, 0.243f, alpha);
                         }
@@ -209,6 +228,9 @@ namespace Vocaluxe.GameModes
 
                         var prect = new SRectF(_Indicators[i].X, _Indicators[i].Y+1, width,  _Indicators[i].H-2, -2.02f);
                         CBase.Drawing.DrawRect(pcolor, prect);
+
+                        //current ratingLimit
+                        CBase.Drawing.DrawRect(new SColorF(0f, 0f, 0f, 0.3f), new SRectF(_Indicators[i].X, _Indicators[i].Y, _Indicators[i].W * _Indicators[i].RatingLimit, _Indicators[i].H, -2.04f));
 
                         //sections
                         var sc = new SColorF(0.745f, 0.745f, 0.745f, alpha);
@@ -249,5 +271,47 @@ namespace Vocaluxe.GameModes
                 return winner;
             return -1;
         }
+
+        private void _IncreaseRequiredRatings()
+        {
+            var rand = new Random();
+            if (_IncreaseAfterFull > 0 && rand.Next(1, _IncreaseAfterFactor) == 1)
+            {
+                for (int i = 0; i < _Indicators.Count; i++)
+                {
+                    _Indicators[i].RequiredRating += _IncreaseAfterFull;
+                }
+            }
+        }
+
+        private double _GetMaxScore(int p, float beat)
+        {
+            var players = CBase.Game.GetPlayers();
+            double points = 0;
+            CSongLine[] lines = _Song.Notes.GetVoice(players[p].VoiceNr).Lines;
+            for (int l = 0; l < lines.Count(); l++)
+            {
+                if (lines[l].Points > 0)
+                {
+                    if (_Indicators[p].FirstLine == -1)
+                    {
+                        _Indicators[p].FirstLine = l;
+                    }
+                    for (int n = 0; n < lines[l].Notes.Count(); n++)
+                    {
+                        if (lines[l].Notes[n].EndBeat <= beat)
+                        {
+                            points += (9000) * (double)lines[l].Notes[n].Points / _Song.Notes.GetVoice(players[p].VoiceNr).Points;
+                        }
+                        else
+                        {
+                            return points;
+                        }
+                    }
+                }
+            }
+            return points;
+        }
+
     }
 }
